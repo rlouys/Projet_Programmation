@@ -1,0 +1,187 @@
+characters.c
+
+/*---------------------------------------------------------------------*/
+
+/**
+* Retourne la taille de la Liste
+* @param li La liste
+* @return Le nombre d'élements de la Liste
+*/
+int list_length(List li)
+{
+	int size = 0;
+
+	if(is_empty_list(li))
+		return size;
+
+	while(li != NULL)
+	{
+		size++;
+		li = li->next;
+	}
+
+	return size;
+}
+
+// ---------------------------------------------------------------------- // 
+
+	printf("Nombre d'éléments : %d\n", list_length(ally));
+
+
+
+
+// ---------------------------------------------------------------------- // 
+
+/*---------------------------------------------------------------------*/
+
+List push_front_list_scanf(List li)
+{
+	Ally *element;
+
+	element = malloc(sizeof(*element));
+
+	if(element == NULL)
+	{
+		fprintf(stderr, "Erreur : probleme allocation dynamique.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	printf("Entrez un chiffre (début de liste): ");
+	scanf("%d", &element->health);
+
+
+	if(is_empty_list(li))
+		element->next = NULL;
+	else
+		element->next = li;
+
+	return element;
+}
+*---------------------------------------------------------------------*/
+
+/**
+* Ajoute un entier en fin de Liste
+* @param li La liste
+* @param x L'entier à insérer
+* @return La liste avec le nouvel élement ajouté
+*/
+List push_back_list(List li, int x)
+{
+	Ally *element;
+
+	element = malloc(sizeof(*element));
+
+	if(element == NULL)
+	{
+		fprintf(stderr, "Erreur : probleme allocation dynamique.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	element->health = x;
+	element->next = NULL;
+
+	if(is_empty_list(li))
+		return element;
+
+	Ally *temp;
+	temp = li;
+
+	while(temp->next != NULL)
+		temp = temp->next;
+
+	temp->next = element;
+
+	return li;
+}
+
+/*---------------------------------------------------------------------*/
+
+/**
+* Ajoute un entier en début de Liste
+* @param li La liste
+* @param x L'entier à insérer
+* @return La liste avec le nouvel élement ajouté
+*/
+List push_front_list(List li, int x)
+{
+	Ally *element;
+
+	element = malloc(sizeof(*element));
+
+	if(element == NULL)
+	{
+		fprintf(stderr, "Erreur : probleme allocation dynamique.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	element->health = x;
+
+	if(is_empty_list(li))
+		element->next = NULL;
+	else
+		element->next = li;
+
+	return element;
+}
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+
+
+main.c
+
+/*ally = push_front_list(ally, 36);
+	print_character(ally);
+
+	ally = push_front_list(ally, 87);
+	ally = push_front_list_scanf(ally);
+		print_character(ally);
+
+	ally = push_front_list_scanf(ally);
+	print_character(ally);
+	ally = push_front_list_scanf(ally);
+	print_character(ally);*/
+
+
+
+
+
+
+
+
+
+
+
+
+characters.h
+
+
+List push_back_list(List li, int x);
+
+
+// ---------------------------------------------------------------------- // 
+
+	List push_front_list_scanf(List li);
+
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+// ---------------------------------------------------------------------- // 
+
+List push_front_list(List li, int x);
