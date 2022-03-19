@@ -1,6 +1,5 @@
 #include <GL/glut.h>
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -69,32 +68,32 @@ bool loadMap(int mX, int mY)		//fonction qui ouvre le fichier txt et charge la c
 
 // draw map //
 
-void drawWall(int mX, int mY)			// fonction qui affiche les murs et les plateformes
+void drawMap(int mX, int mY)			// fonction qui affiche les murs et les plateformes
 {	
-
+	
 
 	for (int j = 0; j < mX; ++j)
 	{
-		for (int i = 0; i < mY; ++i)
+		for (int i = 0; i < mY+1; i++)
 		{
 			if(*(*(map + j) + i) == '#')
 			{	
 
 
 
-				glColor3f(1.0f,0.0f,1.0f);
+				//glColor3f(1.0f,1.0f,1.0f);
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
-				glTranslatef(i,j,0.0f);
+				//glTranslatef(i,j,0.0f);
 				//glTranslatef(j*Square_size,i*Square_size,0.0f);
 
 				glBegin(GL_QUADS);
-				glColor3f(1.0,1.0,0.0);
-				glVertex2d(i,j);
-				glVertex2d(i+1,j);
-				glVertex2d(i+1,j+1);
-				glVertex2d(i,j+1);
+				glColor3f(0.30,0.23,0.12);
+				glVertex2d(i*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),(j+1)*(1000/mX));
+				glVertex2d(i*(1000/mY), (j+1)*(1000/mX));
 			
 				glEnd();
 
@@ -108,125 +107,194 @@ void drawWall(int mX, int mY)			// fonction qui affiche les murs et les platefor
 			
 			}
 
-			if(*(*(map + j) + i) == '@')
+			if(*(*(map + j) + i) == '1')
 			{	
 
 
 
-				glColor3f(1.0f,1.0f,1.0f);
+				//glColor3f(0.0f,0.0f,0.0f);
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
-				glTranslatef(i*Square_size,j*Square_size,0.0f);
+			//	glTranslatef(j,i,0.0f);
 				//glTranslatef(j*Square_size,i*Square_size,0.0f);
 
-				glBegin(GL_QUADS);
-				//glColor3f(1.0,1.0,0.0);
+				/*//glColor3f(1.0,1.0,0.0);
 				glVertex3f(0.0f, 0.0f, 0.0f);
 				glVertex3f(Square_size, 0.0f, 0.0f);
 				glVertex3f(Square_size,Square_size, 0.0f);
-				glVertex3f(0.0f,Square_size, 0.0f);
+				glVertex3f(0.0f,Square_size, 0.0f);*/
 
+				glBegin(GL_QUADS);
+				glColor3f(0.94,0.87,0.70);
+				glVertex2d(i*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),(j+1)*(1000/mX));
+				glVertex2d(i*(1000/mY), (j+1)*(1000/mX));
+			
 				glEnd();
+
+			/*
 				glBegin(GL_POLYGON);         //draw road
 				glColor3f(0.5,0.5,0.5);
 				glVertex3f(0,15, 0.0f);
 				glVertex3f(50, 15, 0.0f);
 				glVertex3f(mX*Square_size, 15, 0.0f);
 				glVertex3f(0, mY*Square_size, 0.0f);
-				glEnd();
+				glEnd();*/
 			
 			}
 		
 			if (*(*(map + j) + i) == '|')
 			{
-				glColor3f(1.0f,1.0f,0.0f);
+			//	glColor3f(1.0f,1.0f,0.0f);
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
-				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				//glTranslatef(i,j,0.0f);
 				//glTranslatef(j*Square_size, i*Square_size,0.0f);
-				glBegin(GL_QUADS);
 
-				glVertex3f(0.0f, 0.0f, 0.0f);
+				/*glVertex3f(0.0f, 0.0f, 0.0f);
 				glVertex3f(Square_size/4, 0.0f, 0.0f);
 				glVertex3f(Square_size/4,Square_size, 0.0f);
-				glVertex3f(0.0f,Square_size, 0.0f);
+				glVertex3f(0.0f,Square_size, 0.0f);*/
 
+				glBegin(GL_QUADS);
+				glColor3f(1.0,1.0,1.0);
+				glVertex2d(i*(1000/mY),j*(1000/mX));
+				glVertex2d((i+0.5)*(1000/mY),j*(1000/mX));
+				glVertex2d((i+0.5)*(1000/mY),(j+1)*(1000/mX));
+				glVertex2d(i*(1000/mY), (j+1)*(1000/mX));
 				glEnd();
 
-
+				glBegin(GL_QUADS);
+				glColor3f(0.5,0.5,0.5);
+				glVertex2d((i+0.5)*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),(j+1)*(1000/mX));
+				glVertex2d((i+0.5)*(1000/mY), (j+1)*(1000/mX));
+				glEnd();
 			}
 			if(*(*(map + j) + i) == 'e')
 			{
-				glColor3f(0.0f,0.0f,0.0f);
+//				glColor3f(0.0f,0.0f,0.0f);
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
-				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(j,i,0.0f);
 				//glTranslatef(j*Square_size,i*Square_size,0.0f);
 
-				glBegin(GL_QUADS);
 				//glColor3f(1.0,1.0,0.0);
-				glVertex3f(0.0f, 0.0f, 0.0f);
+				/*glVertex3f(0.0f, 0.0f, 0.0f);
 				glVertex3f(Square_size, 0.0f, 0.0f);
 				glVertex3f(Square_size,Square_size, 0.0f);
-				glVertex3f(0.0f,Square_size, 0.0f);
+				glVertex3f(0.0f,Square_size, 0.0f);*/
 
+				glBegin(GL_QUADS);
+				glColor3f(1.0,1.0,1.0);
+				glVertex2d(i*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),(j+1)*(1000/mX));
+				glVertex2d(i*(1000/mY), (j+1)*(1000/mX));
+			
 				glEnd();
+
+
 				
-				glBegin(GL_POLYGON);         //draw road
+		/*		glBegin(GL_POLYGON);         //draw road
 				glColor3f(0.5,0.5,0.5);
 				glVertex3f(0,15, 0.0f);
 				glVertex3f(50, 15, 0.0f);
 				glVertex3f(mX*Square_size, 15, 0.0f);
 				glVertex3f(0, mY*Square_size, 0.0f);
-				glEnd();
+				glEnd();*/
 			}
-			if(*(*(map + j) + i) == 'z')
+
+			if(*(*(map + j) + i) == ' ')
 			{
-				glColor3f(0.0f,0.0f,0.0f);
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
-				glTranslatef(i*Square_size,j*Square_size,0.0f);
+			//	glTranslatef(j,i,0.0f);
 				//glTranslatef(j*Square_size,i*Square_size,0.0f);
 
+				//glColor3f(1.0,1.0,0.0);
+			/*	glVertex3f(0.0f, 0.0f, 0.0f);
+				glVertex3f(Square_size, 0.0f, 0.0f);
+				glVertex3f(Square_size,Square_size, 0.0f);
+				glVertex3f(0.0f,Square_size, 0.0f);*/
+
 				glBegin(GL_QUADS);
-				glColor3f(0.5,0.5,0.5);
+				glColor3f(0.5f, 0.5f,0.5f);
+				glVertex2d(i*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),(j+1)*(1000/mX));
+				glVertex2d(i*(1000/mY), (j+1)*(1000/mX));
+			
+				glEnd();
+
+			}	
+
+			if(*(*(map + j) + i) == 'z')
+			{
+	//			glColor3f(0.0f,0.0f,0.0f);
+
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+			//	glTranslatef(j,i,0.0f);
+				//glTranslatef(j*Square_size,i*Square_size,0.0f);
+
+				//glBegin(GL_QUADS);
+				/*glColor3f(0.5,0.5,0.5);
 				glVertex3f(0.0f, 0.0f, 0.0f);
 				glVertex3f(Square_size, 0.0f, 0.0f);
 				glVertex3f(Square_size,Square_size, 0.0f);
-				glVertex3f(0.0f,Square_size, 0.0f);
+				glVertex3f(0.0f,Square_size, 0.0f);*/
 
+				glBegin(GL_QUADS);
+				glColor3f(0.5,0.5,0.5);
+				glVertex2d(i*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),(j+1)*(1000/mX));
+				glVertex2d(i*(1000/mY), (j+1)*(1000/mX));
+			
 				glEnd();
 				
 			}
+			
 			if(*(*(map + j) + i) == 'b')
 			{
-				glColor3f(1.0f,1.0f,1.0f);
+		//		glColor3f(1.0f,1.0f,1.0f);
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
 				//glTranslatef(i*Square_size,j*Square_size,0.0f);
-				glTranslatef(j*Square_size,i*Square_size,0.0f);
+				glTranslatef(j,i,0.0f);
 
-				glBegin(GL_QUADS);
+				/*glBegin(GL_QUADS);
 				//glColor3f(1.0,1.0,0.0);
 				glVertex3f(0.0f, 0.0f, 0.0f);
 				glVertex3f(Square_size, 0.0f, 0.0f);
 				glVertex3f(Square_size,Square_size, 0.0f);
-				glVertex3f(0.0f,Square_size, 0.0f);
+				glVertex3f(0.0f,Square_size, 0.0f);*/
 
+				glBegin(GL_QUADS);
+				glColor3f(1.0,1.0,0.0);
+				glVertex2d(i*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),j*(1000/mX));
+				glVertex2d((i+1)*(1000/mY),(j+1)*(1000/mX));
+				glVertex2d(i*(1000/mY), (j+1)*(1000/mX));
+			
 				glEnd();
+
 				
-				glBegin(GL_POLYGON);         //draw road
+			/*	glBegin(GL_POLYGON);         //draw road
 				glColor3f(0.5,0.5,0.5);
 				glVertex3f(0,15, 0.0f);
 				glVertex3f(50, 15, 0.0f);
 				glVertex3f(mX*Square_size, 15, 0.0f);
 				glVertex3f(0, mY*Square_size, 0.0f);
-				glEnd();
+				glEnd();*/
 			}
 
 		}

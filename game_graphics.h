@@ -13,7 +13,7 @@
 
 //#define MaxX 40
 //#define MaxY 41
-#define Square_size 15.0
+#define Square_size 24.39
 
 char **map;
 
@@ -21,7 +21,7 @@ char **map;
 
 bool loadMap(int mX, int mY);
 //void Display();
-void drawWall(int mX, int mY);
+void drawMap(int mX, int mY);
 
 #endif
 

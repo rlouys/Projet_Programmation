@@ -225,7 +225,7 @@ void HeroCharacter(int direction) {
 // ------------------------------------------------------------------ //
 
 void updatePos(int direction) {
-    const int SPEED = 1;
+    const int SPEED = 2.5;
     switch (direction) {
     case 0:
         if (xPos < xwcMax + 2 || wrapAround)
@@ -245,8 +245,8 @@ void updatePos(int direction) {
         break;
     };
     if (wrapAround) {
-        xPos = (xPos + 600) % 600;
-        yPos = (yPos + 600) % 600;
+        xPos = (xPos + 1000) % 1000;
+        yPos = (yPos + 1000) % 1000;
     }
 }
 

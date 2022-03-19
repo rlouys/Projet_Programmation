@@ -10,7 +10,10 @@
 #include "game_graphics.h"
 #include "menus_graphics.h"
 
-GLsizei winWidth = 600, winHeight = 600;
+#define WIDTH 1000
+#define HEIGHT 1000
+
+GLsizei winWidth = 1000, winHeight = 1000;
 
 int xPos = 300;
 int yPos = 300;
@@ -26,8 +29,8 @@ int direction = 0;
 
 const int REFRESH_MS = 5;
 
-GLfloat xwcMin = 0.0, xwcMax = 600.0;
-GLfloat ywcMin = 0.0, ywcMax = 600.0;
+GLfloat xwcMin = 0.0, xwcMax = 1000.0;
+GLfloat ywcMin = 0.0, ywcMax = 1000.0;
 
 
 
@@ -58,10 +61,6 @@ void arrowFunc(int key, int x, int y) {
 
 // ------------------------------------------------------------------ //
 
-
-
-// ------------------------------------------------------------------ //
-
 void initRendering()
 {
 	glEnable(GL_DEPTH_TEST);
@@ -71,10 +70,12 @@ void initRendering()
 
 void handleResize(int width,int heigth)
 {
-	glViewport(0, 0, width, heigth);
+    glViewport(0.0, 0.0, WIDTH, HEIGHT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0, width, heigth, 0);
+	gluOrtho2D(0, width, 0, heigth);
+    glMatrixMode(GL_MODELVIEW);
+
 }
 
 // ------------------------------------------------------------------ //
@@ -84,209 +85,23 @@ void timer(int value) {
     glutTimerFunc(REFRESH_MS, timer, 0); // next timer call milliseconds later
 }
 
-// ------------------------------------------------------------------ //
 
-/*void Display()
-{	
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    drawWall(mX, mY);
-
-    glPushMatrix();
-    glTranslatef(xPos, yPos, 0);
-
-    HeroCharacter(direction); // génère le perso
-    updatePos(direction); // permet le déplacement
-
-    glPopMatrix();
-    glFlush();
-    tick++;
-
-}*/
-
-// ------------------------------------------------------------------ //
-
-
-/*void WelcomeDisplay()
-{	
-
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //drawWall(mX, mY);
-
-    glColor3f(1, 0, 0);
-
-    glRasterPos3f(50, 500, 1);
-    char msg1[]="SUSTAINABLE MOBILITY : SUBSISTANCE";
-    for(int i = 0; i <strlen(msg1);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
-
-    glRasterPos3f(50, 480, 1);
-    char msg2[]="----------------------------------------------------";
-    for(int i = 0; i <strlen(msg2);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-
-    glRasterPos3f(50, 400, 0);
-    char msg3[]="CONTINUER ('c')";
-    for(int i = 0; i <strlen(msg3);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
-
-    glRasterPos3f(50, 375, 0);
-    char msg4[]="Nouvelle partie ('n')";
-    for(int i = 0; i <strlen(msg4);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
-
-    glRasterPos3f(50, 300, 0);
-    char msg5[]="GAMEPLAY ('g')";
-    for(int i = 0; i <strlen(msg5);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg5[i]);
-
-    glRasterPos3f(50, 275, 0);
-    char msg6[]="OPTIONS ('o')";
-    for(int i = 0; i <strlen(msg6);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
-
-    glRasterPos3f(50, 250, 0);
-    char msg7[]="Sortie('x')";
-    for(int i = 0; i <strlen(msg7);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
-
-    glRasterPos3f(50, 50, 0);
-    char msg8[]="Press 'c' to enter the game";
-    for(int i = 0; i <strlen(msg8);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg8[i]);
-
-    glutSwapBuffers();
-}*/
-
-// ------------------------------------------------------------------ //
-
-/*void DisplayOptions()
-{	
-
-
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //drawWall(mX, mY);
-
-    glColor3f(1, 0, 0);
-
-    glRasterPos3f(50, 500, 1);
-    char msg1[]="OPTIONS";
-    for(int i = 0; i <strlen(msg1);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
-
-    glRasterPos3f(50, 480, 1);
-    char msg2[]="------------";
-    for(int i = 0; i <strlen(msg2);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-
-    glRasterPos3f(50, 400, 0);
-    char msg3[]="LOREM IPSUM (...)";
-    for(int i = 0; i <strlen(msg3);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
-
-    
-    glutSwapBuffers();
-}*/
-
-// ------------------------------------------------------------------ //
-
-/*void DisplayGameplay()
-{	
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //drawWall(mX, mY);
-
-    glColor3f(1, 0, 0);
-
-    glRasterPos3f(50, 500, 1);
-    char msg1[]="GAMEPLAY";
-    for(int i = 0; i <strlen(msg1);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
-
-    glRasterPos3f(50, 480, 1);
-    char msg2[]="---------------";
-    for(int i = 0; i <strlen(msg2);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-
-    glRasterPos3f(50, 400, 0);
-    char msg3[]="LOREM IPSUM (...)";
-    for(int i = 0; i <strlen(msg3);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
-
-    
-    glutSwapBuffers();
-}*/
-
-// ------------------------------------------------------------------ //
-
-
-// ------------------------------------------------------------------ //
-
-/*void DisplayEnding()
-{	
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //drawWall(mX, mY);
-
-    glColor3f(1, 0, 0);
-
-    glRasterPos3f(50, 500, 1);
-    char msg1[]="CYA";
-    for(int i = 0; i <strlen(msg1);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
-
-    glRasterPos3f(50, 480, 1);
-    char msg2[]="-----------------";
-    for(int i = 0; i <strlen(msg2);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-
-    glRasterPos3f(50, 400, 0);
-    char msg3[]="CREDITS (...)";
-    for(int i = 0; i <strlen(msg3);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
-
-    
-    glutSwapBuffers();
-}*/
-
-// ------------------------------------------------------------------ //
-
-/*void myMenu(int id){
-	switch(id){
-
-		case 2:
-			printf("Options\n");
-			break;
-		case 3:
-			printf("Gameplay\n");
-			break;
-		case 4:
-			printf("Pause\n");	
-			break;
-		case 5:
-			printf("_!_Cheat_mode_!_");	
-		case 6:
-			printf("Cya!");	
-	}
-}*/
-
-// ------------------------------------------------------------------ //
 
 void Display()
 {	
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	glClearColor(0.1f,0.1f,0.1f,0.1f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    drawWall(mX, mY);
+    
+    drawMap(mX, mY);
+
 
     glPushMatrix();
     glTranslatef(xPos, yPos, 0);
-
     HeroCharacter(direction); // génère le perso
     updatePos(direction); // permet le déplacement
-
     glPopMatrix();
+
+
     glFlush();
     tick++;
 
@@ -341,6 +156,11 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 void init(void) {
     /* Set color of display window to white. */
     glClearColor(1, 1, 1, 1.0);
+    glColor3f(0,0,0);
+    glPointSize(1000);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0,WIDTH,0,HEIGHT);
 }
 
 // ------------------------------------------------------------------ //
@@ -395,27 +215,28 @@ int main(int argc, char *argv[])
 
 	loadMap(mX, mY);     //Charge la carte
 	
-
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 
-	glutInitWindowSize(800,600); // mY*3*Square_size
+	glutInitWindowSize(1000,1000); // mY*3*Square_size
 	glutInitWindowPosition(0, 0);
 
 	glutCreateWindow("Sustainable Mobility : Subsistance");
 
 
-
+ 
 	initRendering();
+   // handleResize(WIDTH, HEIGHT);
 
-	glutDisplayFunc(WelcomeDisplay);
-    glutReshapeFunc(winReshapeFcn);
+	glutDisplayFunc(Display);
+    handleResize(WIDTH, HEIGHT);
+
+   // glutReshapeFunc(winReshapeFcn);
     glutKeyboardFunc(keyboardFunc);
     glutSpecialFunc(arrowFunc);
 
 
-
-
+// MENU
 
 	glutCreateMenu (myMenu);
 	glutAddMenuEntry ("|             MENU               |", 0);
@@ -429,6 +250,7 @@ int main(int argc, char *argv[])
 
 	glutAttachMenu (GLUT_RIGHT_BUTTON);
 
+// 
     init();
     glutTimerFunc(0, timer, 0);
 
