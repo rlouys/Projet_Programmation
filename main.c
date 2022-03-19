@@ -5,29 +5,34 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "characters.h"
 
+#include "characters.h"
 #include "game_graphics.h"
-//#include "menu_graphics.h"
+#include "menus_graphics.h"
 
 GLsizei winWidth = 600, winHeight = 600;
 
 /* Set range for world coordinates. */
-GLfloat xwcMin = 0.0, xwcMax = 600.0;
-GLfloat ywcMin = 0.0, ywcMax = 600.0;
 
-int tick = 0;
 const int REFRESH_MS = 5;
-int direction = 0;
-bool wrapAround = false;
-int xPos = 300;
-int yPos = 300;
 
+GLfloat xwcMin, xwcMax;
+GLfloat ywcMin, ywcMax;
+
+int xPos;
+int yPos;
+
+int mX;
+int mY;
+
+int tick;
+
+int direction;
+bool wrapAround;
 
 //char **map;
 
-int mX = 40;
-int mY = 41;
+
 
 // ------------------------------------------------------------------ //
 
@@ -51,55 +56,7 @@ void arrowFunc(int key, int x, int y) {
 
 // ------------------------------------------------------------------ //
 
-void HeroCharacter(int direction) {
-    int r = 50;
 
-     glPushMatrix();
-      while (direction--) {
-       glRotatef(90, 0, 0, -1);
-      } // permet de changer d'angle lorsqu'on change de direction
-    glColor3f(1, 1, 0);
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex2f(0, 0);
-    int detail = 30;
-   // int startPoint = 15 * sin(tick / 15);
-    for (int i = 0; i < detail; i++) {
-        double deg = (i * (360 - 2 * 1) / detail) + 0;
-        double x = r * cos(deg * 3.14 / 180);
-        double y = r * sin(deg * 3.14 / 180);
-        glVertex2f(x, y);
-    }
-    glEnd();
-    glPopMatrix();
-}
-
-// ------------------------------------------------------------------ //
-
-void updatePos(int direction) {
-    const int SPEED = 1;
-    switch (direction) {
-    case 0:
-        if (xPos < xwcMax + 2 || wrapAround)
-            xPos += SPEED;
-        break;
-    case 1:
-        if (yPos > -2 || wrapAround)
-            yPos -= SPEED;
-        break;
-    case 2:
-        if (xPos > -2 || wrapAround)
-            xPos -= SPEED;
-        break;
-    case 3:
-        if (yPos < ywcMax + 2 || wrapAround)
-            yPos += SPEED;
-        break;
-    };
-    if (wrapAround) {
-        xPos = (xPos + 600) % 600;
-        yPos = (yPos + 600) % 600;
-    }
-}
 
 // ------------------------------------------------------------------ //
 
@@ -127,7 +84,7 @@ void timer(int value) {
 
 // ------------------------------------------------------------------ //
 
-void Display()
+/*void Display()
 {	
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -143,18 +100,12 @@ void Display()
     glFlush();
     tick++;
 
-}
+}*/
 
 // ------------------------------------------------------------------ //
 
 
-
-
-
-// ------------------------------------------------------------------ //
-
-
-void WelcomeDisplay()
+/*void WelcomeDisplay()
 {	
 
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
@@ -204,11 +155,11 @@ void WelcomeDisplay()
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg8[i]);
 
     glutSwapBuffers();
-}
+}*/
 
 // ------------------------------------------------------------------ //
 
-void DisplayOptions()
+/*void DisplayOptions()
 {	
 
 
@@ -235,11 +186,11 @@ void DisplayOptions()
 
     
     glutSwapBuffers();
-}
+}*/
 
 // ------------------------------------------------------------------ //
 
-void DisplayGameplay()
+/*void DisplayGameplay()
 {	
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -264,14 +215,14 @@ void DisplayGameplay()
 
     
     glutSwapBuffers();
-}
+}*/
 
 // ------------------------------------------------------------------ //
 
 
 // ------------------------------------------------------------------ //
 
-void DisplayEnding()
+/*void DisplayEnding()
 {	
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -296,11 +247,11 @@ void DisplayEnding()
 
     
     glutSwapBuffers();
-}
+}*/
 
 // ------------------------------------------------------------------ //
 
-void myMenu(int id){
+/*void myMenu(int id){
 	switch(id){
 
 		case 2:
@@ -317,7 +268,7 @@ void myMenu(int id){
 		case 6:
 			printf("Cya!");	
 	}
-}
+}*/
 
 // ------------------------------------------------------------------ //
 
@@ -334,8 +285,8 @@ void keyboardFunc(unsigned char Key, int x, int y) {
         break;
     case 'c':
 		glutDisplayFunc(Display);
-		break;
 		glutPostRedisplay();
+		break;
 
 	case 'n':
 		glutDisplayFunc(Display);

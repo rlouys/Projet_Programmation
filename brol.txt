@@ -151,10 +151,29 @@ main.c
 	print_character(ally);*/
 
 
+main.c
+-------------
 
 
 
-
+ case 'c':
+		glutDisplayFunc(Display);
+		break;
+	case 'n':
+		glutDisplayFunc(Display);
+		break;
+	case 'x':
+		glutDisplayFunc(DisplayEnding);
+		break;
+	case 'g':
+		glutDisplayFunc(DisplayGameplay);
+		break;
+	case 'o':
+		glutDisplayFunc(DisplayOptions);		
+		break;	    
+	case 'm':
+		glutDisplayFunc(WelcomeDisplay);	
+    };
 
 
 
@@ -185,3 +204,6 @@ List push_back_list(List li, int x);
 // ---------------------------------------------------------------------- // 
 
 List push_front_list(List li, int x);
+
+
+

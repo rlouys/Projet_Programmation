@@ -1,6 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "characters.h"
+#include "menus_graphics.h"
+//#include "game_graphics.h"
+
+bool wrapAround = false;
+int direction = 0;
+
+GLfloat xwcMin, xwcMax;
+GLfloat ywcMin, ywcMax;
+
+int xPos;
+int yPos;
+
+int mX;
+int mY;
+
+int tick;
 
 
 List new_character(void)
@@ -180,3 +196,57 @@ List create_Hero(List li)
 	element->current_xp = 0;
 	element->weapon_type = 1; //1 = canon à bulles || 2 = fusil// enum?
 */
+
+// ------------------------------------------------------------------ //
+
+
+void HeroCharacter(int direction) {
+    int r = 50;
+
+     glPushMatrix();
+      while (direction--) {
+       glRotatef(90, 0, 0, -1);
+      } // permet de changer d'angle lorsqu'on change de direction
+    glColor3f(1, 1, 0);
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(0, 0);
+    int detail = 30;
+   // int startPoint = 15 * sin(tick / 15);
+    for (int i = 0; i < detail; i++) {
+        double deg = (i * (360 - 2 * 1) / detail) + 0;
+        double x = r * cos(deg * 3.14 / 180);
+        double y = r * sin(deg * 3.14 / 180);
+        glVertex2f(x, y);
+    }
+    glEnd();
+    glPopMatrix();
+}
+
+// ------------------------------------------------------------------ //
+
+void updatePos(int direction) {
+    const int SPEED = 1;
+    switch (direction) {
+    case 0:
+        if (xPos < xwcMax + 2 || wrapAround)
+            xPos += SPEED;
+        break;
+    case 1:
+        if (yPos > -2 || wrapAround)
+            yPos -= SPEED;
+        break;
+    case 2:
+        if (xPos > -2 || wrapAround)
+            xPos -= SPEED;
+        break;
+    case 3:
+        if (yPos < ywcMax + 2 || wrapAround)
+            yPos += SPEED;
+        break;
+    };
+    if (wrapAround) {
+        xPos = (xPos + 600) % 600;
+        yPos = (yPos + 600) % 600;
+    }
+}
+

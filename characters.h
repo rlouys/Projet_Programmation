@@ -2,6 +2,12 @@
 #define __CHARACTERS__H__
 
 #include <stdbool.h>
+#include <math.h>
+#include <GL/glut.h>
+
+
+
+
 
 
 
@@ -52,6 +58,8 @@ typedef struct Game
 	List delete_end_list(List li);
 	List delete_start_list(List li);
 	List clear_list(List li);
+	void HeroCharacter(int direction);
+	void updatePos(int direction);
 
 #endif
 
