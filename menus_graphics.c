@@ -1,4 +1,4 @@
-
+#include "game_graphics.h"
 #include "menus_graphics.h"
 #include "characters.h"
 
@@ -13,16 +13,16 @@
 
 // ------------------------------------------------------------------ //
 
-GLfloat xwcMin = 0.0, xwcMax = 600.0;
-GLfloat ywcMin = 0.0, ywcMax = 600.0;
+GLfloat xwcMin, xwcMax;
+GLfloat ywcMin, ywcMax;
 
-int xPos = 300;
-int yPos = 300;
+int xPos;
+int yPos;
 
-int mX = 40;
-int mY = 41;
+int mX;
+int mY;
 
-int tick = 0;
+int tick;
 
 int direction;
 
@@ -190,20 +190,4 @@ void myMenu(int id){
 
 // ------------------------------------------------------------------ //
 
-void Display()
-{	
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //drawWall(mX, mY);
 
-    glPushMatrix();
-    glTranslatef(xPos, yPos, 0);
-
-    HeroCharacter(direction); // génère le perso
-    updatePos(direction); // permet le déplacement
-
-    glPopMatrix();
-    glFlush();
-    tick++;
-
-}

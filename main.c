@@ -12,23 +12,25 @@
 
 GLsizei winWidth = 600, winHeight = 600;
 
+int xPos = 300;
+int yPos = 300;
+
+int mX = 40;
+int mY = 41;
+
+int tick = 0;
+bool wrapAround = false;
+int direction = 0;
+
 /* Set range for world coordinates. */
 
 const int REFRESH_MS = 5;
 
-GLfloat xwcMin, xwcMax;
-GLfloat ywcMin, ywcMax;
+GLfloat xwcMin = 0.0, xwcMax = 600.0;
+GLfloat ywcMin = 0.0, ywcMax = 600.0;
 
-int xPos;
-int yPos;
 
-int mX;
-int mY;
 
-int tick;
-
-int direction;
-bool wrapAround;
 
 //char **map;
 
@@ -272,6 +274,24 @@ void timer(int value) {
 
 // ------------------------------------------------------------------ //
 
+void Display()
+{	
+	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    drawWall(mX, mY);
+
+    glPushMatrix();
+    glTranslatef(xPos, yPos, 0);
+
+    HeroCharacter(direction); // génère le perso
+    updatePos(direction); // permet le déplacement
+
+    glPopMatrix();
+    glFlush();
+    tick++;
+
+}
+
 // ------------------------------------------------------------------ //
 
 void keyboardFunc(unsigned char Key, int x, int y) {
@@ -345,6 +365,8 @@ void parseArgs(int argc, char **argv) {
     }
 }
 
+
+
 // ------------------------------------------------------------------ //
 
 
@@ -377,7 +399,7 @@ int main(int argc, char *argv[])
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 
-	glutInitWindowSize(mX*Square_size, mY*Square_size); // mY*3*Square_size
+	glutInitWindowSize(800,600); // mY*3*Square_size
 	glutInitWindowPosition(0, 0);
 
 	glutCreateWindow("Sustainable Mobility : Subsistance");
@@ -390,6 +412,10 @@ int main(int argc, char *argv[])
     glutReshapeFunc(winReshapeFcn);
     glutKeyboardFunc(keyboardFunc);
     glutSpecialFunc(arrowFunc);
+
+
+
+
 
 	glutCreateMenu (myMenu);
 	glutAddMenuEntry ("|             MENU               |", 0);

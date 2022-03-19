@@ -6,10 +6,20 @@
 #include <stdbool.h>
 
 #include "game_graphics.h"
-//#include "menus_graphics.h"
+#include "menus_graphics.h"
+#include "characters.h"
 
 // load map //
 
+int xPos;
+int yPos;
+
+int mX;
+int mY;
+
+int tick;
+
+int direction;
 
 bool loadMap(int mX, int mY)		//fonction qui ouvre le fichier txt et charge la carte dans le tableau
 {
@@ -72,28 +82,29 @@ void drawWall(int mX, int mY)			// fonction qui affiche les murs et les platefor
 
 
 
-				glColor3f(1.0f,1.0f,1.0f);
+				glColor3f(1.0f,0.0f,1.0f);
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
-				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(i,j,0.0f);
 				//glTranslatef(j*Square_size,i*Square_size,0.0f);
 
 				glBegin(GL_QUADS);
-				//glColor3f(1.0,1.0,0.0);
-				glVertex3f(0.0f, 0.0f, 0.0f);
-				glVertex3f(Square_size, 0.0f, 0.0f);
-				glVertex3f(Square_size/2,Square_size, 0.0f);
-				glVertex3f(0.0f,Square_size, 0.0f);
-
+				glColor3f(1.0,1.0,0.0);
+				glVertex2d(i,j);
+				glVertex2d(i+1,j);
+				glVertex2d(i+1,j+1);
+				glVertex2d(i,j+1);
+			
 				glEnd();
-				glBegin(GL_POLYGON);         //draw road
+
+			/*	glBegin(GL_POLYGON);         //draw road
 				glColor3f(0.5,0.5,0.5);
 				glVertex3f(0,15, 0.0f);
 				glVertex3f(50, 15, 0.0f);
 				glVertex3f(mX*Square_size, 15, 0.0f);
 				glVertex3f(0, mY*Square_size, 0.0f);
-				glEnd();
+				glEnd();*/
 			
 			}
 
@@ -113,7 +124,7 @@ void drawWall(int mX, int mY)			// fonction qui affiche les murs et les platefor
 				//glColor3f(1.0,1.0,0.0);
 				glVertex3f(0.0f, 0.0f, 0.0f);
 				glVertex3f(Square_size, 0.0f, 0.0f);
-				glVertex3f(Square_size/2,Square_size, 0.0f);
+				glVertex3f(Square_size,Square_size, 0.0f);
 				glVertex3f(0.0f,Square_size, 0.0f);
 
 				glEnd();
@@ -197,8 +208,8 @@ void drawWall(int mX, int mY)			// fonction qui affiche les murs et les platefor
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
-				glTranslatef(i*Square_size,j*Square_size,0.0f);
-				//glTranslatef(j*Square_size,i*Square_size,0.0f);
+				//glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(j*Square_size,i*Square_size,0.0f);
 
 				glBegin(GL_QUADS);
 				//glColor3f(1.0,1.0,0.0);
@@ -224,3 +235,5 @@ void drawWall(int mX, int mY)			// fonction qui affiche les murs et les platefor
 	
 
 }
+
+

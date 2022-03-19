@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "game_graphics.h"
+//#include "game_graphics.h"
 //#include "characters.h"
 
  // VARIABLES
@@ -23,7 +23,7 @@
  // PROTOTYPES
 
 
-void Display();
+//void Display();
 void WelcomeDisplay();
 void DisplayOptions();
 void DisplayGameplay();

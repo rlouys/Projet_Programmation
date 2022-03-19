@@ -20,7 +20,7 @@ char **map;
 // FUNC // 
 
 bool loadMap(int mX, int mY);
-
+//void Display();
 void drawWall(int mX, int mY);
 
 #endif

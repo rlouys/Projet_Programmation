@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include "characters.h"
 #include "menus_graphics.h"
-//#include "game_graphics.h"
+#include "game_graphics.h"
 
-bool wrapAround = false;
-int direction = 0;
+bool wrapAround;
+int direction;
 
 GLfloat xwcMin, xwcMax;
 GLfloat ywcMin, ywcMax;
