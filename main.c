@@ -13,10 +13,10 @@
 #define WIDTH 1000
 #define HEIGHT 1000
 
-GLsizei winWidth = 1000, winHeight = 1000;
+//GLsizei winWidth = 1000, winHeight = 1000;
 
-int xPos = 300;
-int yPos = 300;
+int xPos = 182;
+int yPos = 33;
 
 int mX = 40;
 int mY = 41;
@@ -29,8 +29,8 @@ int direction = 0;
 
 const int REFRESH_MS = 5;
 
-GLfloat xwcMin = 0.0, xwcMax = 1000.0;
-GLfloat ywcMin = 0.0, ywcMax = 1000.0;
+GLfloat xwcMin = 182, xwcMax = 798.001;
+GLfloat ywcMin = 33, ywcMax = 200.0;
 
 
 
@@ -98,10 +98,14 @@ void Display()
     glPushMatrix();
     glTranslatef(xPos, yPos, 0);
     HeroCharacter(direction); // génère le perso
+    while(direction>=0 && direction<4)
+    {
     updatePos(direction); // permet le déplacement
+    direction = 4;
+    }
     glPopMatrix();
-
-
+   /* popEnnemis();
+    updatePos(direction);*/
     glFlush();
     tick++;
 
@@ -113,11 +117,11 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 
 
     switch (Key) {
-    case 'w':
+   /* case 'w':
         wrapAround = !wrapAround;
         printf("Wraparound set to %s\n", ((wrapAround) ? "true" : "false"));
         glutPostRedisplay();
-        break;
+        break;*/
     case 'c':
 		glutDisplayFunc(Display);
 		glutPostRedisplay();
@@ -231,7 +235,7 @@ int main(int argc, char *argv[])
 	glutDisplayFunc(Display);
     handleResize(WIDTH, HEIGHT);
 
-   // glutReshapeFunc(winReshapeFcn);
+    //glutReshapeFunc(winReshapeFcn);
     glutKeyboardFunc(keyboardFunc);
     glutSpecialFunc(arrowFunc);
 

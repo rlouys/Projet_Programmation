@@ -60,6 +60,7 @@ typedef struct Game
 	List clear_list(List li);
 	void HeroCharacter(int direction);
 	void updatePos(int direction);
+//	void popEnnemis();
 
 #endif
 

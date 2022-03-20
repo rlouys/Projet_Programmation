@@ -22,6 +22,9 @@ char **map;
 bool loadMap(int mX, int mY);
 //void Display();
 void drawMap(int mX, int mY);
+void drawSquare(float red, float green, float blue, int j, int i, int type);
+void drawCircle(float red, float green, float blue, int posx, int posy, float rayon);
+
 
 #endif
 

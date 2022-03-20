@@ -199,7 +199,7 @@ List create_Hero(List li)
 
 // ------------------------------------------------------------------ //
 
-
+/* PACMAN
 void HeroCharacter(int direction) {
     int r = 50;
 
@@ -220,23 +220,51 @@ void HeroCharacter(int direction) {
     }
     glEnd();
     glPopMatrix();
-}
+}*/
 
+void HeroCharacter(int direction) {
+    //int startPoint = 15 * sin(tick / 15);
+
+    glPushMatrix();
+
+	 
+      /*while (direction--) {
+       glRotatef(90, 0, 0, -1);
+      } */// permet de changer d'angle lorsqu'on change de direction
+    /*glColor3f(1, 1.0, 0.5);
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(0, 0);
+    int detail = 50;
+    for (int i = 0; i <= detail; i++) {
+        double deg = (i * (360 * 1) / detail) + 0;
+        double x = r * cos(deg * 3.14 / 180);
+        double y = r * sin(deg * 3.14 / 180);
+        glVertex2f(x, y);
+    }*/
+	drawCircle(1, 1, 1, 0, 0, 33);
+	
+
+	//drawSquare(1.0,1.0,1.0,0,0,1);
+
+    glEnd();
+    glPopMatrix();
+
+}
 // ------------------------------------------------------------------ //
 
 void updatePos(int direction) {
-    const int SPEED = 2.5;
+    const int SPEED = 62;
     switch (direction) {
     case 0:
         if (xPos < xwcMax + 2 || wrapAround)
             xPos += SPEED;
         break;
     case 1:
-        if (yPos > -2 || wrapAround)
+        if (yPos > ywcMin || wrapAround)
             yPos -= SPEED;
         break;
     case 2:
-        if (xPos > -2 || wrapAround)
+        if (xPos > xwcMin || wrapAround)
             xPos -= SPEED;
         break;
     case 3:
@@ -244,9 +272,20 @@ void updatePos(int direction) {
             yPos += SPEED;
         break;
     };
-    if (wrapAround) {
+    /*if (wrapAround) {
         xPos = (xPos + 1000) % 1000;
         yPos = (yPos + 1000) % 1000;
-    }
+    }*/
 }
 
+/*
+void popEnnemis(){
+
+	glPushMatrix();
+	drawSquare(0.30, 0.23, 0.12, 50, 50, 0);	
+    glEnd();
+    glPopMatrix();
+
+
+
+}*/
