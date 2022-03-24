@@ -15,13 +15,7 @@
  // VARIABLES
 
 
-
-
-
-
-
  // PROTOTYPES
-
 
 //void Display();
 void WelcomeDisplay();

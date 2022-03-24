@@ -11,7 +11,7 @@
 #define MAP "map-test.txt" 
 
 // --------------------------------------------------------------------------------------------_//
-
+int value;
 
 // load variables //
 
@@ -21,6 +21,8 @@ int mX;
 int mY;
 int tick;
 int direction;
+//int camera = 1000/mY;
+//int value = -24.39;//24.39;
 
 // --------------------------------------------------------------------------------------------_//
 
@@ -37,13 +39,13 @@ bool loadMap(int mX, int mY)		//fonction qui ouvre le fichier txt et charge la c
         return false;
     }
     char c;
-    int i= 0;
+    int i = 0;
     int j = 0;
 	
-	*(map + i) = malloc(sizeof(char *) * mY);	
+	*(map + i) = malloc(sizeof(char *) * mX);	
 	for(i = 0; i < mX; i++)
 		{
-		*(map + i) = malloc(sizeof(char *) * mY);	
+		*(map + i) = malloc(sizeof(char *) * mX);	
 			for(j = 0; j < mY; j++)
 			{		
 				c = fgetc(f);
@@ -76,9 +78,10 @@ bool loadMap(int mX, int mY)		//fonction qui ouvre le fichier txt et charge la c
 
 void drawSquare(float red, float green, float blue, int j, int i, int type)
 {
+	//glPushMatrix();
 	glBegin(GL_QUADS);
 	glColor3f(red,green,blue);
-	
+
 	int map_size = 1000;
 
 	if(type==0)
@@ -103,6 +106,7 @@ void drawSquare(float red, float green, float blue, int j, int i, int type)
 	glVertex2d((i+0.5)*(map_size/mY), (j+1)*(map_size/mX));
 	}
 
+	//glPopMatrix();
 
 
 	glEnd();
@@ -129,12 +133,22 @@ void drawCircle(float red, float green, float blue, int posx, int posy, float ra
 
 }
 
+/*void update()
+{
+	value *= 1.2;
+	glutPostRedisplay();
+	glutTimerFunc(100,update,0);
+}*/
 
 // --------------------------------------------------------------------------------------------_//
 
 void drawMap(int mX, int mY)			
 {	
-	
+	glClear(GL_COLOR_BUFFER_BIT);
+	//glPushMatrix();
+	//glLoadIdentity();
+	//glMatrixMode(GL_MODELVIEW);
+	glTranslatef(0,-value,0);
 
 	for (int j = 0; j < mX; ++j)
 	{
@@ -142,16 +156,19 @@ void drawMap(int mX, int mY)
 		{
 			if(*(*(map + j) + i) == '#') // Murs bruns
 			{	
-				glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();
+
+				/*glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();*/
 
 				drawSquare(0.30, 0.23, 0.12, j, i, 0);	
+						//	glTranslatef(0,1000/mY,0);
+
 			}
 
 			if(*(*(map + j) + i) == '1') // Sable bordures
 			{
-				glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();
+				/*glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();*/
 
 				drawSquare(0.94, 0.87, 0.70, j, i, 0);
 			}
@@ -159,8 +176,8 @@ void drawMap(int mX, int mY)
 			if (*(*(map + j) + i) == '|') // lignes centrales
 			{
 
-				glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();
+				/*glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();*/
 			
 				drawSquare(0.5, 0.5, 0.5, j, i, 1);
 				drawSquare(1.0, 1.0, 1.0, j, i, 2);
@@ -170,8 +187,8 @@ void drawMap(int mX, int mY)
 			if (*(*(map + j) + i) == 'l') // piste cyclable
 			{
 
-				glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();
+				/*glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();*/
 
 				drawSquare(0.5, 0.5, 0.5, j, i, 1);
 				drawSquare(1.0, 1.0, 0.7, j, i, 2);
@@ -181,8 +198,8 @@ void drawMap(int mX, int mY)
 			if(*(*(map + j) + i) == 'e') // Ennemis
 			{
 
-				glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();
+				/*glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();*/
 
 				drawSquare(1.0, 0.0, 0.0, j, i, 0);
 
@@ -191,8 +208,8 @@ void drawMap(int mX, int mY)
 			if(*(*(map + j) + i) == ' ') // Fond de plateau
 			{
 
-				glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();
+				/*glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();*/
 
 				drawSquare(0.5, 0.5, 0.5, j, i, 0);
 
@@ -200,23 +217,27 @@ void drawMap(int mX, int mY)
 
 			if(*(*(map + j) + i) == 'z') // A adapter, sert à combler un vide de dessin non désiré
 			{
-				glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();
+				/*glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();*/
 
-				drawSquare(0.5, 0.5, 0.5, j, i, 0);
+				drawSquare(1, 1, 1, j, i, 0);
 
 			}
 			
 			if(*(*(map + j) + i) == 'b') // Hero
 			{
-				glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();
+				/*glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();*/
 
 				drawSquare(1.0, 1.0, 1.0, j, i, 0);
 		
 			}
 		}
 	}
+	//glPopMatrix();
+
 }
+
+
 
 

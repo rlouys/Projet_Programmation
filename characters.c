@@ -227,7 +227,8 @@ void HeroCharacter(int direction) {
 
     glPushMatrix();
 
-	 
+	int ratiox = HEIGHT/mY;
+	int ratioy = WIDTH/mX;
       /*while (direction--) {
        glRotatef(90, 0, 0, -1);
       } */// permet de changer d'angle lorsqu'on change de direction
@@ -241,10 +242,17 @@ void HeroCharacter(int direction) {
         double y = r * sin(deg * 3.14 / 180);
         glVertex2f(x, y);
     }*/
-	drawCircle(1, 1, 1, 0, 0, 33);
-	
+	//drawCircle(1, 1, 1, 0, 0, HEIGHT/mY);
+	//drawSquare(0.94, 0.87, 0.70, 0, 0, 0);
+	glBegin(GL_QUADS);
+	glColor3f(0,0,0);
 
-	//drawSquare(1.0,1.0,1.0,0,0,1);
+	glVertex2d(0,0);
+	glVertex2d(ratiox,0);
+	glVertex2d(ratiox,ratioy);
+	glVertex2d(0, ratioy);
+
+	//drawSquare(1.0,1.0,1.0,0,0,0);
 
     glEnd();
     glPopMatrix();
@@ -256,7 +264,7 @@ void updatePos(int direction) {
     const int SPEED = 62;
     switch (direction) {
     case 0:
-        if (xPos < xwcMax + 2 || wrapAround)
+        if (xPos < xwcMax || wrapAround)
             xPos += SPEED;
         break;
     case 1:

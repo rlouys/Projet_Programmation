@@ -10,26 +10,27 @@
 #include "game_graphics.h"
 #include "menus_graphics.h"
 
-#define WIDTH 1000
-#define HEIGHT 1000
 
 //GLsizei winWidth = 1000, winHeight = 1000;
 
 int xPos = 182;
 int yPos = 33;
 
-int mX = 40;
+int mX = 70;
 int mY = 41;
 
 int tick = 0;
 bool wrapAround = false;
 int direction = 0;
 
+int value = 50;
+
+int c = 0;
 /* Set range for world coordinates. */
 
 const int REFRESH_MS = 5;
 
-GLfloat xwcMin = 182, xwcMax = 798.001;
+GLfloat xwcMin = 182, xwcMax = 800.001;
 GLfloat ywcMin = 33, ywcMax = 200.0;
 
 
@@ -51,10 +52,10 @@ void arrowFunc(int key, int x, int y) {
         direction = 1;
         break;
     case GLUT_KEY_LEFT:
-        direction = 2;
+        direction = 0;
         break;
     case GLUT_KEY_RIGHT:
-        direction = 0;
+        direction = 2;
         break;
     }
 }
@@ -70,29 +71,45 @@ void initRendering()
 
 void handleResize(int width,int heigth)
 {
-    glViewport(0.0, 0.0, WIDTH, HEIGHT);
+    glViewport(0.0, 0.0, width, heigth);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0, width, 0, heigth);
+	gluOrtho2D(1000, 0, 0, 600);
     glMatrixMode(GL_MODELVIEW);
-
+    glLoadIdentity();
 }
 
 // ------------------------------------------------------------------ //
 
 void timer(int value) {
+    
     glutPostRedisplay();      // Post re-paint request to activate display()
-    glutTimerFunc(REFRESH_MS, timer, 0); // next timer call milliseconds later
+    glutTimerFunc(30, timer, 0); // next timer call milliseconds later
+
 }
 
+int updatePosition(int value){
+    
+    value = value*2;
+    if(value>=200){
+            value = 24.39;
+        }
 
+    return value;
+
+}
 
 void Display()
 {	
 	glClearColor(0.1f,0.1f,0.1f,0.1f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
+    value = updatePosition(value);
+    printf("Valeur : %d\n", value);
+    glPushMatrix();
+   // glLoadIdentity();
     drawMap(mX, mY);
+    glPopMatrix();
 
 
     glPushMatrix();
@@ -157,15 +174,7 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 
 // ------------------------------------------------------------------ //
 
-void init(void) {
-    /* Set color of display window to white. */
-    glClearColor(1, 1, 1, 1.0);
-    glColor3f(0,0,0);
-    glPointSize(1000);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0,WIDTH,0,HEIGHT);
-}
+ 
 
 // ------------------------------------------------------------------ //
 
@@ -175,6 +184,7 @@ void winReshapeFcn(GLint newWidth, GLint newHeight) {
     gluOrtho2D(xwcMin, xwcMax, ywcMin, ywcMax);
     glClear(GL_COLOR_BUFFER_BIT);
 }
+
 
 // ------------------------------------------------------------------ //
 
@@ -189,8 +199,19 @@ void parseArgs(int argc, char **argv) {
     }
 }
 
+// ------------------------------------------------------------------ //
 
-
+void mouse(int bouton,int etat,int x,int y) { // action à la souris || Clic gauche : indique la position d'où on se trouve || Clic droit : ferme la fenêtre (exit(0)). 
+  if ( etat == GLUT_DOWN )
+    switch ( bouton ) {
+      case GLUT_LEFT_BUTTON  : c = (c+1)%7; 
+                               printf("%4d %4d\n",x,y); 
+                               glutPostRedisplay();
+                               break ;
+      case GLUT_RIGHT_BUTTON : exit(0);
+                               break; 
+                               }
+}
 // ------------------------------------------------------------------ //
 
 
@@ -233,31 +254,33 @@ int main(int argc, char *argv[])
    // handleResize(WIDTH, HEIGHT);
 
 	glutDisplayFunc(Display);
-    handleResize(WIDTH, HEIGHT);
+    //handleResize(WIDTH, HEIGHT);
 
-    //glutReshapeFunc(winReshapeFcn);
+    glutReshapeFunc(handleResize);
     glutKeyboardFunc(keyboardFunc);
     glutSpecialFunc(arrowFunc);
-
+    glutMouseFunc(mouse);    	
 
 // MENU
-
+/*
 	glutCreateMenu (myMenu);
 	glutAddMenuEntry ("|             MENU               |", 0);
 	glutAddMenuEntry ("''''''''''''''''''''''''''''''''''''''''''''''''''", 1);
 
-	glutAddMenuEntry ("| Options", 2);
+	glutAddMenuEntry ("| 
+    Options", 2);
 	glutAddMenuEntry ("| Gameplay", 3);
 	glutAddMenuEntry ("| Pause", 4);
 	glutAddMenuEntry ("| Cheat mode : disabled", 5);
 	glutAddMenuEntry ("| Quit", 6);
 
 	glutAttachMenu (GLUT_RIGHT_BUTTON);
-
+*/
 // 
-    init();
-    glutTimerFunc(0, timer, 0);
+    glutTimerFunc(10, timer, 0);
+    //glutTimerFunc(25, &drawMap, 0);
 
+	//glutTimerFunc(1000,update,0);
 
 	glutMainLoop();
 
