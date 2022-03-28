@@ -1,5 +1,10 @@
 {
     "files.associations": {
-        "game_graphics.h": "c"
+        "game_graphics.h": "c",
+        "stdbool.h": "c",
+        "stdlib.h": "c",
+        "enemies.h": "c",
+        "game.h": "c",
+        "type_traits": "c"
     }
 }

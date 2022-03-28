@@ -1,15 +1,33 @@
 #ifndef __CHARACTERS_H__
-#define __CHARACTERS__H__
+#define __CHARACTERS_H__
+
+/*** LIBS ***/
 
 #include <stdbool.h>
 #include <math.h>
 #include <GL/glut.h>
 
+/***  STRUCTURES   ***/
 
+struct positionP
+{
+	int x;
+	int y;
+};
 
+struct play
+{
+	int vie;
+	struct positionP pos;
+	int evolution;
+	int attack;
+	int current_xp;
+	int weapon_type;
+};
 
+typedef struct play* player;
 
-
+player p;
 
 	// Définition du héro //
 
@@ -49,7 +67,7 @@ typedef struct Game
 
 
 	// Fonctions //
-
+/*
 	List new_character(void);
 	bool is_empty_list(List li);
 	void print_character(List li);
@@ -58,9 +76,19 @@ typedef struct Game
 	List delete_end_list(List li);
 	List delete_start_list(List li);
 	List clear_list(List li);
+//	void popEnnemis();
+*/
+
+/*** FUNCTIONS ***/
+
 	void HeroCharacter(int direction);
 	void updatePos(int direction);
-//	void popEnnemis();
+	player createPlayer(int *mX, int *mY);
+	void moveLeft(player p);
+	void moveRight(player p);
+	void moveDown(player p);
+	void moveUp(player p);
+
 
 #endif
 

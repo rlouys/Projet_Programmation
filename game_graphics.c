@@ -1,5 +1,7 @@
-#include <GL/glut.h>
+/*** LIBS ***/
 
+
+#include <GL/glut.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -7,30 +9,28 @@
 #include "game_graphics.h"
 #include "menus_graphics.h"
 #include "characters.h"
-
-#define MAP "map-test.txt" 
-
+#include "enemies.h"
+#include "game.h"
+#include "timers_and_effects.h"
 // --------------------------------------------------------------------------------------------_//
-int value;
+#define MAP "map-test.txt" 
+#define FOND 0.5
+// --------------------------------------------------------------------------------------------_//
 
-// load variables //
 
-int xPos;
-int yPos;
+/***  VARIABLES  ***/
+
+float *value;
 int mX;
 int mY;
-int tick;
-int direction;
-//int camera = 1000/mY;
-//int value = -24.39;//24.39;
 
+
+/*** FUNCTIONS ***/ 
 // --------------------------------------------------------------------------------------------_//
 
-bool loadMap(int mX, int mY)		//fonction qui ouvre le fichier txt et charge la carte dans le tableau
+bool loadMap(int *mX, int *mY)		//fonction qui ouvre le fichier txt et charge la carte dans le tableau
 {
-	
-
-    map = malloc(sizeof(char *) * mX);	
+    map = malloc(sizeof(char *) * (*mX));	
     FILE *f = NULL;
     f = fopen(MAP, "r");
     if(f == NULL)
@@ -42,11 +42,10 @@ bool loadMap(int mX, int mY)		//fonction qui ouvre le fichier txt et charge la c
     int i = 0;
     int j = 0;
 	
-	*(map + i) = malloc(sizeof(char *) * mX);	
-	for(i = 0; i < mX; i++)
+	for(i = 0; i < (*mX); i++)
 		{
-		*(map + i) = malloc(sizeof(char *) * mX);	
-			for(j = 0; j < mY; j++)
+		*(map + i) = malloc(sizeof(char *) * (*mX));	
+			for(j = 0; j < (*mY); j++)
 			{		
 				c = fgetc(f);
 				*(*(map + i) + j) = c;
@@ -58,11 +57,11 @@ bool loadMap(int mX, int mY)		//fonction qui ouvre le fichier txt et charge la c
 		
 	    printf("\n");
 
-		for(i = 0; i < mX; i++)
+		for(i = 0; i < (*mX); i++)
 		{
-			for(j = 0; j < mY; j++)
+			for(j = 0; j < (*mY); j++)
 			{
-				printf("%c", map[i][j]);
+				printf("%c", *(*(map + i) + j));			
 			}
 			printf("\n");
 		}
@@ -72,45 +71,74 @@ bool loadMap(int mX, int mY)		//fonction qui ouvre le fichier txt et charge la c
  }		
 
 // --------------------------------------------------------------------------------------------_//
+void drawLine(float red, float green, float blue)
+{
+	
+	float line = Square_size/3;
+
+	glBegin(GL_QUADS);
+	glColor3f(red,green,blue);
+
+	
+	glVertex3f(line, 0.0f, 0.0f);
+	glVertex3f(line*2, 0.0f, 0.0f);
+	glVertex3f(line*2,Square_size, 0.0f);
+	glVertex3f(line,Square_size, 0.0f);
+
+	red = FOND;
+	green = FOND;
+	blue = FOND;
+
+	glColor3f(red,green,blue);
+
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(line, 0.0f, 0.0f);
+	glVertex3f(line,Square_size, 0.0f);
+	glVertex3f(0,Square_size, 0.0f);
+
+	glColor3f(red,green,blue);
+
+	glVertex3f(line*2, 0.0f,0.0f);
+	glVertex3f(line*3, 0.0f,0.0f);
+	glVertex3f(line*3,Square_size,0.0f);
+	glVertex3f(line*2,Square_size,0.0f);
+
+	
+	
+	glEnd();
+}
+
+// --------------------------------------------------------------------------------------------_//
 
 // DRAW A SQUARE (SIZEOF = Map_pixel_size/nb_objects)
 // les couleurs doivent être entrées en paramètre
 
-void drawSquare(float red, float green, float blue, int j, int i, int type)
+void drawSquare(float red, float green, float blue)
 {
-	//glPushMatrix();
 	glBegin(GL_QUADS);
 	glColor3f(red,green,blue);
 
-	int map_size = 1000;
-
-	if(type==0)
-	{
-	glVertex2d(i*(map_size/mY),j*(map_size/mX));
-	glVertex2d((i+2)*(map_size/mY),j*(map_size/mX));
-	glVertex2d((i+2)*(map_size/mY),(j+1)*(map_size/mX));
-	glVertex2d(i*(map_size/mY), (j+1)*(map_size/mX));
-	}
-	else if(type==1)
-	{
-	glVertex2d(i*(map_size/mY),j*(map_size/mX));
-	glVertex2d((i+0.5)*(map_size/mY),j*(map_size/mX));
-	glVertex2d((i+0.5)*(map_size/mY),(j+1)*(map_size/mX));
-	glVertex2d(i*(map_size/mY), (j+1)*(map_size/mX));
-	}
-	else if(type ==2)
-	{
-	glVertex2d((i+0.5)*(map_size/mY),j*(map_size/mX));
-	glVertex2d((i+1)*(map_size/mY),j*(map_size/mX));
-	glVertex2d((i+1)*(map_size/mY),(j+1)*(map_size/mX));
-	glVertex2d((i+0.5)*(map_size/mY), (j+1)*(map_size/mX));
-	}
-
-	//glPopMatrix();
-
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(Square_size, 0.0f, 0.0f);
+		glVertex3f(Square_size,Square_size, 0.0f);
+		glVertex3f(0.0f,Square_size, 0.0f);
 
 	glEnd();
 
+}
+
+// --------------------------------------------------------------------------------------------_//
+
+void drawSky()
+{
+        glBegin(GL_POLYGON); 
+            glColor3f(1.0,0.0,0.0);
+	
+            glVertex3f(Square_size, mY*Square_size, 0);
+            glVertex3f(Square_size, Square_size, 0);
+            glVertex3f(mX*Square_size, Square_size, 0);
+            glVertex3f(mX*Square_size, mY*Square_size, 0);
+        glEnd();
 }
 
 // --------------------------------------------------------------------------------------------_//
@@ -133,110 +161,222 @@ void drawCircle(float red, float green, float blue, int posx, int posy, float ra
 
 }
 
-/*void update()
-{
-	value *= 1.2;
-	glutPostRedisplay();
-	glutTimerFunc(100,update,0);
-}*/
+
 
 // --------------------------------------------------------------------------------------------_//
 
-void drawMap(int mX, int mY)			
+void drawMap(int *mX, int *mY)			
 {	
+	
 	glClear(GL_COLOR_BUFFER_BIT);
-	//glPushMatrix();
-	//glLoadIdentity();
-	//glMatrixMode(GL_MODELVIEW);
-	glTranslatef(0,-value,0);
+	glutPostRedisplay();
 
-	for (int j = 0; j < mX; ++j)
+	for (int j = 0; j < (*mX); ++j)
 	{
-		for (int i = 0; i < mY+1; i++)
+		for (int i = 0; i < (*mY); i++)
 		{
+		
 			if(*(*(map + j) + i) == '#') // Murs bruns
 			{	
 
-				/*glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();*/
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(0,-(*value),0);
 
-				drawSquare(0.30, 0.23, 0.12, j, i, 0);	
-						//	glTranslatef(0,1000/mY,0);
+				drawSquare(0.30, 0.23, 0.12);	
 
 			}
 
 			if(*(*(map + j) + i) == '1') // Sable bordures
 			{
-				/*glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();*/
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(0,-(*value),0);
 
-				drawSquare(0.94, 0.87, 0.70, j, i, 0);
+				drawSquare(0.94, 0.87, 0.70);
 			}
 		
 			if (*(*(map + j) + i) == '|') // lignes centrales
 			{
 
-				/*glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();*/
-			
-				drawSquare(0.5, 0.5, 0.5, j, i, 1);
-				drawSquare(1.0, 1.0, 1.0, j, i, 2);
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(0,-(*value),0);
+
+				drawLine(1, 1, 0);
 			
 			}
 
 			if (*(*(map + j) + i) == 'l') // piste cyclable
 			{
 
-				/*glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();*/
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(0,-(*value),0);
 
-				drawSquare(0.5, 0.5, 0.5, j, i, 1);
-				drawSquare(1.0, 1.0, 0.7, j, i, 2);
+				drawLine(1, 0.843, 0);
 
 			}
 
 			if(*(*(map + j) + i) == 'e') // Ennemis
 			{
 
-				/*glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();*/
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(0,-(*value),0);
 
-				drawSquare(1.0, 0.0, 0.0, j, i, 0);
+				drawSquare(1.0, 0.0, 0.0);
 
 			}
 
-			if(*(*(map + j) + i) == ' ') // Fond de plateau
+			if(*(*(map + j) + i) == ' ' || *(*(map + j) + i) == 'X') // Fond de plateau
 			{
 
-				/*glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();*/
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(0,-(*value),0);
 
-				drawSquare(0.5, 0.5, 0.5, j, i, 0);
+				drawSquare(FOND, FOND, FOND);
 
 			}	
 
 			if(*(*(map + j) + i) == 'z') // A adapter, sert à combler un vide de dessin non désiré
 			{
-				/*glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();*/
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(0,-(*value),0);
 
-				drawSquare(1, 1, 1, j, i, 0);
+				drawSquare(1, 1, 1);
 
 			}
 			
 			if(*(*(map + j) + i) == 'b') // Hero
 			{
-				/*glMatrixMode(GL_MODELVIEW);
-				glLoadIdentity();*/
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(0,-(*value),0);
 
-				drawSquare(1.0, 1.0, 1.0, j, i, 0);
+				drawSquare(1.0, 1.0, 1.0);
 		
 			}
 		}
 	}
-	//glPopMatrix();
-
 }
+
+// ------------------------------------------------------------------ //
+
+void drawPlayer(player p)
+{
+	int i, j;
+
+	
+	i = p->pos.x;
+	j = p->pos.y;
+		
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glTranslatef(i*Square_size,j*Square_size,0.0f);
+	glColor3f(0.0f,1.0f,0.0f);
+
+	drawSquare(1.0, 0.0, 1.0);	
+}
+
+// ------------------------------------------------------------------ //
+
+void drawEnemy(enemy e)	
+{
+	int i, j;
+	i = e->pos.x;
+	j = e->pos.y;
+	glColor3f(1.0f,0.0F,0.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(j*Square_size,i*Square_size,0.0f);
+	glBegin(GL_QUADS);
+	glVertex3f(0.0f,0.0f,0.0f);
+	glVertex3f(Square_size,0.0f,0.0f);
+	glVertex3f(Square_size,Square_size,0.0f);
+	glVertex3f(0.0f,Square_size,0.0f);
+	glEnd();
+}
+
+// ------------------------------------------------------------------ //
+
+void drawTirs(tirsP p)
+{
+	int i, j;
+	i = p->pos.x;
+	j = p->pos.y;
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(j*Shoot_size,i*Shoot_size,0.0f);
+	glBegin(GL_QUADS);
+	glVertex3f(0.0f,0.0f,0.0f);
+	glVertex3f(Shoot_size,0.0f,0.0f);
+	glVertex3f(Shoot_size,Shoot_size,0.0f);
+	glVertex3f(0.0f,Shoot_size,0.0f);
+	glEnd();
+}
+
+// ------------------------------------------------------------- //
+
+void drawAllEnnemis(listeEn e)
+{	
+	enemy first = malloc(sizeof(enemies));
+	enemy next = malloc(sizeof(enemies));
+	first = e->starList;
+	next = e->starList->nextptr;
+	if (e->starList != NULL || e->endList != NULL)
+	{
+		drawEnemy(first);
+		if (e->starList->nextptr != NULL)
+		{
+			drawEnemy(next);
+			while (next->nextptr != NULL)
+			{
+				next = next->nextptr;
+				drawEnemy(next);
+			}
+		}
+	}
+}
+
+// ------------------------------------------------------------- //
+
+void drawAllTirs(listetirsP t)
+{
+	tirsP first = malloc(sizeof(tirs));
+	tirsP next = malloc(sizeof(tirs));
+	first = t->starList;
+	if (t->starList != NULL && t->starList->nextptr != NULL)
+	{
+	next = t->starList->nextptr;
+	}
+	if (t->starList != NULL || t->endList != NULL)
+	{
+		drawTirs(first);
+		if (t->starList->nextptr != NULL)
+		{
+			drawTirs(next);
+			while (next->nextptr != NULL)
+			{
+				next = next->nextptr;
+				drawTirs(next);
+			}
+		}
+	}
+}
+
 
 
 

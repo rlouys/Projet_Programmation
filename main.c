@@ -1,47 +1,33 @@
-#include <GL/glut.h>
+/*** LIBS ***/
 
+#include <GL/glut.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 
 #include "characters.h"
 #include "game_graphics.h"
 #include "menus_graphics.h"
+#include "timers_and_effects.h"
+#include "enemies.h"
+#include "tirs.h"
+#include "game.h"
 
+/*** VARIABLES ***/
 
-//GLsizei winWidth = 1000, winHeight = 1000;
-
-int xPos = 182;
-int yPos = 33;
-
-int mX = 70;
-int mY = 41;
-
+bool test = false;
 int tick = 0;
-bool wrapAround = false;
 int direction = 0;
-
-int value = 50;
-
+float vl = 20.0;
+float *value = &vl;
 int c = 0;
-/* Set range for world coordinates. */
-
-const int REFRESH_MS = 5;
-
-GLfloat xwcMin = 182, xwcMax = 800.001;
-GLfloat ywcMin = 33, ywcMax = 200.0;
 
 
-
-
-//char **map;
-
-
-
+/*** FUNCTIONS ***/
 // ------------------------------------------------------------------ //
-
 
 void arrowFunc(int key, int x, int y) {
     switch (key) {
@@ -60,6 +46,7 @@ void arrowFunc(int key, int x, int y) {
     }
 }
 
+
 // ------------------------------------------------------------------ //
 
 void initRendering()
@@ -71,60 +58,36 @@ void initRendering()
 
 void handleResize(int width,int heigth)
 {
-    glViewport(0.0, 0.0, width, heigth);
+    glViewport(0, 0, width, heigth);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(1000, 0, 0, 600);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    gluOrtho2D(width, 0,0, heigth);
+
 }
 
 // ------------------------------------------------------------------ //
 
-void timer(int value) {
-    
-    glutPostRedisplay();      // Post re-paint request to activate display()
-    glutTimerFunc(30, timer, 0); // next timer call milliseconds later
-
-}
-
 int updatePosition(int value){
     
-    value = value*2;
-    if(value>=200){
-            value = 24.39;
+    value = value*1.25;
+    if(value>=500){
+            value = 10;
         }
-
     return value;
 
 }
 
+// ------------------------------------------------------------------ //
+
 void Display()
 {	
+    
 	glClearColor(0.1f,0.1f,0.1f,0.1f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    value = updatePosition(value);
-    printf("Valeur : %d\n", value);
-    glPushMatrix();
-   // glLoadIdentity();
-    drawMap(mX, mY);
-    glPopMatrix();
 
+    game(&mX, &mY, p,e,t);
 
-    glPushMatrix();
-    glTranslatef(xPos, yPos, 0);
-    HeroCharacter(direction); // génère le perso
-    while(direction>=0 && direction<4)
-    {
-    updatePos(direction); // permet le déplacement
-    direction = 4;
-    }
-    glPopMatrix();
-   /* popEnnemis();
-    updatePos(direction);*/
     glFlush();
-    tick++;
 
 }
 
@@ -134,7 +97,7 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 
 
     switch (Key) {
-   /* case 'w':
+    /*case 'w':
         wrapAround = !wrapAround;
         printf("Wraparound set to %s\n", ((wrapAround) ? "true" : "false"));
         glutPostRedisplay();
@@ -174,21 +137,7 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 
 // ------------------------------------------------------------------ //
 
- 
-
-// ------------------------------------------------------------------ //
-
-void winReshapeFcn(GLint newWidth, GLint newHeight) {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(xwcMin, xwcMax, ywcMin, ywcMax);
-    glClear(GL_COLOR_BUFFER_BIT);
-}
-
-
-// ------------------------------------------------------------------ //
-
-void parseArgs(int argc, char **argv) {
+/*void parseArgs(int argc, char **argv) {
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-w") == 0) {
             printf("Wraparound enabled");
@@ -197,7 +146,7 @@ void parseArgs(int argc, char **argv) {
            printf("Unrecognized option: %s", argv[i]);
         }
     }
-}
+}*/
 
 // ------------------------------------------------------------------ //
 
@@ -217,7 +166,8 @@ void mouse(int bouton,int etat,int x,int y) { // action à la souris || Clic gau
 
 int main(int argc, char *argv[])
 {
-
+    mX = 80;
+    mY = 41;
 	// TESTS // 
 /*
 	List Hero = new_character();
@@ -235,15 +185,19 @@ int main(int argc, char *argv[])
 
 // ------------------------------------------------------------------ //
 	// GLUT //
+    srand(time(NULL));
+   // parseArgs(argc, argv);
 
-    parseArgs(argc, argv);
-
-	loadMap(mX, mY);     //Charge la carte
+	loadMap(&mX, &mY);     //Charge la carte
 	
+
+     p = createPlayer(&mX, &mY);
+     e = initialListEnemies();
+     t = initialListeTirs();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 
-	glutInitWindowSize(1000,1000); // mY*3*Square_size
+	glutInitWindowSize((mY)*Square_size, mX*Square_size);
 	glutInitWindowPosition(0, 0);
 
 	glutCreateWindow("Sustainable Mobility : Subsistance");
@@ -251,37 +205,36 @@ int main(int argc, char *argv[])
 
  
 	initRendering();
-   // handleResize(WIDTH, HEIGHT);
-
-	glutDisplayFunc(Display);
-    //handleResize(WIDTH, HEIGHT);
-
+	glutDisplayFunc(WelcomeDisplay);
     glutReshapeFunc(handleResize);
     glutKeyboardFunc(keyboardFunc);
     glutSpecialFunc(arrowFunc);
     glutMouseFunc(mouse);    	
 
 // MENU
-/*
-	glutCreateMenu (myMenu);
+    glutCreateMenu (myMenu);
 	glutAddMenuEntry ("|             MENU               |", 0);
 	glutAddMenuEntry ("''''''''''''''''''''''''''''''''''''''''''''''''''", 1);
 
-	glutAddMenuEntry ("| 
-    Options", 2);
+	glutAddMenuEntry ("| Options", 2);
 	glutAddMenuEntry ("| Gameplay", 3);
 	glutAddMenuEntry ("| Pause", 4);
 	glutAddMenuEntry ("| Cheat mode : disabled", 5);
 	glutAddMenuEntry ("| Quit", 6);
 
 	glutAttachMenu (GLUT_RIGHT_BUTTON);
-*/
-// 
-    glutTimerFunc(10, timer, 0);
-    //glutTimerFunc(25, &drawMap, 0);
 
-	//glutTimerFunc(1000,update,0);
+ 
+    glutTimerFunc(50, timer, 0);
+    glutTimerFunc(50, updateCollisions, 0);
+    glutTimerFunc(200, updateEnemies, 1);
+    glutTimerFunc(50, updateTirs, 2);
+    glutTimerFunc(50, updateNewEnemies, 3);
+    glutTimerFunc(50, updateDeleteEnemies, 4);
+    glutTimerFunc(50, updateDeleteTirs, 5);
 
+
+    glEnable(GL_DEPTH_TEST);
 	glutMainLoop();
 
 	return 0;

@@ -1,32 +1,39 @@
-
- // LOAD MAP && DRAW MAP//
-
-
 #ifndef _GAME_GRAPHICS_H_
 #define _GAME_GRAPHICS_H_
-#define WIDTH 1000
-#define HEIGHT 1000
 
+/*** LIBS ***/
 
 #include <stdbool.h>
 
+#include "enemies.h"
+#include "characters.h"
+#include "tirs.h"
+#include "timers_and_effects.h" 
+#include "game.h"
 
-// BLOC SIZES DEFINITION // 
 
-//#define MaxX 40
-//#define MaxY 41
-//#define Square_size 24.39
+#define Square_size 20.0
+#define Shoot_size 10.0
+
+/***  VARIABLES  ***/
 
 char **map;
+int mX;
+int mY;
 
-// FUNC // 
+/*** FUNCTIONS ***/ 
 
-bool loadMap(int mX, int mY);
-//void Display();
-void drawMap(int mX, int mY);
-void drawSquare(float red, float green, float blue, int j, int i, int type);
+bool loadMap(int *mX, int *mY);
+void drawMap(int *mX, int *mY);
+void drawSquare(float red, float green, float blue);
 void drawCircle(float red, float green, float blue, int posx, int posy, float rayon);
-void update();
+void drawPlayer(player p);
+void drawEnemy(enemy e);	
+void drawTirs(tirsP p);
+void drawAllEnnemis(listeEn e);
+void drawSky();
+void drawLine(float red, float green, float blue);
+
 
 
 #endif
