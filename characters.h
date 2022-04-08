@@ -15,7 +15,7 @@ struct positionP
 	int y;
 };
 
-struct play
+struct player
 {
 	int vie;
 	struct positionP pos;
@@ -25,7 +25,7 @@ struct play
 	int weapon_type;
 };
 
-typedef struct play* player;
+typedef struct player* player;
 
 player p;
 

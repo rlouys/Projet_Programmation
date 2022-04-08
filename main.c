@@ -24,6 +24,11 @@ int direction = 0;
 float vl = 20.0;
 float *value = &vl;
 int c = 0;
+char* cheatMode = "| Cheat mode : disabled";
+bool cheatModeT = false;
+//int sg = 0;
+bool startgame = false;
+
 
 
 /*** FUNCTIONS ***/
@@ -61,7 +66,7 @@ void handleResize(int width,int heigth)
     glViewport(0, 0, width, heigth);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-    gluOrtho2D(width, 0,0, heigth);
+    gluOrtho2D(0, width, 0, heigth);
 
 }
 
@@ -79,7 +84,7 @@ int updatePosition(int value){
 
 // ------------------------------------------------------------------ //
 
-void Display()
+void DisplayGame()
 {	
     
 	glClearColor(0.1f,0.1f,0.1f,0.1f);
@@ -103,12 +108,14 @@ void keyboardFunc(unsigned char Key, int x, int y) {
         glutPostRedisplay();
         break;*/
     case 'c':
-		glutDisplayFunc(Display);
+        startgame = !startgame;
+		glutDisplayFunc(DisplayGame);
 		glutPostRedisplay();
 		break;
 
 	case 'n':
-		glutDisplayFunc(Display);
+        startgame = !startgame;
+		glutDisplayFunc(DisplayGame);
 		glutPostRedisplay();
 		break;
 
@@ -144,7 +151,8 @@ void keyboardFunc(unsigned char Key, int x, int y) {
             wrapAround = true;
         } else {
            printf("Unrecognized option: %s", argv[i]);
-        }
+        }    glutTimerFunc(1000, MenuTimer, 0); // next timer call milliseconds later
+
     }
 }*/
 
@@ -197,8 +205,8 @@ int main(int argc, char *argv[])
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 
-	glutInitWindowSize((mY)*Square_size, mX*Square_size);
-	glutInitWindowPosition(0, 0);
+	glutInitWindowSize(mY*Square_size, mX*Square_size);
+	glutInitWindowPosition(1000, 0);
 
 	glutCreateWindow("Sustainable Mobility : Subsistance");
 
@@ -210,33 +218,36 @@ int main(int argc, char *argv[])
     glutKeyboardFunc(keyboardFunc);
     glutSpecialFunc(arrowFunc);
     glutMouseFunc(mouse);    	
-
 // MENU
     glutCreateMenu (myMenu);
 	glutAddMenuEntry ("|             MENU               |", 0);
-	glutAddMenuEntry ("''''''''''''''''''''''''''''''''''''''''''''''''''", 1);
+	glutAddMenuEntry ("''''''''''''''''''''''''''''''''''''''''''''''''''",0);
 
 	glutAddMenuEntry ("| Options", 2);
 	glutAddMenuEntry ("| Gameplay", 3);
 	glutAddMenuEntry ("| Pause", 4);
-	glutAddMenuEntry ("| Cheat mode : disabled", 5);
+	glutAddMenuEntry (cheatMode, 5);
 	glutAddMenuEntry ("| Quit", 6);
 
 	glutAttachMenu (GLUT_RIGHT_BUTTON);
 
- 
+   // if(*startgame == 1){
+     //   printf("startgame : %i", *startgame);
     glutTimerFunc(50, timer, 0);
-    glutTimerFunc(50, updateCollisions, 0);
+    glutTimerFunc(10, updateCollisions, 0);
     glutTimerFunc(200, updateEnemies, 1);
     glutTimerFunc(50, updateTirs, 2);
     glutTimerFunc(50, updateNewEnemies, 3);
-    glutTimerFunc(50, updateDeleteEnemies, 4);
-    glutTimerFunc(50, updateDeleteTirs, 5);
-
-
+    glutTimerFunc(10, updateDeleteEnemies, 4);
+    glutTimerFunc(10, updateDeleteTirs, 5);
+    //glutTimerFunc(10, MenuTimer, 6); // next timer call milliseconds later
+    
+   // }
     glEnable(GL_DEPTH_TEST);
 	glutMainLoop();
+    
 
+    
 	return 0;
 
 }

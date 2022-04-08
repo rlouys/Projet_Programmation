@@ -21,6 +21,7 @@ void DisplayOptions();
 void DisplayGameplay();
 void DisplayEnding();
 void myMenu(int id);
+void EndGameDisplay();
 
 
 

@@ -27,8 +27,8 @@ struct listeEnemies
 {
 	
 	int quantite;
-	struct enemies *starList;
-	struct enemies *endList;
+	struct enemies *first;
+	struct enemies *last;
 	
 };
 

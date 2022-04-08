@@ -11,7 +11,7 @@
 
 void Keyboard(unsigned char key, int x, int y);
 void game(int *mX, int *mY, player p, listeEn e, listetirsP t);
-void checkCollision (enemy e, tirsP p);
+void checkCollisionTirsEnnemis (enemy e, tirsP p);
 void drawAllTirs(listetirsP t);
 
 

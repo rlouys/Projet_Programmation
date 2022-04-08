@@ -9,10 +9,12 @@
 #include "game_graphics.h"
 #include "tirs.h"
 #include "enemies.h"
+#include "characters.h"
 
 /***  VARIABLES ***/ 
 
 float *value;
+float *deplacement_fenetre;
 
 bool UP = false;
 bool LEFT = false;
@@ -78,21 +80,25 @@ void arrowFunction(int key, int x, int y) {
 
 void game(int *maxX, int *maxY, player p, listeEn e, listetirsP t)
 {
+	//drawScore(p);
+		
 
 	glPushMatrix();
-	drawMap(&mX, &mY);			//afficher la carte
+	drawMap(&mX, &mY, p);			//afficher la carte
     glPopMatrix();
 	drawPlayer(p);
-	if (e->starList != NULL || e->endList != NULL)
+	if (e->first != NULL || e->last != NULL)
 	{
 		drawAllEnnemis(e);
 	}		
 
 
-	if (t->starList != NULL || t->endList != NULL)
+	if (t->first != NULL || t->last != NULL)
 	{
 		drawAllTirs(t);
 	}
+
+	
 	
 	glutKeyboardFunc(Keyboard);		//fonction de glut gérant le clavier
 	glutSpecialFunc(arrowFunction);
@@ -141,26 +147,80 @@ void game(int *maxX, int *maxY, player p, listeEn e, listetirsP t)
 }
 
 // ------------------------------------------------------------ // 
+void checkCollisionTirsEnnemis (enemy e, tirsP w)
+{	bool Collide = false;
+	int key = 1;
+	//bool ColY = false;
 
-void checkCollision (enemy e, tirsP p)
-{	bool ColX = false;
-	bool ColY = false;
-	if (p->pos.x + Shoot_size <= e->pos.x && e->pos.x + Square_size <= p->pos.x)
-	{
-		ColX = true;
-	}
-	if (p->pos.y + Shoot_size <= e->pos.y && e->pos.y + Square_size <= p->pos.y)
-	{
-		ColY = true;
-	}
-	if (ColX && ColY)
+	
+
+
+	if ((w->pos.x/2) == e->pos.x && e->pos.y == ((w->pos.y-2)/2)-1 && key != 0)
+		{
+		int wposx = w->pos.x/2;
+		int eposx = e->pos.x;
+		int eposy = e->pos.y;
+		int wposy = (w->pos.y-2)/2;
+		printf("e->pos.x = %i                      ", eposx);
+		printf("e->pos.y = %i\n", eposy);
+		printf("t->pos.x = %i                      ", wposx);
+		printf("t->pos.y = %i\n", wposy);
+
+			Collide = true;
+			key = 0;
+			
+		}
+	
+	if (Collide)
 	{
 		CHECKCOLLISION = true;
 	}
 	if (CHECKCOLLISION)
+	{	
+		
+		e->vie = (e->vie) - p->attack;
+		printf("\n\n\nvie restante : %i\n\n\n", e->vie);
+
+
+		if(e->vie == 0)
+		{
+		e->active = false;
+		}
+
+		w->active = false;
+		CHECKCOLLISION = false;
+	}
+	
+} 
+
+
+// ------------------------------------------------------------ // 
+/*void checkCollision (enemy e, tirsP p)
+{	bool ColX = false;
+	bool ColY = false;
+	if (p->pos.x + Shoot_size <= e->pos.x && e->pos.x + Square_size <= p->pos.x)
 	{
+		printf("test\n");
+		ColX = true;
+		
+	}
+	if (p->pos.y + Shoot_size <= e->pos.y && e->pos.y + Square_size <= p->pos.y)
+	{
+				printf("testY\n");
+
+		ColY = true;
+	}
+	if (ColX || ColY)
+	{
+		CHECKCOLLISION = true;
+	}
+	if (CHECKCOLLISION)
+	{	
+		e->vie = (e->vie) -1;
+		printf("vie restante : %i", e->vie);
 		e->active = false;
 		p->active = false;
 		CHECKCOLLISION = false;
 	}
-} 
+	
+} */

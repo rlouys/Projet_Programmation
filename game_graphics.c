@@ -14,7 +14,7 @@
 #include "timers_and_effects.h"
 // --------------------------------------------------------------------------------------------_//
 #define MAP "map-test.txt" 
-#define FOND 0.5
+#define FOND 0.0
 // --------------------------------------------------------------------------------------------_//
 
 
@@ -71,6 +71,21 @@ bool loadMap(int *mX, int *mY)		//fonction qui ouvre le fichier txt et charge la
  }		
 
 // --------------------------------------------------------------------------------------------_//
+
+void drawScore(player p){
+
+
+	int pos;
+//vie = 3
+	for(pos = 0; pos < p->vie; pos++)
+	{
+		glTranslatef(pos,5,0);
+		drawSquare(1,0,0);
+	}
+
+}
+
+// --------------------------------------------------------------------------------------------_//
 void drawLine(float red, float green, float blue)
 {
 	
@@ -108,6 +123,51 @@ void drawLine(float red, float green, float blue)
 	glEnd();
 }
 
+void drawLineBorder(float red, float green, float blue, int border) //border 0 == gauche | border 1 == droite
+{
+	
+	float line = Square_size/3;
+
+	glBegin(GL_QUADS);
+	glColor3f(red,green,blue);
+
+	if(border == 0) // gauche
+	{
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(line, 0.0f, 0.0f);
+		glVertex3f(line,Square_size, 0.0f);
+		glVertex3f(0.0f,Square_size, 0.0f);
+	}
+	else if(border == 1)// droite
+	{
+		glVertex3f(line*2, 0.0f, 0.0f);
+		glVertex3f(line*3, 0.0f, 0.0f);
+		glVertex3f(line*3,Square_size, 0.0f);
+		glVertex3f(line*2,Square_size, 0.0f);
+	}
+	else if(border == 2)//grillage droite
+	{
+		glVertex2d(line*2, line);
+		glVertex2d(line*3, line);
+		glVertex2d(line*3, line*1.5);
+		glVertex2d(line*2, line*1.5);
+
+	}
+	else if(border == 3)//grillage gauche
+	{
+		glVertex2d(0, line);
+		glVertex2d(0, line*1.5);
+		glVertex2d(line, line*1.5);
+		glVertex2d(line, line);
+
+	}
+	
+
+	
+	
+	glEnd();
+}
+
 // --------------------------------------------------------------------------------------------_//
 
 // DRAW A SQUARE (SIZEOF = Map_pixel_size/nb_objects)
@@ -122,24 +182,29 @@ void drawSquare(float red, float green, float blue)
 		glVertex3f(Square_size, 0.0f, 0.0f);
 		glVertex3f(Square_size,Square_size, 0.0f);
 		glVertex3f(0.0f,Square_size, 0.0f);
+		
+	
+	glEnd();
 
+}
+// --------------------------------------------------------------------------------------------_//
+
+void drawHero(float red, float green, float blue)
+{
+
+	glBegin(GL_QUADS);
+	glColor3f(red,green,blue);
+
+		glVertex3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(Hero_size, 0.0f, 0.0f);
+		glVertex3f(Hero_size,Hero_size, 0.0f);
+		glVertex3f(0,Hero_size, 0.0f);
+		
+	
 	glEnd();
 
 }
 
-// --------------------------------------------------------------------------------------------_//
-
-void drawSky()
-{
-        glBegin(GL_POLYGON); 
-            glColor3f(1.0,0.0,0.0);
-	
-            glVertex3f(Square_size, mY*Square_size, 0);
-            glVertex3f(Square_size, Square_size, 0);
-            glVertex3f(mX*Square_size, Square_size, 0);
-            glVertex3f(mX*Square_size, mY*Square_size, 0);
-        glEnd();
-}
 
 // --------------------------------------------------------------------------------------------_//
 
@@ -165,11 +230,14 @@ void drawCircle(float red, float green, float blue, int posx, int posy, float ra
 
 // --------------------------------------------------------------------------------------------_//
 
-void drawMap(int *mX, int *mY)			
+void drawMap(int *mX, int *mY, player p)			
 {	
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 	glutPostRedisplay();
+
+	drawScore(p);
+				glTranslatef(0,-(Square_size),0);
 
 	for (int j = 0; j < (*mX); ++j)
 	{
@@ -185,6 +253,24 @@ void drawMap(int *mX, int *mY)
 				glTranslatef(0,-(*value),0);
 
 				drawSquare(0.30, 0.23, 0.12);	
+				drawLineBorder(0.5,0.5,0.5,0);
+				drawLineBorder(0.0,0.0,0.0,3);
+
+				
+
+			}
+
+			if(*(*(map + j) + i) == '@') // Murs bruns
+			{	
+
+				glMatrixMode(GL_MODELVIEW);
+				glLoadIdentity();
+				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				glTranslatef(0,-(*value),0);
+
+				drawSquare(0.30, 0.23, 0.12);	
+				drawLineBorder(0.5,0.5,0.5,1);
+				drawLineBorder(0.0,0.0,0.0,2);
 
 			}
 
@@ -193,7 +279,7 @@ void drawMap(int *mX, int *mY)
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
-				glTranslatef(0,-(*value),0);
+				//glTranslatef(0,-(*value),0);
 
 				drawSquare(0.94, 0.87, 0.70);
 			}
@@ -206,8 +292,9 @@ void drawMap(int *mX, int *mY)
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 				glTranslatef(0,-(*value),0);
 
-				drawLine(1, 1, 0);
-			
+				//drawLine(1, 1, 0);
+				drawLine(1, 1, 1);
+
 			}
 
 			if (*(*(map + j) + i) == 'l') // piste cyclable
@@ -218,7 +305,9 @@ void drawMap(int *mX, int *mY)
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 				glTranslatef(0,-(*value),0);
 
-				drawLine(1, 0.843, 0);
+			//	drawLine(1, 0.843, 0);
+				drawLine(1, 1, 1);
+
 
 			}
 
@@ -228,7 +317,7 @@ void drawMap(int *mX, int *mY)
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
-				glTranslatef(0,-(*value),0);
+				//glTranslatef(0,-(*value),0);
 
 				drawSquare(1.0, 0.0, 0.0);
 
@@ -240,18 +329,20 @@ void drawMap(int *mX, int *mY)
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
+				//if(*(*(map + j) + i+1) != 'l')
+				//{
 				glTranslatef(0,-(*value),0);
-
+				//}
 				drawSquare(FOND, FOND, FOND);
 
-			}	
+			}
 
 			if(*(*(map + j) + i) == 'z') // A adapter, sert à combler un vide de dessin non désiré
 			{
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
-				glTranslatef(0,-(*value),0);
+				//glTranslatef(0,-(*value),0);
 
 				drawSquare(1, 1, 1);
 
@@ -262,7 +353,7 @@ void drawMap(int *mX, int *mY)
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
-				glTranslatef(0,-(*value),0);
+				//glTranslatef(0,-(*value),0);
 
 				drawSquare(1.0, 1.0, 1.0);
 		
@@ -278,6 +369,7 @@ void drawPlayer(player p)
 	int i, j;
 
 	
+	
 	i = p->pos.x;
 	j = p->pos.y;
 		
@@ -287,7 +379,8 @@ void drawPlayer(player p)
 	glTranslatef(i*Square_size,j*Square_size,0.0f);
 	glColor3f(0.0f,1.0f,0.0f);
 
-	drawSquare(1.0, 0.0, 1.0);	
+	//drawSquare(1.0, 0.0, 1.0);	
+	drawHero(1.0,0.0,1.0);
 }
 
 // ------------------------------------------------------------------ //
@@ -300,7 +393,7 @@ void drawEnemy(enemy e)
 	glColor3f(1.0f,0.0F,0.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef(j*Square_size,i*Square_size,0.0f);
+	glTranslatef(i*Square_size,j*Square_size,0.0f);
 	glBegin(GL_QUADS);
 	glVertex3f(0.0f,0.0f,0.0f);
 	glVertex3f(Square_size,0.0f,0.0f);
@@ -314,17 +407,31 @@ void drawEnemy(enemy e)
 void drawTirs(tirsP p)
 {
 	int i, j;
-	i = p->pos.x;
-	j = p->pos.y;
-	glColor3f(0.0f, 0.0f, 0.0f);
+
+	j = p->pos.x;
+	i = p->pos.y;
+
+	glColor3f(0.141f, 0.901, 0.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(j*Shoot_size,i*Shoot_size,0.0f);
 	glBegin(GL_QUADS);
-	glVertex3f(0.0f,0.0f,0.0f);
-	glVertex3f(Shoot_size,0.0f,0.0f);
-	glVertex3f(Shoot_size,Shoot_size,0.0f);
-	glVertex3f(0.0f,Shoot_size,0.0f);
+
+	if(Hero_size > 20)
+	{
+		glVertex2d((Hero_size/5)*2, 0);
+		glVertex2d((Hero_size/5)*3, 0);
+		glVertex2d((Hero_size/5)*3, (Hero_size/2));
+		glVertex2d((Hero_size/5)*2, (Hero_size/2));
+	}
+	else
+	{
+		glVertex2d((Hero_size/5)*1, 0);
+		glVertex2d((Hero_size/5)*4, 0);
+		glVertex2d((Hero_size/5)*4, (Hero_size/2));
+		glVertex2d((Hero_size/5)*1, (Hero_size/2));
+	}
+
 	glEnd();
 }
 
@@ -334,12 +441,12 @@ void drawAllEnnemis(listeEn e)
 {	
 	enemy first = malloc(sizeof(enemies));
 	enemy next = malloc(sizeof(enemies));
-	first = e->starList;
-	next = e->starList->nextptr;
-	if (e->starList != NULL || e->endList != NULL)
+	first = e->first;
+	next = e->first->nextptr;
+	if (e->first != NULL || e->last != NULL) // test existence
 	{
 		drawEnemy(first);
-		if (e->starList->nextptr != NULL)
+		if (e->first->nextptr != NULL)
 		{
 			drawEnemy(next);
 			while (next->nextptr != NULL)
@@ -357,15 +464,15 @@ void drawAllTirs(listetirsP t)
 {
 	tirsP first = malloc(sizeof(tirs));
 	tirsP next = malloc(sizeof(tirs));
-	first = t->starList;
-	if (t->starList != NULL && t->starList->nextptr != NULL)
+	first = t->first;
+	if (t->first != NULL && t->first->nextptr != NULL)
 	{
-	next = t->starList->nextptr;
+	next = t->first->nextptr;
 	}
-	if (t->starList != NULL || t->endList != NULL)
+	if (t->first != NULL || t->last != NULL)
 	{
 		drawTirs(first);
-		if (t->starList->nextptr != NULL)
+		if (t->first->nextptr != NULL)
 		{
 			drawTirs(next);
 			while (next->nextptr != NULL)
@@ -376,6 +483,7 @@ void drawAllTirs(listetirsP t)
 		}
 	}
 }
+
 
 
 

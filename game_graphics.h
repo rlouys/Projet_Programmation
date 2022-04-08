@@ -11,7 +11,7 @@
 #include "timers_and_effects.h" 
 #include "game.h"
 
-
+#define Hero_size 20.0
 #define Square_size 20.0
 #define Shoot_size 10.0
 
@@ -24,7 +24,7 @@ int mY;
 /*** FUNCTIONS ***/ 
 
 bool loadMap(int *mX, int *mY);
-void drawMap(int *mX, int *mY);
+void drawMap(int *mX, int *mY, player p);
 void drawSquare(float red, float green, float blue);
 void drawCircle(float red, float green, float blue, int posx, int posy, float rayon);
 void drawPlayer(player p);
@@ -33,6 +33,9 @@ void drawTirs(tirsP p);
 void drawAllEnnemis(listeEn e);
 void drawSky();
 void drawLine(float red, float green, float blue);
+void drawLineBorder(float red, float green, float blue, int border); //border 0 == gauche | border 1 == droite
+void drawScore(player p);
+
 
 
 

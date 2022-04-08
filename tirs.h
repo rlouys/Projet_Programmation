@@ -28,8 +28,8 @@ struct listeTirs
 {
 	
 	int quantite;
-	struct tirs *starList;
-	struct tirs *endList;
+	struct tirs *first;
+	struct tirs *last;
 	
 };
 

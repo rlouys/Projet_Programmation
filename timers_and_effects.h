@@ -10,7 +10,7 @@
 
 /*** VARIABLES ***/
 
-#define FPS 55
+#define FPS 30
 bool test;
 
 
@@ -23,5 +23,7 @@ void updateNewEnemies(int valeur);
 void updateTirs(int valeur);
 void updateDeleteEnemies(int valeur);
 void updateDeleteTirs(int valeur);
+//void MenuTimer(int valeur);
+
 
 #endif

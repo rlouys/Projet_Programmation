@@ -20,8 +20,8 @@ listetirsP  initialListeTirs()
 	{
 		exit(EXIT_FAILURE);
 	}
-	t->starList = NULL;
-	t->endList = NULL;
+	t->first = NULL;
+	t->last = NULL;
 	t->quantite = 0;
 	return t;
 }
@@ -30,8 +30,10 @@ listetirsP  initialListeTirs()
 
 tirsP createTirs(player p)
 {
+	
+
 	int x = (p->pos.x)*2;
-	int y = ((p->pos.y)*2) + 1;
+	int y = ((p->pos.y)*2) + 2; 
 	tirsP new = malloc(sizeof(tirs));
 	if (new == NULL)
 	{
@@ -55,16 +57,16 @@ void insertionTirs(listetirsP t, tirsP base)
 		exit(EXIT_FAILURE);
 	}
 	new = base;
-	if (t->starList == NULL || t->endList == NULL)
+	if (t->first == NULL || t->last == NULL)
 	{
-		t->endList = new;
-		t->starList = new;
+		t->last = new;
+		t->first = new;
 	}
 	else
 	{
-		new->nextptr = t->starList;
-		t->starList->prevptr = new;
-		t->starList = new;
+		new->nextptr = t->first;
+		t->first->prevptr = new;
+		t->first = new;
 	}
 	t->quantite += 1;
 }
@@ -74,10 +76,10 @@ void insertionTirs(listetirsP t, tirsP base)
 void suppressionTirs(listetirsP t, bool test)
 {
 	test = false;
-	if (t->starList != NULL)
+	if (t->first != NULL)
 	{
 		tirsP base = malloc(sizeof(tirs));
-		base = t->starList;
+		base = t->first;
 		while (base != NULL)
 		{
 			if (base->active == test)
@@ -85,20 +87,20 @@ void suppressionTirs(listetirsP t, bool test)
 				tirsP delete = malloc(sizeof(tirs));
 				delete = base;
 				base = base->nextptr;
-				if (t->starList == delete && t->endList == delete)
+				if (t->first == delete && t->last == delete)
 				{
-					t->endList = NULL;
-					t->starList = NULL;
+					t->last = NULL;
+					t->first = NULL;
 				}
-				else if (t->starList != delete && t->endList == delete)
+				else if (t->first != delete && t->last == delete)
 				{
-					t->endList = delete->prevptr;
-					t->endList->nextptr = NULL;
+					t->last = delete->prevptr;
+					t->last->nextptr = NULL;
 				}
-				else if (t->starList == delete && t->endList != delete)
+				else if (t->first == delete && t->last != delete)
 				{
-					t->starList = delete->nextptr;
-					t->starList->prevptr = NULL;
+					t->first = delete->nextptr;
+					t->first->prevptr = NULL;
 				}
 				else
 				{

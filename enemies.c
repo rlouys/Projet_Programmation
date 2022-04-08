@@ -8,6 +8,7 @@
 
 #include "game_graphics.h"
 #include "enemies.h"
+#include "menus_graphics.h"
 
 /*** FUNCTIONS ***/
 // --------------------------------------------------------------------- // 
@@ -19,8 +20,8 @@ listeEn initialListEnemies()
 	{
 		exit(EXIT_FAILURE);
 	}
-	e->starList = NULL;
-	e->endList = NULL;
+	e->first = NULL;
+	e->last = NULL;
 	e->quantite = 0;
 	return e;
 }
@@ -30,14 +31,14 @@ listeEn initialListEnemies()
 enemy createEnemy(int *maxY)
 {
 	enemy new = malloc(sizeof(enemies));
-	int y = (rand() % (*maxY + 10) + 1);
+	int y = (rand() % (34-7+1) +7);
 	if (new == NULL)
 	{
 		exit(EXIT_FAILURE);
 	} 
-	new->vie = 1;
-	new->pos.x = 5;
-	new->pos.y = y;
+	new->vie = 3;
+	new->pos.x = y;
+	new->pos.y = 50;
 	new->nextptr = NULL;
 	new->prevptr = NULL;
 	new->active = true;
@@ -48,24 +49,26 @@ enemy createEnemy(int *maxY)
 
 void insertionEnemies(listeEn e, enemy base)
 {
+	//if(e->quantite <= 10){
 	enemy new = malloc(sizeof(enemies));
 	if (new == NULL)
 	{
 		exit(EXIT_FAILURE);
 	}
 	new = base;
-	if (e->starList == NULL || e->endList == NULL)
+	if (e->first == NULL || e->last == NULL)
 	{
-		e->endList= new;
-		e->starList = new;
+		e->last= new;
+		e->first = new;
 	}
 	else
 	{
-		new->nextptr = e->starList;
-		e->starList->prevptr = new;
-		e->starList = new;
+		new->nextptr = e->first;
+		e->first->prevptr = new;
+		e->first = new;
 	}
 	e->quantite += 1;
+	//}
 }
 
 // --------------------------------------------------------------------- // 
@@ -73,43 +76,54 @@ void insertionEnemies(listeEn e, enemy base)
 void suppressionEnemies(listeEn e, bool test)
 {
 	test = false;
-	if (e->starList != NULL)
+	if (e->first != NULL)
 	{
 		enemy base = malloc(sizeof(enemies));
 		if (base == NULL)
 		{
 			exit(EXIT_FAILURE);
 		}
-		base = e->starList;
+		base = e->first;
 		while (base != NULL)
 		{
 			if (base->active == test)
 			{
-				enemy deleate = malloc(sizeof(enemies));
-				deleate = base;
+				enemy deleted = malloc(sizeof(enemies));
+				deleted = base;
 				base = base->nextptr;
-				if (e->starList == deleate && e->endList == deleate)
+				if (e->first == deleted && e->last == deleted)
 				{
-					e->starList = NULL;
-					e->endList = NULL;
+					e->first = NULL;
+					e->last = NULL;
 				}
-				else if (e->starList != deleate && e->endList == deleate)
+				else if (e->first != deleted && e->last == deleted)
 				{
-					e->endList = deleate->prevptr;
-					e->endList->nextptr = NULL;
+					e->last = deleted->prevptr;
+					e->last->nextptr = NULL;
 				}
-				else if (e->starList == deleate && e->endList != deleate)
+				else if (e->first == deleted && e->first != deleted)
 				{
-					e->starList  = deleate->nextptr;
-					e->starList->prevptr = NULL;
+					e->first  = deleted->nextptr;
+					e->first->prevptr = NULL;
+					
 				}
 				else
 				{
-					deleate->nextptr->prevptr = deleate->prevptr;
-					deleate->prevptr->nextptr = deleate->nextptr;
+					deleted->nextptr->prevptr = deleted->prevptr;
+					deleted->prevptr->nextptr = deleted->nextptr;
 				}
-				free(deleate);
+				free(deleted);
 				e->quantite--;
+				if(p->current_xp < 1000)
+				{
+				p->current_xp += 50;
+				}
+				printf("Score : %i\n", p->current_xp);
+				if(p->current_xp == 500)
+				{
+						glutDisplayFunc(EndGameDisplay);
+				}
+
 			}
 			else
 			{

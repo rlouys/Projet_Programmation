@@ -6,170 +6,246 @@
 #include "enemies.h"
 #include "tirs.h"
 #include "characters.h"
+#include "menus_graphics.h"
 
 /*** VARIABLES ***/
 
 int mX;
 int mY;
 float *value;
+float *deplacement_fenetre;
+int counter = 0;
+bool startgame;
 
+#define ENNEMI_SPEED 100 // 10 = ultraspeed/hardcore | 1000 = slow
+#define ENNEMI_PER_TEN_SECOND 5
+#define RANGE_MAX 120
+#define ATTACK_SPEED 10 // 1 is superfast, 1000 is slow
 /*** FUNCTIONS ***/
 
 // ---------------------------------------------------------------------------------- //
 
 void timer(int valeur) {
+	
+	if(startgame==true){ 
+
+		*value = *value *1.75;
+
+			if((*value)>=500){
+					*value = 20;
+			}
+	
+   }
+       glutPostRedisplay();      
+       glutTimerFunc(1000/FPS, timer, 0); 
+
+  // printf("startgame :::: \n");
+}
+
+// ---------------------------------------------------------------------------------- //
+/* void MenuTimer(int valeur) {
     
     glutPostRedisplay();      // Post re-paint request to activate display()
-	*value = *value *2;
-	if((*value)>=400){
-            *value = 20;
-        }
-	//printf("Valeur : %lf\n", *value);
-    glutTimerFunc(1000/FPS, timer, 0); // next timer call milliseconds later
+	
+	*deplacement_fenetre += 1;
+	int somme = 0;
+	somme += *deplacement_fenetre;
+	printf("somme : %i\n", somme);
+	if((*deplacement_fenetre)==-20){
+		*deplacement_fenetre = 5;
+	}
 
-}
+	if((somme)>=21)
+	{
+			*deplacement_fenetre = -21;
+			somme = 0;
+
+	}
+	//printf("Valeur : %lf\n", *value);
+    glutTimerFunc(10, MenuTimer, 6); // next timer call milliseconds later
+
+}*/
 
 // ---------------------------------------------------------------------------------- //
 
 void updateCollisions(int valeur)
 {
-	enemy baseE = e->starList;
-	tirsP baseP = t->starList;
-	if (e->starList != NULL && t->starList != NULL)
+	if(startgame==true){ 
+
+	enemy baseE = e->first;
+	tirsP baseP = t->first;
+	
+	if (e->first != NULL && t->first != NULL)
 	{
-		checkCollision(baseE, baseP);
-		if (t->starList->nextptr != NULL)
+		checkCollisionTirsEnnemis(baseE, baseP);
+		if (t->first->nextptr != NULL)
 			{
 				baseP = baseP->nextptr;	
-				checkCollision(baseE, baseP);
+				checkCollisionTirsEnnemis(baseE, baseP);
 				while (baseP->nextptr != NULL)
 				{
 					baseP = baseP->nextptr;
-					checkCollision(baseE, baseP);
+					checkCollisionTirsEnnemis(baseE, baseP);
 				}
 			}
-		if (e->starList->nextptr != NULL)
+		if (e->first->nextptr != NULL)
 		{
 			baseE = baseE->nextptr;
-			baseP = t->starList;
-			checkCollision(baseE, baseP);
-			if (t->starList->nextptr != NULL)
+			baseP = t->first;
+			checkCollisionTirsEnnemis(baseE, baseP);
+			if (t->first->nextptr != NULL)
 			{
 				baseP = baseP->nextptr;
-				checkCollision (baseE, baseP);
+				checkCollisionTirsEnnemis (baseE, baseP);
 				while (baseP->nextptr != NULL)
 				{
 					baseP = baseP->nextptr;
-					checkCollision(baseE, baseP);
+					checkCollisionTirsEnnemis(baseE, baseP);
 				}
 			}
 			while (baseE->nextptr != NULL)
 			{
 				baseE = baseE->nextptr;
-				baseP = t->starList;
-				checkCollision(baseE, baseP);
-				if (t->starList->nextptr != NULL)
+				baseP = t->first;
+				checkCollisionTirsEnnemis(baseE, baseP);
+				if (t->first->nextptr != NULL)
 				{
 					baseP = baseP->nextptr;
-					checkCollision (baseE, baseP);
+					checkCollisionTirsEnnemis (baseE, baseP);
 					while (baseP->nextptr != NULL)
 					{
 						baseP = baseP->nextptr;
-						checkCollision(baseE, baseP);
+						checkCollisionTirsEnnemis(baseE, baseP);
 					}
 				}
 			}
 		}
 	}
+	}
 	glutPostRedisplay();
-	glutTimerFunc(50, updateCollisions, 0);
+	glutTimerFunc(10, updateCollisions, 0);
 }
 
 // ---------------------------------------------------------------------------------- //
 
 void updateEnemies(int valeur)
 {
-	q = e->starList;
-	if (e->starList != NULL)
+	if(startgame==true){ 
+
+	q = e->first;
+	if (e->first != NULL)
 	{
-		q->pos.x += 1;
-		if (q->pos.x > 28)
+		q->pos.y -= 1;
+		if (q->pos.y == 0)
 		{
-			q->pos.x = 2;
-			q->active = false;
+			q->pos.y = 40;
+			p->current_xp -= 50;
+			//q->active = false;
+			printf("score : %i\n", p->current_xp);
+			e->quantite--;
+
 		}
 		while (q->nextptr != NULL)
 		{
 			q = q->nextptr;
-			q->pos.x +=1;
-			if (q->pos.x > 28)
+			q->pos.y -=1;
+			if (q->pos.y == 0)
 			{
-				q->pos.x = 2;
-				q->active = false;
+				q->pos.y = 40;
+				p->current_xp -= 50;
+				printf("score : %i\n", p->current_xp);
+				e->quantite--;
+
+				//q->active = false;
 			}
 		}
 	}
+	}
 	glutPostRedisplay();
-	glutTimerFunc(200, updateEnemies, 1);
+	glutTimerFunc(ENNEMI_SPEED, updateEnemies, 1);
 }
 
 // ---------------------------------------------------------------------------------- //
 
 void updateNewEnemies(int valeur)
 {
+	if(startgame==true){ 
+
 	enemy new = createEnemy((&mX));
 	insertionEnemies(e, new);
+	/*counter += 1;
+	printf("counter : %i", counter);
+	if(counter == 10)
+	{
+		glutDisplayFunc(WelcomeDisplay);
+	}*/
+	}
 	glutPostRedisplay();
-	glutTimerFunc(1000, updateNewEnemies, 3);
+	glutTimerFunc(10000/ENNEMI_PER_TEN_SECOND, updateNewEnemies, 3);
+	
 }
 
 // ---------------------------------------------------------------------------------- //
 
 void updateTirs(int valeur)
 {
-	r = t->starList;
-	if (t->starList != NULL)
+	if(startgame==true){ 
+
+	r = t->first;
+	if (t->first != NULL)
 	{
-		r->pos.x -= 1;
-		if (r->pos.x < 24)
+		r->pos.y += 1;
+		if (r->pos.y >= RANGE_MAX)
 		{
-			r->pos.x = 88;
+			r->pos.y = 24;
 			r->active = false;
 		}
 		while (r->nextptr != NULL)
 		{
 			r = r->nextptr;
-			r->pos.x -= 1;
-			if (r->pos.x < 24)
+			r->pos.y += 1;
+			if (r->pos.y >= RANGE_MAX)
 			{
-				r->pos.x = 88;
+				r->pos.y = 24;
 				r->active = false;
 			}
 		}
 	}
+	}
 	glutPostRedisplay();
-	glutTimerFunc(50, updateTirs, 2);
+	glutTimerFunc(ATTACK_SPEED, updateTirs, 2);
 }
+
+// ---------------------------------------------------------------------------------- //
+
+
+// ---------------------------------------------------------------------------------- //
 
 
 void updateDeleteEnemies(int valeur)
 {
-	if (e->starList != NULL || e->endList != NULL)
+	if(startgame==true){ 
+
+	if (e->first != NULL || e->last != NULL)
 	{
 		suppressionEnemies(e, test);
 	}
+	}
 	glutPostRedisplay();
-	glutTimerFunc(200, updateDeleteEnemies, 4);
+	glutTimerFunc(10, updateDeleteEnemies, 4);
 }
 
 void updateDeleteTirs(int valeur)
 {
-	if (t->starList != NULL || t->endList != NULL)
+	if(startgame==true){ 
+
+	if (t->first != NULL || t->last != NULL)
 	{
 		suppressionTirs(t, test);
 	}
+	}
 	glutPostRedisplay();
-	glutTimerFunc(50, updateDeleteTirs, 5);
+	glutTimerFunc(10, updateDeleteTirs, 5);
 }
 
 

@@ -22,6 +22,7 @@ player createPlayer(int *maxX, int *maxY)
 {
 	player p;
 
+
 	int x = 0, y = 0;
 
 	for (int i = 0; i < *maxX; ++i)
@@ -31,8 +32,8 @@ player createPlayer(int *maxX, int *maxY)
 			if(*(*(map + i) + j) == 'X')
 			{
 			
-				x = i;
-				y = j;
+				x = j;
+				y = i;
 			}
 		}
 	}
@@ -41,6 +42,9 @@ player createPlayer(int *maxX, int *maxY)
 	p->vie = 3;
 	p->pos.x = x;
 	p->pos.y = y;
+	p->current_xp = 0;
+	//p->weapon_type = 0;
+	p->attack = 1;
 
 	return p;
 }
@@ -55,10 +59,15 @@ void moveUp(player p)		//la fonction va vérifier si on peut se déplacer vers l
 	x = p->pos.x;
 	y = p->pos.y+1;
      
-	if (*(*(map + x) + y)!='#')
+	
+	if (p->pos.y < 11)
 	{
 		p->pos.y = y;
 	}
+		printf("*** p->pos.y : %i ***\n", p->pos.y);
+
+	  		  printf("char : %c\n", *(*(map + y) + x));
+				printf("---------------------\n");
 
 }
 
@@ -71,11 +80,12 @@ void moveDown(player p)		//la fonction va vérifier si on peut se déplacer vers
 	x = p->pos.x;
 	y = p->pos.y-1;
 
-     	if (*(*(map + x) + y)!='#' )
+     	if (*(*(map + y) + x)!='#' )
 	{
 		p->pos.y = y;
 	}
-	
+		printf("char : %c\n", *(*(map + y) + x));
+
 }
 
 // ------------------------------------------------------------------ //
@@ -84,14 +94,15 @@ void moveRight(player p)
 {
  int  x = 0, y = 0;
       
-x = p->pos.x-1;
+x = p->pos.x+1;
 y = p->pos.y;
 
 
-if (*(*(map + x) + y)!='#')
+if (*(*(map + y) + x)!='@')
  {
 	p->pos.x = x;
   }     
+	  		  printf("char : %c\n", *(*(map + y) + x));
 
 }
 
@@ -101,14 +112,18 @@ void moveLeft(player p)
 {
  int  x = 0, y = 0;
 
-   x = p->pos.x+1;
+   x = p->pos.x-1;
    y = p->pos.y;
   
    
-   if (*(*(map + x) + y) !='#')
+   if (*(*(map + y) + x) !='#')
       {
 	p->pos.x = x;
       }
+
+	  
+	  		  printf("char : %c\n", *(*(map + y) + x));
+
 }
 
 // ------------------------------------------------------------------ //
