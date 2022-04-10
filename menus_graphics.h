@@ -18,16 +18,39 @@ int mY;
 
 /*** FUNCTIONS ***/
 
-void WelcomeDisplay(); // Create the WELCOME display (start menu)
-void EndGameDisplay(); // Create the FAILURE endgame display (...you failed...)
-void WinDisplay();
-void DisplayOptions(); // Create the OPTIONS display while inside the WelcomeDisplay (o)
-void DisplayGameplay(); // Create the GAMEPLAY display while inside the WelcomeDisplay (g)
-void DisplayEnding(); // Create the ENDING display while inside the WelcomeDisplay when you want to exit the game (x)
-void myMenu(int id); // Create the RIGHT_BUTTON_CLICK menu
-void wait(); // Used to wait until a certain time (Endgame display - Wait... - Exit L222)
-void frameDraw(int red, int green, int blue, int x, int y, int length, int title);
-void keyboardFunc(unsigned char Key, int x, int y);
+// initialise les fonctions au clavier lorsque dans un menu
+void keyboardFunc(unsigned char Key, int x, int y); 
+
+// Dessine un cadre autour d'un texte
+void frameDraw(int red, int green, int blue, int x, int y, int length, int title); 
+
+// Crée l'écran de DÉMARRAGE
+void WelcomeDisplay(); 
+
+// Crée le menu de FIN en cas d'ÉCHEC (you failed...)
+void EndGameDisplay(); 
+
+// Crée le menu de FIN en cas de VICTOIRE (you win!)
+void WinDisplay(); 
+
+// Crée et affiche l'écran des OPTIONS
+void DisplayOptions(); 
+
+// Crée et affiche l'écran lié au GAMEPLAY
+void DisplayGameplay(); 
+
+// Crée et affiche l'écran de fin de programme
+void DisplayEnding(); 
+
+// Crée le menu clic droit
+void init_rightClick_Menu(); 
+
+// Initialise le menu clic droit
+void myMenu(int id); 
+
+// Utilisé pour attendre un certain temps (delay) depuis le main.c
+void wait(); 
+
 
 
 

@@ -8,6 +8,13 @@
 #include "hero.h"
 #include "menus_graphics.h"
 
+/*** CONSTANTES ***/
+
+#define ENNEMI_SPEED 150 // 10 = ultraspeed/hardcore | 1000 = slow
+#define ENNEMI_PER_TEN_SECOND 5
+#define RANGE_MAX 120
+#define ATTACK_SPEED 5 // 1 is superfast, 1000 is slow
+
 /*** VARIABLES ***/
 
 int mX;
@@ -17,16 +24,15 @@ float *deplacement_fenetre;
 int counter = 0;
 bool startgame;
 
-#define ENNEMI_SPEED 150 // 10 = ultraspeed/hardcore | 1000 = slow
-#define ENNEMI_PER_TEN_SECOND 5
-#define RANGE_MAX 120
-#define ATTACK_SPEED 5 // 1 is superfast, 1000 is slow
 /*** FUNCTIONS ***/
 
 // ---------------------------------------------------------------------------------- //
 
-void timer(int valeur) {
+// timer qui gère le défilement de la map
+
+void scrolling(int valeur) {
 	
+
 	if(startgame==true){ 
 
 		*value = *value *1.75;
@@ -36,86 +42,76 @@ void timer(int valeur) {
 			}
 	
    }
+
        glutPostRedisplay();      
-       glutTimerFunc(1000/FPS, timer, 0); 
+       glutTimerFunc(1000/FPS, scrolling, 0); 
 
   // printf("startgame :::: \n");
 }
 
 // ---------------------------------------------------------------------------------- //
-/* void MenuTimer(int valeur) {
-    
-    glutPostRedisplay();      // Post re-paint request to activate display()
-	
-	*deplacement_fenetre += 1;
-	int somme = 0;
-	somme += *deplacement_fenetre;
-	printf("somme : %i\n", somme);
-	if((*deplacement_fenetre)==-20){
-		*deplacement_fenetre = 5;
-	}
 
-	if((somme)>=21)
-	{
-			*deplacement_fenetre = -21;
-			somme = 0;
-
-	}
-	//printf("Valeur : %lf\n", *value);
-    glutTimerFunc(10, MenuTimer, 6); // next timer call milliseconds later
-
-}*/
-
-// ---------------------------------------------------------------------------------- //
+// timer qui gère les collisions tir et ennemis (en test : allie et ennemis gérés en +)
 
 void updateCollisions(int valeur)
 {
 	if(startgame==true){ 
+	enemy En = e->first;
+	tir_Struct Sht = t->first;
 
-	enemy baseE = e->first;
-	tirsP baseP = t->first;
-	
+	//checkCollisionHeroEnnemis(En); // en test
+
 	if (e->first != NULL && t->first != NULL)
 	{
-		checkCollisionTirsEnnemis(baseE, baseP);
-		if (t->first->nextptr != NULL)
+		checkCollisionTirsEnnemis(En, Sht);
+
+		if (t->first->next != NULL)
 			{
-				baseP = baseP->nextptr;	
-				checkCollisionTirsEnnemis(baseE, baseP);
-				while (baseP->nextptr != NULL)
+				Sht = Sht->next;	
+				checkCollisionTirsEnnemis(En, Sht);
+
+				
+				while (Sht->next != NULL)
 				{
-					baseP = baseP->nextptr;
-					checkCollisionTirsEnnemis(baseE, baseP);
+					Sht = Sht->next;
+					checkCollisionTirsEnnemis(En, Sht);
+
 				}
 			}
-		if (e->first->nextptr != NULL)
+		if (e->first->next != NULL)
 		{
-			baseE = baseE->nextptr;
-			baseP = t->first;
-			checkCollisionTirsEnnemis(baseE, baseP);
-			if (t->first->nextptr != NULL)
+			En = En->next;
+			Sht = t->first;
+			checkCollisionTirsEnnemis(En, Sht);
+
+			if (t->first->next != NULL)
 			{
-				baseP = baseP->nextptr;
-				checkCollisionTirsEnnemis (baseE, baseP);
-				while (baseP->nextptr != NULL)
+				Sht = Sht->next;
+				checkCollisionTirsEnnemis (En, Sht);
+
+				while (Sht->next != NULL)
 				{
-					baseP = baseP->nextptr;
-					checkCollisionTirsEnnemis(baseE, baseP);
+					Sht = Sht->next;
+					checkCollisionTirsEnnemis(En, Sht);
+
 				}
 			}
-			while (baseE->nextptr != NULL)
+			while (En->next != NULL)
 			{
-				baseE = baseE->nextptr;
-				baseP = t->first;
-				checkCollisionTirsEnnemis(baseE, baseP);
-				if (t->first->nextptr != NULL)
+				En = En->next;
+				Sht = t->first;
+				checkCollisionTirsEnnemis(En, Sht);
+
+				if (t->first->next != NULL)
 				{
-					baseP = baseP->nextptr;
-					checkCollisionTirsEnnemis (baseE, baseP);
-					while (baseP->nextptr != NULL)
+					Sht = Sht->next;
+					checkCollisionTirsEnnemis (En, Sht);
+
+					while (Sht->next != NULL)
 					{
-						baseP = baseP->nextptr;
-						checkCollisionTirsEnnemis(baseE, baseP);
+						Sht = Sht->next;
+						checkCollisionTirsEnnemis(En, Sht);
+
 					}
 				}
 			}
@@ -127,6 +123,8 @@ void updateCollisions(int valeur)
 }
 
 // ---------------------------------------------------------------------------------- //
+
+// timer qui gère les changements de statut de l'ennemi
 
 void updateEnemies(int valeur)
 {
@@ -153,29 +151,23 @@ void updateEnemies(int valeur)
 				}
 
 		}
-		while (car->nextptr != NULL)
+		while (car->next != NULL)
 		{
-			car = car->nextptr;
+			car = car->next;
 			car->pos.y -=1;
 			if (car->pos.y == 0)
 			{
 				car->pos.y = 40;
 				hero->current_xp -= 50;
-			//	printf("score : %f\n", hero->current_xp);
 				e->quantite--;
 				hero->health -= 1;
 
-			//	printf("vie : %i\n", hero->health);
 				drawHealth(hero);
 
 				if(hero->health == 0){
 					glutDisplayFunc(EndGameDisplay);
 
 				}
-
-			
-
-
 			}
 		}
 	}
@@ -186,19 +178,17 @@ void updateEnemies(int valeur)
 
 // ---------------------------------------------------------------------------------- //
 
+// timer qui gère l'insertion de nouveaux ennemis
+
 void updateNewEnemies(int valeur)
 {
 	if(startgame==true){ 
 
 	enemy new = createEnemy((&mX));
 	insertionEnemies(e, new);
-	/*counter += 1;
-	printf("counter : %i", counter);
-	if(counter == 10)
-	{
-		glutDisplayFunc(WelcomeDisplay);
-	}*/
+	
 	}
+	
 	glutPostRedisplay();
 	glutTimerFunc(10000/ENNEMI_PER_TEN_SECOND, updateNewEnemies, 3);
 	
@@ -206,27 +196,29 @@ void updateNewEnemies(int valeur)
 
 // ---------------------------------------------------------------------------------- //
 
+// timer qui gère le défilement des tirs
+
 void updateTirs(int valeur)
 {
 	if(startgame==true){ 
 
-	r = t->first;
+	shoot = t->first;
 	if (t->first != NULL)
 	{
-		r->pos.y += 1;
-		if (r->pos.y >= RANGE_MAX)
+		shoot->pos.y += 1;
+		if (shoot->pos.y >= RANGE_MAX)
 		{
-			r->pos.y = 24;
-			r->active = false;
+			shoot->pos.y = 24;
+			shoot->active = false;
 		}
-		while (r->nextptr != NULL)
+		while (shoot->next != NULL)
 		{
-			r = r->nextptr;
-			r->pos.y += 1;
-			if (r->pos.y >= RANGE_MAX)
+			shoot = shoot->next;
+			shoot->pos.y += 1;
+			if (shoot->pos.y >= RANGE_MAX)
 			{
-				r->pos.y = 24;
-				r->active = false;
+				shoot->pos.y = 24;
+				shoot->active = false;
 			}
 		}
 	}
@@ -237,9 +229,7 @@ void updateTirs(int valeur)
 
 // ---------------------------------------------------------------------------------- //
 
-
-// ---------------------------------------------------------------------------------- //
-
+// timer qui gère les suppressions d'ennemis
 
 void updateDeleteEnemies(int valeur)
 {
@@ -254,6 +244,10 @@ void updateDeleteEnemies(int valeur)
 	glutTimerFunc(10, updateDeleteEnemies, 4);
 }
 
+// ---------------------------------------------------------------------------------- //
+
+// timer qui gère les suppressions d'ennemis
+
 void updateDeleteTirs(int valeur)
 {
 	if(startgame==true){ 
@@ -266,6 +260,8 @@ void updateDeleteTirs(int valeur)
 	glutPostRedisplay();
 	glutTimerFunc(10, updateDeleteTirs, 5);
 }
+
+// ---------------------------------------------------------------------------------- //
 
 
 

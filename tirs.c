@@ -1,21 +1,24 @@
 /*** LIBS ***/
 
 #include <GL/glut.h>
-#include "game_graphics.h"
-#include "hero.h"
-#include "tirs.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <time.h>
 
+/*** FILES ***/
+
+#include "game_graphics.h"
+#include "hero.h"
+#include "tirs.h"
+
 /*** FUNCTIONS ***/
 
-// ---------------------------------------------------------------------------------- //
+// initialise une liste qui contient les tirs et leur "stats"
 
-listetirsP  initialListeTirs()
+listetir_Struct  initialListeTirs()
 {
-	listetirsP t = malloc(sizeof(listeTirs));
+	listetir_Struct t = malloc(sizeof(listeTirs));
 	if (t == NULL)
 	{
 		exit(EXIT_FAILURE);
@@ -28,65 +31,71 @@ listetirsP  initialListeTirs()
 
 // ---------------------------------------------------------------------------------- //
 
-tirsP createTirs(Hero hero)
+// dessine le tir sur la map
+
+tir_Struct createTirs(Hero hero)
 {
 	
 
 	int x = (hero->pos.x)*2;
 	int y = ((hero->pos.y)*2) + 2; 
-	tirsP new = malloc(sizeof(tirs));
-	if (new == NULL)
+	tir_Struct newTir = malloc(sizeof(tirs));
+	if (newTir == NULL)
 	{
 		exit(EXIT_FAILURE);
 	}
-	new->pos.x = x;
-	new->pos.y = y;
-	new->nextptr = NULL;
-	new->prevptr = NULL;
-	new->active = true;
-	return new;
+	newTir->pos.x = x;
+	newTir->pos.y = y;
+	newTir->next = NULL;
+	newTir->previous = NULL;
+	newTir->active = true;
+	return newTir;
 }
 
 // ---------------------------------------------------------------------------------- //
 
-void insertionTirs(listetirsP t, tirsP base)
+//dessine le tir sur la map
+
+void insertionTirs(listetir_Struct t, tir_Struct base)
 {
-	tirsP new = malloc(sizeof(tirs));
-	if (new == NULL)
+	tir_Struct newTir = malloc(sizeof(tirs));
+	if (newTir == NULL)
 	{
 		exit(EXIT_FAILURE);
 	}
-	new = base;
+	newTir = base;
 	if (t->first == NULL || t->last == NULL)
 	{
-		t->last = new;
-		t->first = new;
+		t->last = newTir;
+		t->first = newTir;
 	}
 	else
 	{
-		new->nextptr = t->first;
-		t->first->prevptr = new;
-		t->first = new;
+		newTir->next = t->first;
+		t->first->previous = newTir;
+		t->first = newTir;
 	}
 	t->quantite += 1;
 }
 
 // ---------------------------------------------------------------------------------- //
 
-void suppressionTirs(listetirsP t, bool test)
+//supprime le tir s'il y a une collision (booléen renvoyé depuis timers_and_effects.h suite à un test)
+
+void suppressionTirs(listetir_Struct t, bool test)
 {
 	test = false;
 	if (t->first != NULL)
 	{
-		tirsP base = malloc(sizeof(tirs));
-		base = t->first;
-		while (base != NULL)
+		tir_Struct shoot = malloc(sizeof(tirs));
+		shoot = t->first;
+		while (shoot != NULL)
 		{
-			if (base->active == test)
+			if (shoot->active == test)
 			{
-				tirsP delete = malloc(sizeof(tirs));
-				delete = base;
-				base = base->nextptr;
+				tir_Struct delete = malloc(sizeof(tirs));
+				delete = shoot;
+				shoot = shoot->next;
 				if (t->first == delete && t->last == delete)
 				{
 					t->last = NULL;
@@ -94,25 +103,25 @@ void suppressionTirs(listetirsP t, bool test)
 				}
 				else if (t->first != delete && t->last == delete)
 				{
-					t->last = delete->prevptr;
-					t->last->nextptr = NULL;
+					t->last = delete->previous;
+					t->last->next = NULL;
 				}
 				else if (t->first == delete && t->last != delete)
 				{
-					t->first = delete->nextptr;
-					t->first->prevptr = NULL;
+					t->first = delete->next;
+					t->first->previous = NULL;
 				}
 				else
 				{
-					delete->nextptr->prevptr = delete->prevptr;
-					delete->prevptr->nextptr = delete->nextptr;
+					delete->next->previous = delete->previous;
+					delete->previous->next = delete->next;
 				}
 				free(delete);
 				t->quantite--;
 			}
 			else
 			{
-				base = base->nextptr;
+				shoot = shoot->next;
 			}
 		}
 	}
@@ -120,9 +129,11 @@ void suppressionTirs(listetirsP t, bool test)
 
 // ---------------------------------------------------------------------------------- //
 
-void tirer(Hero hero, listetirsP t)
+// permet au héro de tirer (createTirs + insertionTirs)
+
+void tirer(Hero hero, listetir_Struct t)
 {
-	tirsP new = createTirs(hero);
-	insertionTirs(t, new);
+	tir_Struct newTir = createTirs(hero);
+	insertionTirs(t, newTir);
 }
 // ---------------------------------------------------------------------------------- //

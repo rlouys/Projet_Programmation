@@ -8,20 +8,23 @@
 #include <math.h>
 #include <string.h>
 
+/*** FILES ***/
+
 #include "game_graphics.h"
 #include "menus_graphics.h"
 #include "hero.h"
 #include "enemies.h"
 #include "game.h"
 #include "timers_and_effects.h"
-// --------------------------------------------------------------------------------------------_//
+
+/***  CONSTANTES  ***/
+
 #define MAP "map-test.txt" 
 #define FOND 0.0
 #define HEART_SIZE 0.8 //(0.1 = little || 1 = big)
-// --------------------------------------------------------------------------------------------_//
-
 
 /***  VARIABLES  ***/
+
 
 float *value;
 int mX;
@@ -31,7 +34,9 @@ int mY;
 /*** FUNCTIONS ***/ 
 // --------------------------------------------------------------------------------------------_//
 
-bool loadMap(int *mX, int *mY)		//fonction qui ouvre le fichier txt et charge la carte dans le tableau
+// charge la map
+
+bool loadMap(int *mX, int *mY)		
 {
     map = malloc(sizeof(char *) * (*mX));	
     FILE *f = NULL;
@@ -75,6 +80,8 @@ bool loadMap(int *mX, int *mY)		//fonction qui ouvre le fichier txt et charge la
 
 // --------------------------------------------------------------------------------------------_//
 
+// affiche la vitalité du joueur en temps réel
+
 void drawHealth(Hero hero){
 
 	glMatrixMode(GL_MODELVIEW);
@@ -100,6 +107,8 @@ void drawHealth(Hero hero){
 
 // --------------------------------------------------------------------------------------------_//
 
+// affiche le score du joueur en temps réel
+
 void drawScore(Hero hero)
 {
 	glMatrixMode(GL_MODELVIEW);
@@ -122,6 +131,8 @@ void drawScore(Hero hero)
 
 // --------------------------------------------------------------------------------------------_//
 
+// dessine un coeur aux couleurs voulues
+
 void drawHeart(float red, float green, float blue)
 {
 	glBegin(GL_TRIANGLE_FAN);
@@ -138,6 +149,10 @@ void drawHeart(float red, float green, float blue)
 }
 
 // --------------------------------------------------------------------------------------------_//
+
+// dessine une ligne aux couleurs voulues
+
+
 void drawLine(float red, float green, float blue)
 {
 	
@@ -176,6 +191,8 @@ void drawLine(float red, float green, float blue)
 }
 
 // ------------------------------------------------------------------------ // 
+
+// dessine une bordure à un carré, aux couleurs voulues et à la disposition voulue || border 0 == gauche | border 1 == droite
 
 void drawLineBorder(float red, float green, float blue, int border) //border 0 == gauche | border 1 == droite
 {
@@ -216,9 +233,6 @@ void drawLineBorder(float red, float green, float blue, int border) //border 0 =
 
 	}
 	
-
-	
-	
 	glEnd();
 }
 
@@ -226,6 +240,7 @@ void drawLineBorder(float red, float green, float blue, int border) //border 0 =
 
 // DRAW A SQUARE (SIZEOF = Map_pixel_size/nb_objects)
 // les couleurs doivent être entrées en paramètre
+// dessine un carré aux couleurs voulues
 
 void drawSquare(float red, float green, float blue)
 {
@@ -242,6 +257,8 @@ void drawSquare(float red, float green, float blue)
 
 }
 // --------------------------------------------------------------------------------------------_//
+
+// dessine le héro (design du hero)
 
 void drawHero(float red, float green, float blue)
 {
@@ -262,6 +279,8 @@ void drawHero(float red, float green, float blue)
 
 // --------------------------------------------------------------------------------------------_//
 
+// dessine un cercle aux couleurs voulues
+
 void drawCircle(float red, float green, float blue, int posx, int posy, float rayon)
 {
 
@@ -281,9 +300,9 @@ void drawCircle(float red, float green, float blue, int posx, int posy, float ra
 }
 // --------------------------------------------------------------------------------------------_//
 
+// écrit un texte aux couleurs et positions voulues
+
 void writeSomething(float red, float green, float blue, int x, int y, char *txt){
-
-
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -302,6 +321,8 @@ void writeSomething(float red, float green, float blue, int x, int y, char *txt)
 }
 
 // --------------------------------------------------------------------------------------------_//
+
+// dessine la map et tout les éléments statiques (score, murs)
 
 void drawMap(int *mX, int *mY, Hero hero)			
 {	
@@ -444,6 +465,9 @@ void drawMap(int *mX, int *mY, Hero hero)
 
 // ------------------------------------------------------------------ //
 
+// place le héro sur la carte (en le plaçant au bon endroit)
+
+
 void drawPlayer(Hero hero)
 {
 	int i, j;
@@ -460,10 +484,12 @@ void drawPlayer(Hero hero)
 	glColor3f(0.0f,1.0f,0.0f);
 
 	//drawSquare(1.0, 0.0, 1.0);	
-	drawHero(1.0,0.0,1.0);
+	drawHero(0.03, 0.49, 0.13);
 }
 
 // ------------------------------------------------------------------ //
+
+// dessine un ennemi et le place sur la carte
 
 void drawEnemy(enemy e)	
 {
@@ -484,14 +510,18 @@ void drawEnemy(enemy e)
 
 // ------------------------------------------------------------------ //
 
-void drawTirs(tirsP t)
+// dessine les tirs envoyés du joueur
+
+void drawTirs(tir_Struct t)
 {
 	int i, j;
 
 	j = t->pos.x;
 	i = t->pos.y;
 
-	glColor3f(0.141f, 0.901, 0.0f);
+	//glColor3f(0.141f, 0.901, 0.0f);
+	glColor3f(1,1,0);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(j*Shoot_size,i*Shoot_size,0.0f);
@@ -517,21 +547,23 @@ void drawTirs(tirsP t)
 
 // ------------------------------------------------------------- //
 
+// dessine des ennemis à la chaine (utilise drawEnemy à la chaine)
+
 void drawAllEnnemis(EnemyList e)
 {	
 	enemy first = malloc(sizeof(enemies));
 	enemy next = malloc(sizeof(enemies));
 	first = e->first;
-	next = e->first->nextptr;
+	next = e->first->next;
 	if (e->first != NULL || e->last != NULL) // test existence
 	{
 		drawEnemy(first);
-		if (e->first->nextptr != NULL)
+		if (e->first->next != NULL)
 		{
 			drawEnemy(next);
-			while (next->nextptr != NULL)
+			while (next->next != NULL)
 			{
-				next = next->nextptr;
+				next = next->next;
 				drawEnemy(next);
 			}
 		}
@@ -540,28 +572,44 @@ void drawAllEnnemis(EnemyList e)
 
 // ------------------------------------------------------------- //
 
-void drawAllTirs(listetirsP t)
+// dessine les tirs à la chaine (utilise drawTirs à la chaîne)
+
+void drawAllTirs(listetir_Struct t)
 {
-	tirsP first = malloc(sizeof(tirs));
-	tirsP next = malloc(sizeof(tirs));
+	tir_Struct first = malloc(sizeof(tirs));
+	tir_Struct next = malloc(sizeof(tirs));
 	first = t->first;
-	if (t->first != NULL && t->first->nextptr != NULL)
+	if (t->first != NULL && t->first->next != NULL)
 	{
-	next = t->first->nextptr;
+	next = t->first->next;
 	}
 	if (t->first != NULL || t->last != NULL)
 	{
 		drawTirs(first);
-		if (t->first->nextptr != NULL)
+		if (t->first->next != NULL)
 		{
 			drawTirs(next);
-			while (next->nextptr != NULL)
+			while (next->next != NULL)
 			{
-				next = next->nextptr;
+				next = next->next;
 				drawTirs(next);
 			}
 		}
 	}
+}
+
+// ------------------------------------------------------------- //
+
+void DisplayGame()
+{	
+    
+	glClearColor(0.1f,0.1f,0.1f,0.1f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    game(&mX, &mY, hero,e,t);
+
+    glFlush();
+
 }
 
 

@@ -15,7 +15,7 @@ struct positionP
 	int y;
 };
 
-	// Définition du héro //
+// Définition du héro //
 
 struct Hero
 	{
@@ -44,11 +44,15 @@ int mY;
 
 /*** FUNCTIONS ***/
 
-	Hero createHero(int *mX, int *mY); // Initialize the hero and initialize its stats
-	void moveUp(Hero hero); // Verify if the hero can move UP or not
-	void moveDown(Hero hero); // Verify if the hero can move DOWN or not
-	void moveRight(Hero hero); // Verify if the hero can move RIGHT or not
-	void moveLeft(Hero hero); // Verify if the hero can move LEFT or not
+
+// Initialise le héro et ses statistiques
+Hero createHero(int *mX, int *mY); 
+
+// Vérifient si le héro peut se déplacer dans un sens ou dans un autre.
+void moveUp(Hero hero); 
+void moveDown(Hero hero); 
+void moveRight(Hero hero); 
+void moveLeft(Hero hero); 
 
 // -------------------- // 
 

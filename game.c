@@ -10,6 +10,8 @@
 #include "tirs.h"
 #include "enemies.h"
 #include "hero.h"
+#include "enemies.h"
+#include "game.h"
 
 /***  VARIABLES ***/ 
 
@@ -27,37 +29,25 @@ bool CHECKCOLLISION = false;
 
 // ------------------------------------------------------------ // 
 
-void Keyboard(unsigned char key, int x, int y)  // fonction allant gérer les input
+// definition de la fonction Keyboard permettant de quitter/tirer
+
+void Keyboard(unsigned char key, int x, int y)  
 {
 	switch(key)
 	{
 		case 27:
 			//glutDisplayFunc(WelcomeDisplay);
 			exit(0);
-
-		case 'z':
-			UP = true;
-			break;
-
-		case'q':
-			LEFT = true;
-			break;
-
-		case'd':
-			RIGHT = true;
-			break;
-
-		case's':
-			DOWN = true;
-			break;
-		
-	        case 32:
+	
+		case 32:
 			SHOOT = true;
 			break;		
 	}	
 }
 
 // ------------------------------------------------------------ // 
+
+// definition de la fonction arrowFunction permettant de se déplacer via les flèches directionnelles
 
 void arrowFunction(int key, int x, int y) {
     switch (key) {
@@ -78,10 +68,10 @@ void arrowFunction(int key, int x, int y) {
 
 // ------------------------------------------------------------ // 
 
-void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetirsP t)
-{
-	//drawScore(hero);
-		
+// dessine le jeu et lance la partie, fait apparaitre les ennemis et les tirs
+
+void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t)
+{		
 
 	glPushMatrix();
 	drawMap(&mX, &mY, hero);			//afficher la carte
@@ -107,8 +97,6 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetirsP t)
 	{
 		
 		moveLeft(hero);		//va se déplacer vers la gauche si on appuie sur q+
-	//	printf("hero->pos.x : %i\n", hero->pos.x);
-	//	printf("hero->pos.y : %i\n", hero->pos.y);
 		LEFT = false;
 		
 	}
@@ -116,15 +104,11 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetirsP t)
 	{
 		
 		moveRight(hero);		//va se déplacer vers la droite si on apppuie sur d
-	//	printf("hero->pos.x : %i\n", hero->pos.x);
-	//	printf("hero->pos.y : %i\n", hero->pos.y);
 		RIGHT = false;
 	}
 	if (UP == true)
 	{
 		moveUp(hero);
-	//	printf("hero->pos.x : %i\n", hero->pos.x);
-	//	printf("hero->pos.y : %i\n", hero->pos.y);
 		UP = false;
 	}
 	
@@ -132,8 +116,6 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetirsP t)
 	{
 		
         moveDown(hero);
-	//	printf("hero->pos.x : %i\n", hero->pos.x);
-	//	printf("hero->pos.y : %i\n", hero->pos.y);
 		DOWN = false;
 	}
 	if (SHOOT == true)
@@ -142,31 +124,19 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetirsP t)
 		SHOOT=false;
 	}
 
-
 	glutPostRedisplay();
 }
 
 // ------------------------------------------------------------ // 
-void checkCollisionTirsEnnemis (enemy e, tirsP w)
-{	bool Collide = false;
+
+// vérifie s'il y a une collision entre l'ennemi et le tir allié, le cas échéant, lui enlève de la vie ou le supprime, et augmente le score
+void checkCollisionTirsEnnemis (enemy e, tir_Struct w)
+{	
+	bool Collide = false;
 	int key = 1;
-	//bool ColY = false;
-
-	
-
 
 	if ((w->pos.x/2) == e->pos.x && e->pos.y == ((w->pos.y-2)/2)-1 && key != 0)
 		{
-		/*int wposx = w->pos.x/2;
-		int eposx = e->pos.x;
-		int eposy = e->pos.y;
-		int wposy = (w->pos.y-2)/2;*/
-
-		/*printf("e->pos.x = %i                      ", eposx);
-		printf("e->pos.y = %i\n", eposy);
-		printf("t->pos.x = %i                      ", wposx);
-		printf("t->pos.y = %i\n", wposy);*/
-
 			Collide = true;
 			key = 0;
 			
@@ -180,7 +150,6 @@ void checkCollisionTirsEnnemis (enemy e, tirsP w)
 	{	
 		
 		e->vie = (e->vie) - hero->attack;
-	//	printf("\n\n\nvie restante : %i\n\n\n", e->vie);
 
 
 		if(e->vie == 0)
@@ -198,32 +167,41 @@ void checkCollisionTirsEnnemis (enemy e, tirsP w)
 
 
 // ------------------------------------------------------------ // 
-/*void checkCollision (enemy e, tirsP p)
-{	bool ColX = false;
-	bool ColY = false;
-	if (hero->pos.x + Shoot_size <= e->pos.x && e->pos.x + Square_size <= hero->pos.x)
-	{
-		printf("test\n");
-		ColX = true;
-		
-	}
-	if (hero->pos.y + Shoot_size <= e->pos.y && e->pos.y + Square_size <= hero->pos.y)
-	{
-				printf("testY\n");
+/*
+void checkCollisionHeroEnnemis (enemy e)
+{	
+	bool Collide = false;
+	int key = 1;
 
-		ColY = true;
-	}
-	if (ColX || ColY)
+	if (hero->pos.x == e->pos.x && e->pos.y == hero->pos.y && key != 0)
+		{
+			Collide = true;
+			key = 0;
+			
+		}
+	
+	if (Collide)
 	{
 		CHECKCOLLISION = true;
 	}
 	if (CHECKCOLLISION)
 	{	
-		e->vie = (e->vie) -1;
-		printf("vie restante : %i", e->vie);
+		
+		e->vie = 0;
+		printf( "vie ennemi : %i", e->vie);
+		hero->health -= 1;
+		printf("vie hero : %i", hero->health);
+
+
+		if(e->vie == 0)
+		{
 		e->active = false;
-		hero->active = false;
+		hero->killed += 1;
+
+		}
+
 		CHECKCOLLISION = false;
 	}
 	
-} */
+} 
+*/

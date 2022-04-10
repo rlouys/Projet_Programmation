@@ -20,8 +20,8 @@ struct enemies
 	int vie;
 	struct positionE pos;
 	bool active;
-	struct enemies *prevptr;
-	struct enemies *nextptr;
+	struct enemies *previous;
+	struct enemies *next;
 };
 typedef struct enemies enemies;
 
@@ -36,16 +36,27 @@ struct ListEnemy
 };
 typedef struct ListEnemy ListEnemy;
 
+typedef struct enemies *enemy; 
+typedef struct ListEnemy *EnemyList;
+
+/*** VARIABLES ***/
+
+enemy car;
+EnemyList e;
+
 
 /*** FUNCTIONS ***/
 
-typedef struct enemies *enemy; 
-typedef struct ListEnemy *EnemyList;
-enemy createEnemy(int *maxY);
-EnemyList initialListEnemies();
-void insertionEnemies(EnemyList e, enemy q);
-void suppressionEnemies(EnemyList e, bool test);
-enemy car;
-EnemyList e;
+// Initialise une liste d'ennemis vide
+EnemyList initialListEnemies(); 
+
+// Créer et initialise les stats un ennemi
+enemy createEnemy(int *maxY); 
+
+// Créer un ennemi et le place dans la liste chainée
+void insertionEnemies(EnemyList e, enemy car); 
+
+//Supprime un ennemi et l'enleve de la liste
+void suppressionEnemies(EnemyList e, bool test); 
 
 #endif

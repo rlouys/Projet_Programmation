@@ -14,7 +14,7 @@
 
 // ------------------------------------------------------------------ //
 
-// Initialize the hero and initialize its stats
+// Initialise le héro et ses statistiques
 
 Hero createHero(int *maxX, int *maxY)
 {
@@ -50,7 +50,7 @@ Hero createHero(int *maxX, int *maxY)
 
 // ------------------------------------------------------------------ //
 
-// Verify if the hero can move up or not
+// Vérifient si le héro peut se déplacer dans un sens ou dans un autre.
 
 void moveUp(Hero hero)		
 {
@@ -62,14 +62,11 @@ void moveUp(Hero hero)
 	{
 		hero->pos.y = y;
 	}
-	/*printf("*** hero->pos.y : %i ***\n", hero->pos.y);
-	printf("char : %c\n", *(*(map + y) + x));
-	printf("---------------------\n");*/
 }
 
 // ------------------------------------------------------------------ //
 
-// Verify if the hero can move down or not
+// Vérifient si le héro peut se déplacer dans un sens ou dans un autre.
 
 void moveDown(Hero hero)		//la fonction va vérifier si on peut se déplacer vers la droite et le faire le cas échéant
 {
@@ -82,12 +79,11 @@ void moveDown(Hero hero)		//la fonction va vérifier si on peut se déplacer ver
 	{
 		hero->pos.y = y;
 	}
-	//printf("char : %c\n", *(*(map + y) + x));
 }
 
 // ------------------------------------------------------------------ //
 
-// Verify if the hero can move right or not
+// Vérifient si le héro peut se déplacer dans un sens ou dans un autre.
 
 void moveRight(Hero hero)
 {
@@ -101,12 +97,11 @@ void moveRight(Hero hero)
 		hero->pos.x = x;
 	}     
 	
-	//printf("char : %c\n", *(*(map + y) + x));
 }
 
 // ------------------------------------------------------------------ //
 
-// Verify if the hero can move left or not
+// Vérifient si le héro peut se déplacer dans un sens ou dans un autre.
 
 void moveLeft(Hero hero)
 {
@@ -119,7 +114,6 @@ void moveLeft(Hero hero)
 	{
 		hero->pos.x = x;
 	}
-	//printf("char : %c\n", *(*(map + y) + x));
 }
 
 // ------------------------------------------------------------------ //

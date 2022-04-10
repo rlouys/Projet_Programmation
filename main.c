@@ -8,6 +8,9 @@
 #include <stdbool.h>
 #include <time.h>
 
+
+/*** FILES ***/
+
 #include "hero.h"
 #include "game_graphics.h"
 #include "menus_graphics.h"
@@ -16,20 +19,22 @@
 #include "tirs.h"
 #include "game.h"
 
+/*** CONSTANTES ***/ 
 
 #define MAP_WIDTH mX*Square_size
 #define MAP_HEIGTH mY*Square_size
+
+
 /*** VARIABLES ***/
 
 bool test = false;
-int tick = 0;
+//int tick = 0;
 int direction = 0;
 float vl = 20.0;
 float *value = &vl;
 int c = 0;
 char* cheatMode = "| Cheat mode : disabled";
-bool cheatModeT = false;
-//int sg = 0;
+//bool cheatModeT = false;
 bool startgame = false;
 bool try = false;
 
@@ -100,98 +105,7 @@ int updatePosition(int value){
 
 // ------------------------------------------------------------------ //
 
-void DisplayGame()
-{	
-    
-	glClearColor(0.1f,0.1f,0.1f,0.1f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    game(&mX, &mY, hero,e,t);
-
-    glFlush();
-
-}
-
-// ------------------------------------------------------------------ //
-
-void keyboardFunc(unsigned char Key, int x, int y) {
-
-
-    switch (Key) {
-    /*case 'w':
-        wrapAround = !wrapAround;
-        printf("Wraparound set to %s\n", ((wrapAround) ? "true" : "false"));
-        glutPostRedisplay();
-        break;*/
-    case 'c':
-        startgame = !startgame;
-		glutDisplayFunc(DisplayGame);
-		glutPostRedisplay();
-		break;
-
-	case 'n':
-        startgame = !startgame;
-		glutDisplayFunc(DisplayGame);
-		glutPostRedisplay();
-		break;
-
-	case 'x':
-        if(try==false){
-		glutDisplayFunc(DisplayEnding);
-		glutPostRedisplay();
-        }
-
-       // wait();
-        //exit(0);
-
-        if(try==true) wait();
-        
-    	break;
-    
-
-    case 'r':
-            startgame = false;
-            hero->current_xp = 0;
-            hero->health = 3;
-            hero->killed = 0;
-            e->quantite = 0;
-            glutDisplayFunc(WelcomeDisplay);
-            glutPostRedisplay();
-            break;
-
-	case 'g':
-		glutDisplayFunc(DisplayGameplay);
-		glutPostRedisplay();
-		break;
-
-	case 'o':
-		glutDisplayFunc(DisplayOptions);		
-		glutPostRedisplay();
-		break;	    
-
-	case 'm':
-		glutDisplayFunc(WelcomeDisplay);
-		glutPostRedisplay();	
-		break;	
-    };
-   
-}
-
-// ------------------------------------------------------------------ //
-
-/*void parseArgs(int argc, char **argv) {
-    for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "-w") == 0) {
-            printf("Wraparound enabled");
-            wrapAround = true;
-        } else {
-           printf("Unrecognized option: %s", argv[i]);
-        }    glutTimerFunc(1000, MenuTimer, 0); // next timer call milliseconds later
-
-    }
-}*/
-
-// ------------------------------------------------------------------ //
+// action à la souris || Clic gauche : indique la position d'où on se trouve || Clic droit(comment) : ferme la fenêtre (exit(0)). 
 
 void mouse(int bouton,int etat,int x,int y) { // action à la souris || Clic gauche : indique la position d'où on se trouve || Clic droit : ferme la fenêtre (exit(0)). 
   if ( etat == GLUT_DOWN )
@@ -200,8 +114,8 @@ void mouse(int bouton,int etat,int x,int y) { // action à la souris || Clic gau
                                printf("%4d %4d\n",x,y); 
                                glutPostRedisplay();
                                break ;
-      case GLUT_RIGHT_BUTTON : exit(0);
-                               break; 
+      /*case GLUT_RIGHT_BUTTON : exit(0);
+                               break; */
                                }
 }
 // ------------------------------------------------------------------ //
@@ -209,80 +123,52 @@ void mouse(int bouton,int etat,int x,int y) { // action à la souris || Clic gau
 
 int main(int argc, char *argv[])
 {
+
+    // VARIABLES // 
+
     mX = 80;
     mY = 41;
-	// TESTS // 
-/*
-	List Hero = new_character();
-	print_character(Hero);
-
-	
-	Hero = create_Hero(Hero);
-	print_character(Hero);
-
-	printf("Cleaning the Hero....\n\n");
-	Hero = clear_list (Hero);
-	print_character(Hero); 
-
-*/
-
-// ------------------------------------------------------------------ //
-	// GLUT //
     srand(time(NULL));
-   // parseArgs(argc, argv);
 
+    // map & jeu
 	loadMap(&mX, &mY);     //Charge la carte
 	
-
      hero = createHero(&mX, &mY);
      e = initialListEnemies();
      t = initialListeTirs();
+
+     // GLUT initialisations
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-
 	glutInitWindowSize(MAP_HEIGTH, MAP_WIDTH);
 	glutInitWindowPosition(1000, 0);
-
 	glutCreateWindow("Sustainable Mobility : Subsistance");
-
-
- 
 	initRendering();
 	glutDisplayFunc(WelcomeDisplay);
     glutReshapeFunc(handleResize);
     glutKeyboardFunc(keyboardFunc);
     glutSpecialFunc(arrowFunc);
     glutMouseFunc(mouse);    	
-// MENU
-    glutCreateMenu (myMenu);
-	glutAddMenuEntry ("|             MENU               |", 0);
-	glutAddMenuEntry ("''''''''''''''''''''''''''''''''''''''''''''''''''",0);
 
-	glutAddMenuEntry ("| Options", 2);
-	glutAddMenuEntry ("| Gameplay", 3);
-	glutAddMenuEntry ("| Pause", 4);
-	glutAddMenuEntry (cheatMode, 5);
-	glutAddMenuEntry ("| Quit", 6);
 
-	glutAttachMenu (GLUT_RIGHT_BUTTON);
+// MENU CLIC DROIT
 
-   // if(*startgame == 1){
-     //   printf("startgame : %i", *startgame);
-    glutTimerFunc(50, timer, 0);
+    init_rightClick_Menu();
+  
+
+// TIMERS
+    glutTimerFunc(50, scrolling, 0);
     glutTimerFunc(10, updateCollisions, 0);
     glutTimerFunc(200, updateEnemies, 1);
     glutTimerFunc(50, updateTirs, 2);
     glutTimerFunc(50, updateNewEnemies, 3);
     glutTimerFunc(10, updateDeleteEnemies, 4);
     glutTimerFunc(10, updateDeleteTirs, 5);
-    //glutTimerFunc(10, MenuTimer, 6); // next timer call milliseconds later
     
-   // }
     glEnable(GL_DEPTH_TEST);
 	glutMainLoop();
-    
-
-    
+        
 	return 0;
 
 }

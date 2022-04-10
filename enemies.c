@@ -12,10 +12,13 @@
 #include "enemies.h"
 #include "menus_graphics.h"
 
+/*** VARIABLES ***/
 
 bool startgame; 
 
 /*** FUNCTIONS ***/
+
+// Initialise une liste d'ennemis vide
 
 EnemyList initialListEnemies()
 {
@@ -32,6 +35,8 @@ EnemyList initialListEnemies()
 
 // --------------------------------------------------------------------- // 
 
+// Créer et initialise les stats un ennemi
+
 enemy createEnemy(int *maxY)
 {
 	
@@ -44,33 +49,37 @@ enemy createEnemy(int *maxY)
 	new->vie = 3;
 	new->pos.x = x;
 	new->pos.y = 65;
-	new->nextptr = NULL;
-	new->prevptr = NULL;
+	new->next = NULL;
+	new->previous = NULL;
 	new->active = true;
 	return new;
 }
 
 // --------------------------------------------------------------------- // 
 
-void insertionEnemies(EnemyList e, enemy base)
+// Créer un ennemi et le place dans la liste chainée
+
+void insertionEnemies(EnemyList e, enemy car)
 {
-	//if(e->quantite <= 10){
-	enemy new = malloc(sizeof(enemies));
-	if (new == NULL)
+	enemy newEnemy = malloc(sizeof(enemies));
+	
+	if (newEnemy == NULL)
 	{
 		exit(EXIT_FAILURE);
 	}
-	new = base;
+
+	newEnemy = car;
+
 	if (e->first == NULL || e->last == NULL)
 	{
-		e->last= new;
-		e->first = new;
+		e->last= newEnemy;
+		e->first = newEnemy;
 	}
 	else
 	{
-		new->nextptr = e->first;
-		e->first->prevptr = new;
-		e->first = new;
+		newEnemy->next = e->first;
+		e->first->previous = newEnemy;
+		e->first = newEnemy;
 	}
 	e->quantite += 1;
 	//}
@@ -78,25 +87,27 @@ void insertionEnemies(EnemyList e, enemy base)
 
 // --------------------------------------------------------------------- // 
 
+//Supprime un ennemi et l'enleve de la liste
+
 void suppressionEnemies(EnemyList e, bool test)
 {
 
 	test = false;
 	if (e->first != NULL)
 	{
-		enemy base = malloc(sizeof(enemies));
-		if (base == NULL)
+		enemy newEnemy = malloc(sizeof(enemies));
+		if (newEnemy == NULL)
 		{
 			exit(EXIT_FAILURE);
 		}
-		base = e->first;
-		while (base != NULL)
+		newEnemy = e->first;
+		while (newEnemy != NULL)
 		{
-			if (base->active == test)
+			if (newEnemy->active == test)
 			{
 				enemy deleted = malloc(sizeof(enemies));
-				deleted = base;
-				base = base->nextptr;
+				deleted = newEnemy;
+				newEnemy = newEnemy->next;
 				if (e->first == deleted && e->last == deleted)
 				{
 					e->first = NULL;
@@ -104,19 +115,19 @@ void suppressionEnemies(EnemyList e, bool test)
 				}
 				else if (e->first != deleted && e->last == deleted)
 				{
-					e->last = deleted->prevptr;
-					e->last->nextptr = NULL;
+					e->last = deleted->previous;
+					e->last->next = NULL;
 				}
 				else if (e->first == deleted && e->first != deleted)
 				{
-					e->first  = deleted->nextptr;
-					e->first->prevptr = NULL;
+					e->first  = deleted->next;
+					e->first->previous = NULL;
 					
 				}
 				else
 				{
-					deleted->nextptr->prevptr = deleted->prevptr;
-					deleted->prevptr->nextptr = deleted->nextptr;
+					deleted->next->previous = deleted->previous;
+					deleted->previous->next = deleted->next;
 				}
 				free(deleted);
 				e->quantite--;
@@ -126,19 +137,15 @@ void suppressionEnemies(EnemyList e, bool test)
 					hero->current_xp += 50;
 				}
 
-				//printf("Score : %f\n", hero->current_xp);
-
-				
 				if(hero->current_xp == 200)
 				{
-						
 						glutDisplayFunc(WinDisplay);
 				}
 
 			}
 			else
 			{
-				base = base->nextptr;
+				newEnemy = newEnemy->next;
 			}
 		}
 	}
