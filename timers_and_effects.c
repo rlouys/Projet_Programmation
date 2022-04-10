@@ -17,8 +17,8 @@ float *deplacement_fenetre;
 int counter = 0;
 bool startgame;
 
-#define ENNEMI_SPEED 100 // 10 = ultraspeed/hardcore | 1000 = slow
-#define ENNEMI_PER_TEN_SECOND 5
+#define ENNEMI_SPEED 150 // 10 = ultraspeed/hardcore | 1000 = slow
+#define ENNEMI_PER_TEN_SECOND 7
 #define RANGE_MAX 120
 #define ATTACK_SPEED 10 // 1 is superfast, 1000 is slow
 /*** FUNCTIONS ***/
@@ -130,7 +130,7 @@ void updateCollisions(int valeur)
 
 void updateEnemies(int valeur)
 {
-	if(startgame==true){ 
+	if(startgame==true && p->vie != 0){ 
 
 	q = e->first;
 	if (e->first != NULL)
@@ -140,9 +140,18 @@ void updateEnemies(int valeur)
 		{
 			q->pos.y = 40;
 			p->current_xp -= 50;
-			//q->active = false;
 			printf("score : %i\n", p->current_xp);
 			e->quantite--;
+			p->vie -= 1;
+			p->killed +=1;
+			printf("vie : %i\n", p->vie);
+			drawHealth(p);
+
+			if(p->vie == 0){
+					glutDisplayFunc(EndGameDisplay);
+
+				}
+
 
 		}
 		while (q->nextptr != NULL)
@@ -155,8 +164,16 @@ void updateEnemies(int valeur)
 				p->current_xp -= 50;
 				printf("score : %i\n", p->current_xp);
 				e->quantite--;
+				p->vie -= 1;
+				p->killed +=1;
 
-				//q->active = false;
+				printf("vie : %i\n", p->vie);
+				drawHealth(p);
+
+				if(p->vie == 0){
+					glutDisplayFunc(EndGameDisplay);
+
+				}
 			}
 		}
 	}

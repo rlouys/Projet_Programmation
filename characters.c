@@ -45,6 +45,7 @@ player createPlayer(int *maxX, int *maxY)
 	p->current_xp = 0;
 	//p->weapon_type = 0;
 	p->attack = 1;
+	p->killed = 0;
 
 	return p;
 }

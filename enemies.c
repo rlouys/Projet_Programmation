@@ -30,15 +30,16 @@ listeEn initialListEnemies()
 
 enemy createEnemy(int *maxY)
 {
+	
 	enemy new = malloc(sizeof(enemies));
-	int y = (rand() % (34-7+1) +7);
+	int x = (rand() % (30-5+1) +5);
 	if (new == NULL)
 	{
 		exit(EXIT_FAILURE);
 	} 
 	new->vie = 3;
-	new->pos.x = y;
-	new->pos.y = 50;
+	new->pos.x = x;
+	new->pos.y = 65;
 	new->nextptr = NULL;
 	new->prevptr = NULL;
 	new->active = true;

@@ -16,6 +16,9 @@
 #include "tirs.h"
 #include "game.h"
 
+
+#define MAP_WIDTH mX*Square_size
+#define MAP_HEIGTH mY*Square_size
 /*** VARIABLES ***/
 
 bool test = false;
@@ -28,10 +31,23 @@ char* cheatMode = "| Cheat mode : disabled";
 bool cheatModeT = false;
 //int sg = 0;
 bool startgame = false;
-
+bool try = false;
 
 
 /*** FUNCTIONS ***/
+// ------------------------------------------------------------------ //
+
+void wait()
+{
+    int timerwait;
+
+    for(timerwait = 0; timerwait < 100000; timerwait++)
+    {
+            printf("timerwait : %i\n", timerwait);
+    }
+    exit(0);
+}
+
 // ------------------------------------------------------------------ //
 
 void arrowFunc(int key, int x, int y) {
@@ -120,9 +136,17 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 		break;
 
 	case 'x':
+        if(try==false){
 		glutDisplayFunc(DisplayEnding);
 		glutPostRedisplay();
-		break;
+        }
+
+       // wait();
+        //exit(0);
+
+        if(try==true) wait();
+        
+    	break;
 
 	case 'g':
 		glutDisplayFunc(DisplayGameplay);
@@ -205,7 +229,7 @@ int main(int argc, char *argv[])
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 
-	glutInitWindowSize(mY*Square_size, mX*Square_size);
+	glutInitWindowSize(MAP_HEIGTH, MAP_WIDTH);
 	glutInitWindowPosition(1000, 0);
 
 	glutCreateWindow("Sustainable Mobility : Subsistance");

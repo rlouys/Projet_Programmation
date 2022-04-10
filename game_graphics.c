@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
+#include <string.h>
 
 #include "game_graphics.h"
 #include "menus_graphics.h"
@@ -15,6 +17,7 @@
 // --------------------------------------------------------------------------------------------_//
 #define MAP "map-test.txt" 
 #define FOND 0.0
+#define HEART_SIZE 0.8 //(0.1 = little || 1 = big)
 // --------------------------------------------------------------------------------------------_//
 
 
@@ -72,17 +75,67 @@ bool loadMap(int *mX, int *mY)		//fonction qui ouvre le fichier txt et charge la
 
 // --------------------------------------------------------------------------------------------_//
 
-void drawScore(player p){
+void drawHealth(player p){
 
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
-	int pos;
+	int i;
+
+	int x = 700;
+	int y = 980;
+
+	glTranslatef(x,y,0);
+
 //vie = 3
-	for(pos = 0; pos < p->vie; pos++)
-	{
-		glTranslatef(pos,5,0);
-		drawSquare(1,0,0);
+	for(i = 1; i <= p->vie; i++)
+	{	
+		
+		drawHeart(1,0,0);
+		glTranslatef(Square_size*2,0,0);
+
 	}
 
+}
+
+// --------------------------------------------------------------------------------------------_//
+
+void drawScore(player p)
+{
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+
+	
+	int a = p->current_xp;
+
+	char str[10];
+
+	sprintf(str, "%d", a);
+
+
+	writeSomething(0,0,0,700, 780, "SCORE");
+	writeSomething(0,0,0,690, 760, "-------");
+	writeSomething(0,0,0,700, 738, str);
+
+}
+
+
+// --------------------------------------------------------------------------------------------_//
+
+void drawHeart(float red, float green, float blue)
+{
+	glBegin(GL_TRIANGLE_FAN);
+	glColor3f(red, green, blue);
+
+	for(float a = 0; a < 2*(3.15); a+=0.01)
+	{
+		float x = HEART_SIZE*(16 * pow(sin(a), 3));
+		float y = HEART_SIZE*(-1*(13 * cos(a) - 5 * cos(2*a) - 2*cos(3*a) - cos(4*a)));
+		glVertex2f(x,-y);
+	}
+
+	glEnd();
 }
 
 // --------------------------------------------------------------------------------------------_//
@@ -122,6 +175,8 @@ void drawLine(float red, float green, float blue)
 	
 	glEnd();
 }
+
+// ------------------------------------------------------------------------ // 
 
 void drawLineBorder(float red, float green, float blue, int border) //border 0 == gauche | border 1 == droite
 {
@@ -225,8 +280,27 @@ void drawCircle(float red, float green, float blue, int posx, int posy, float ra
 
 
 }
+// --------------------------------------------------------------------------------------------_//
+
+void writeSomething(float red, float green, float blue, int x, int y, char *txt){
 
 
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glColor3f(red, green, blue);
+	glRasterPos3f(x, y, 0);
+    char *msg1= txt;
+
+    for(int i = 0; i <strlen(msg1);i++)
+	{
+    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
+	}
+
+
+
+}
 
 // --------------------------------------------------------------------------------------------_//
 
@@ -236,8 +310,7 @@ void drawMap(int *mX, int *mY, player p)
 	glClear(GL_COLOR_BUFFER_BIT);
 	glutPostRedisplay();
 
-	drawScore(p);
-				glTranslatef(0,-(Square_size),0);
+	glTranslatef(0,-(Square_size),0);
 
 	for (int j = 0; j < (*mX); ++j)
 	{
@@ -265,6 +338,7 @@ void drawMap(int *mX, int *mY, player p)
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
+
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 				glTranslatef(0,-(*value),0);
 
@@ -278,8 +352,8 @@ void drawMap(int *mX, int *mY, player p)
 			{
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
+
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
-				//glTranslatef(0,-(*value),0);
 
 				drawSquare(0.94, 0.87, 0.70);
 			}
@@ -289,6 +363,7 @@ void drawMap(int *mX, int *mY, player p)
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
+
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 				glTranslatef(0,-(*value),0);
 
@@ -302,10 +377,10 @@ void drawMap(int *mX, int *mY, player p)
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
+
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 				glTranslatef(0,-(*value),0);
 
-			//	drawLine(1, 0.843, 0);
 				drawLine(1, 1, 1);
 
 
@@ -316,8 +391,8 @@ void drawMap(int *mX, int *mY, player p)
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
+
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
-				//glTranslatef(0,-(*value),0);
 
 				drawSquare(1.0, 0.0, 0.0);
 
@@ -328,11 +403,10 @@ void drawMap(int *mX, int *mY, player p)
 
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
+
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
-				//if(*(*(map + j) + i+1) != 'l')
-				//{
 				glTranslatef(0,-(*value),0);
-				//}
+
 				drawSquare(FOND, FOND, FOND);
 
 			}
@@ -341,8 +415,8 @@ void drawMap(int *mX, int *mY, player p)
 			{
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
+
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
-				//glTranslatef(0,-(*value),0);
 
 				drawSquare(1, 1, 1);
 
@@ -352,14 +426,21 @@ void drawMap(int *mX, int *mY, player p)
 			{
 				glMatrixMode(GL_MODELVIEW);
 				glLoadIdentity();
+
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
-				//glTranslatef(0,-(*value),0);
 
 				drawSquare(1.0, 1.0, 1.0);
 		
 			}
 		}
 	}
+	drawHealth(p);
+	writeSomething(0,0,0,690,1010,"HEALTH");
+	writeSomething(0,0,0,680,995,"---------");
+	
+	drawScore(p);
+
+
 }
 
 // ------------------------------------------------------------------ //

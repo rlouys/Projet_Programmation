@@ -15,6 +15,7 @@
 #define Square_size 20.0
 #define Shoot_size 10.0
 
+
 /***  VARIABLES  ***/
 
 char **map;
@@ -35,7 +36,9 @@ void drawSky();
 void drawLine(float red, float green, float blue);
 void drawLineBorder(float red, float green, float blue, int border); //border 0 == gauche | border 1 == droite
 void drawScore(player p);
-
+void drawHealth(player p);
+void drawHeart(float red, float green, float blue);
+void writeSomething(float red, float green, float blue, int x, int y, char *txt);
 
 
 

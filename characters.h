@@ -23,6 +23,7 @@ struct player
 	int attack;
 	int current_xp;
 	int weapon_type;
+	int killed;
 };
 
 typedef struct player* player;
