@@ -12,8 +12,10 @@ struct positionE
 	int x;
 	int y;
 };
-typedef struct enemies enemies;
+
+
 struct enemies
+
 {
 	int vie;
 	struct positionE pos;
@@ -21,9 +23,10 @@ struct enemies
 	struct enemies *prevptr;
 	struct enemies *nextptr;
 };
+typedef struct enemies enemies;
 
-typedef struct listeEnemies listeEnemies;
-struct listeEnemies
+
+struct ListEnemy
 {
 	
 	int quantite;
@@ -31,17 +34,18 @@ struct listeEnemies
 	struct enemies *last;
 	
 };
+typedef struct ListEnemy ListEnemy;
 
 
 /*** FUNCTIONS ***/
 
 typedef struct enemies *enemy; 
-typedef struct listeEnemies *listeEn;
+typedef struct ListEnemy *EnemyList;
 enemy createEnemy(int *maxY);
-listeEn  initialListEnemies();
-void insertionEnemies(listeEn e, enemy q);
-void suppressionEnemies(listeEn e, bool test);
-enemy q;
-listeEn e;
+EnemyList initialListEnemies();
+void insertionEnemies(EnemyList e, enemy q);
+void suppressionEnemies(EnemyList e, bool test);
+enemy car;
+EnemyList e;
 
 #endif

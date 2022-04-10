@@ -10,7 +10,7 @@
 
 #include "game_graphics.h"
 #include "menus_graphics.h"
-#include "characters.h"
+#include "hero.h"
 #include "enemies.h"
 #include "game.h"
 #include "timers_and_effects.h"
@@ -75,7 +75,7 @@ bool loadMap(int *mX, int *mY)		//fonction qui ouvre le fichier txt et charge la
 
 // --------------------------------------------------------------------------------------------_//
 
-void drawHealth(player p){
+void drawHealth(Hero hero){
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -88,7 +88,7 @@ void drawHealth(player p){
 	glTranslatef(x,y,0);
 
 //vie = 3
-	for(i = 1; i <= p->vie; i++)
+	for(i = 1; i <= hero->health; i++)
 	{	
 		
 		drawHeart(1,0,0);
@@ -100,14 +100,14 @@ void drawHealth(player p){
 
 // --------------------------------------------------------------------------------------------_//
 
-void drawScore(player p)
+void drawScore(Hero hero)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 
 	
-	int a = p->current_xp;
+	int a = hero->current_xp;
 
 	char str[10];
 
@@ -119,7 +119,6 @@ void drawScore(player p)
 	writeSomething(0,0,0,700, 738, str);
 
 }
-
 
 // --------------------------------------------------------------------------------------------_//
 
@@ -304,7 +303,7 @@ void writeSomething(float red, float green, float blue, int x, int y, char *txt)
 
 // --------------------------------------------------------------------------------------------_//
 
-void drawMap(int *mX, int *mY, player p)			
+void drawMap(int *mX, int *mY, Hero hero)			
 {	
 	
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -434,25 +433,25 @@ void drawMap(int *mX, int *mY, player p)
 			}
 		}
 	}
-	drawHealth(p);
+	drawHealth(hero);
 	writeSomething(0,0,0,690,1010,"HEALTH");
 	writeSomething(0,0,0,680,995,"---------");
 	
-	drawScore(p);
+	drawScore(hero);
 
 
 }
 
 // ------------------------------------------------------------------ //
 
-void drawPlayer(player p)
+void drawPlayer(Hero hero)
 {
 	int i, j;
 
 	
 	
-	i = p->pos.x;
-	j = p->pos.y;
+	i = hero->pos.x;
+	j = hero->pos.y;
 		
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -485,12 +484,12 @@ void drawEnemy(enemy e)
 
 // ------------------------------------------------------------------ //
 
-void drawTirs(tirsP p)
+void drawTirs(tirsP t)
 {
 	int i, j;
 
-	j = p->pos.x;
-	i = p->pos.y;
+	j = t->pos.x;
+	i = t->pos.y;
 
 	glColor3f(0.141f, 0.901, 0.0f);
 	glMatrixMode(GL_MODELVIEW);
@@ -518,7 +517,7 @@ void drawTirs(tirsP p)
 
 // ------------------------------------------------------------- //
 
-void drawAllEnnemis(listeEn e)
+void drawAllEnnemis(EnemyList e)
 {	
 	enemy first = malloc(sizeof(enemies));
 	enemy next = malloc(sizeof(enemies));

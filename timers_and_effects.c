@@ -5,7 +5,7 @@
 #include "game.h"
 #include "enemies.h"
 #include "tirs.h"
-#include "characters.h"
+#include "hero.h"
 #include "menus_graphics.h"
 
 /*** VARIABLES ***/
@@ -18,9 +18,9 @@ int counter = 0;
 bool startgame;
 
 #define ENNEMI_SPEED 150 // 10 = ultraspeed/hardcore | 1000 = slow
-#define ENNEMI_PER_TEN_SECOND 7
+#define ENNEMI_PER_TEN_SECOND 5
 #define RANGE_MAX 120
-#define ATTACK_SPEED 10 // 1 is superfast, 1000 is slow
+#define ATTACK_SPEED 5 // 1 is superfast, 1000 is slow
 /*** FUNCTIONS ***/
 
 // ---------------------------------------------------------------------------------- //
@@ -130,50 +130,52 @@ void updateCollisions(int valeur)
 
 void updateEnemies(int valeur)
 {
-	if(startgame==true && p->vie != 0){ 
+	if(startgame==true && hero->health != 0 && hero->current_xp != 200){ 
 
-	q = e->first;
+	car = e->first;
 	if (e->first != NULL)
 	{
-		q->pos.y -= 1;
-		if (q->pos.y == 0)
+		car->pos.y -= 1;
+		if (car->pos.y == 0)
 		{
-			q->pos.y = 40;
-			p->current_xp -= 50;
-			printf("score : %i\n", p->current_xp);
+			car->pos.y = 40;
+			hero->current_xp -= 50;
+			//("score : %f\n", hero->current_xp);
 			e->quantite--;
-			p->vie -= 1;
-			p->killed +=1;
-			printf("vie : %i\n", p->vie);
-			drawHealth(p);
+			hero->health -= 1;
+			hero->killed +=1;
+		//	printf("vie : %i\n", hero->health);
+			drawHealth(hero);
 
-			if(p->vie == 0){
+			if(hero->health == 0){
 					glutDisplayFunc(EndGameDisplay);
 
 				}
-
 
 		}
-		while (q->nextptr != NULL)
+		while (car->nextptr != NULL)
 		{
-			q = q->nextptr;
-			q->pos.y -=1;
-			if (q->pos.y == 0)
+			car = car->nextptr;
+			car->pos.y -=1;
+			if (car->pos.y == 0)
 			{
-				q->pos.y = 40;
-				p->current_xp -= 50;
-				printf("score : %i\n", p->current_xp);
+				car->pos.y = 40;
+				hero->current_xp -= 50;
+			//	printf("score : %f\n", hero->current_xp);
 				e->quantite--;
-				p->vie -= 1;
-				p->killed +=1;
+				hero->health -= 1;
 
-				printf("vie : %i\n", p->vie);
-				drawHealth(p);
+			//	printf("vie : %i\n", hero->health);
+				drawHealth(hero);
 
-				if(p->vie == 0){
+				if(hero->health == 0){
 					glutDisplayFunc(EndGameDisplay);
 
 				}
+
+			
+
+
 			}
 		}
 	}

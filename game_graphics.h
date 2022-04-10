@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 #include "enemies.h"
-#include "characters.h"
+#include "hero.h"
 #include "tirs.h"
 #include "timers_and_effects.h" 
 #include "game.h"
@@ -25,18 +25,18 @@ int mY;
 /*** FUNCTIONS ***/ 
 
 bool loadMap(int *mX, int *mY);
-void drawMap(int *mX, int *mY, player p);
+void drawMap(int *mX, int *mY, Hero hero);
 void drawSquare(float red, float green, float blue);
 void drawCircle(float red, float green, float blue, int posx, int posy, float rayon);
-void drawPlayer(player p);
+void drawPlayer(Hero hero);
 void drawEnemy(enemy e);	
 void drawTirs(tirsP p);
-void drawAllEnnemis(listeEn e);
+void drawAllEnnemis(EnemyList e);
 void drawSky();
 void drawLine(float red, float green, float blue);
 void drawLineBorder(float red, float green, float blue, int border); //border 0 == gauche | border 1 == droite
-void drawScore(player p);
-void drawHealth(player p);
+void drawScore(Hero hero);
+void drawHealth(Hero hero);
 void drawHeart(float red, float green, float blue);
 void writeSomething(float red, float green, float blue, int x, int y, char *txt);
 

@@ -4,7 +4,7 @@
 #include "game_graphics.h"
 #include "menus_graphics.h"
 #include "timers_and_effects.h"
-#include "characters.h"
+#include "hero.h"
 
 
 #include <GL/glut.h>
@@ -20,38 +20,128 @@
 /*** VARIABLES ***/
 // ------------------------------------------------------------------ //
 
-int mX;
-int mY;
-char* cheatMode;
-bool cheatModeT;
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 1000
+
 float df = 5;
 float *deplacement_fenetre = &df;
-bool try;
+bool frame = true;
+
+
 
 // ------------------------------------------------------------------ //
 /*** FUNCTIONS ***/
 // ------------------------------------------------------------------ //
 
+// Create a frame around something
+
+void frameDraw(int red, int green, int blue, int x, int y, int length, int title)
+{
+    
+    int i, j;
+    int x_left = x-10;
+    int x_right = x+200;
+    int y_up = y + 15;
+    int y_down = y - 15;  
+
+    if (title == 0){
+
+        for (i = 0; i < 30; i++){ 
+            glRasterPos3f(x_left, y_down+i, 1); // DRAW UP LINE FRAME
+            char msg1[]="|";
+            for(int i = 0; i <strlen(msg1);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
+
+            glRasterPos3f(x_right, y_down+i, 1); // DRAW DOWN LINE FRAME
+            char msg2[]="|";
+            for(int i = 0; i <strlen(msg2);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
+        }
+
+        for(j = 0; j <= length; j++)
+        {
+            glRasterPos3f(x_left+j, y_down, 1); // DRAW RIGHT LINE FRAME
+            char msg3[]="-";
+            for(int i = 0; i <strlen(msg3);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
+
+            glRasterPos3f(x_left+j, y_up, 1); // DRAW LEFT LINE FRAME
+            char msg4[]="-";
+            for(int i = 0; i <strlen(msg4);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
+        }
+    }
+
+        if(title == 1)
+        {
+
+            y_down -= 20;
+            y_up += 25;
+
+            for(j = 0; j <= length; j++){
+                glRasterPos3f((x_left+j)-length, y_down, 1); // DRAW RIGHT LINE FRAME
+                char msg4[]="-";
+                for(int i = 0; i <strlen(msg4);i++){
+                    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);}
+            }
+
+            for(j = 0; j <= length; j++){
+                glRasterPos3f((x_left+j)-length, y_up, 1); // DRAW RIGHT LINE FRAME
+                char msg5[]="-";
+                for(int i = 0; i <strlen(msg5);i++){
+                    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg5[i]);}  
+            }    
+
+
+            /*for (i = 0; i < 30; i++){ 
+
+                glRasterPos3f(x_left, y_down+i, 1); // DRAW UP LINE FRAME
+                char msg1[]="|";
+                for(int i = 0; i <strlen(msg1);i++)
+                    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
+
+                glRasterPos3f(x_right, y_down+i, 1); // DRAW DOWN LINE FRAME
+                char msg2[]="|";
+                for(int i = 0; i <strlen(msg2);i++)
+                    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
+            }*/
+        
+        for(j = 0; j <= length+210; j++)
+        {
+            glRasterPos3f(x_left+j, y_down, 1); // DRAW RIGHT LINE FRAME
+            char msg3[]="-";
+            for(int i = 0; i <strlen(msg3);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
+
+            glRasterPos3f(x_left+j, y_up, 1); // DRAW LEFT LINE FRAME
+            char msg4[]="-";
+            for(int i = 0; i <strlen(msg4);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);                     
+        }
+        
+        }
+
+}
+
 void WelcomeDisplay()
 {	
 
+	int x = (SCREEN_WIDTH/2)-80;
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     glColor3f(0.03, 0.49, 0.13);
 
-    glRasterPos3f(50, 800, 1);
+    frameDraw(0.03,0.49,0.13, x+30, 850, 630, 1);
+
+    glColor3f(1, 1, 1);
+
+    glRasterPos3f(x-130, 850, 1);
     char msg1[]="SUSTAINABLE MOBILITY : SUBSISTANCE";
     for(int i = 0; i <strlen(msg1);i++)
     	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
 
 
-    glRasterPos3f(50, 780, 1);
-    char msg2[]="----------------------------------------------------";
-    for(int i = 0; i <strlen(msg2);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-
-    glColor3f(1, 0, 0);
+    glColor3f(1, 1, 1);
 
     glRasterPos3f(50, 740, 0);
     char msg3[]="CONTINUER ('c')";
@@ -73,20 +163,31 @@ void WelcomeDisplay()
     for(int i = 0; i <strlen(msg6);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
 
+    glColor3f(0.03, 0.49, 0.13);
+    frameDraw(0.03, 0.49, 0.13, 50, 580, 210, 0);
+    glColor3f(1,1,1);
+
     glRasterPos3f(50, 580, 0);
-    char msg7[]="Sortie('x')";
+    char msg7[]=">>>> SORTIE >>>>('x')";
     for(int i = 0; i <strlen(msg7);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
 
-    glRasterPos3f(50, 50, 0);
+    glColor3f(1,1,1);
+    
+    glRasterPos3f(x-20, 50, 0);
     char msg8[]="Press 'c' to enter the game";
     for(int i = 0; i <strlen(msg8);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg8[i]);
 
     glutSwapBuffers();
+
+    
 }
 
 // ------------------------------------------------------------------ //
+
+// Create the failure endgame display (...you failed...)
+
 void EndGameDisplay()
 {	
    // int tick;
@@ -95,71 +196,172 @@ void EndGameDisplay()
     glColor3f(0.03, 0.49, 0.13);
     glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-  //  glTranslatef(0,0,0);
-
-   /* glRasterPos3f(-500, -250, 0);
-    char msg1[]="----------- YOU FAILED -----------";
-    for(int i = 0; i <strlen(msg1);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);*/
-
-    int a = p->current_xp;
+    int a = hero->current_xp;
 	char str[10];
+
 	sprintf(str, "%d", a);
 
-    int b = p->killed;
+    int b = hero->killed;
     
     char strn[10];
     sprintf(strn, "%d", b);
 
-	writeSomething(1,1,1,200, 930, "++++++++++++++++++++++++");    
-    writeSomething(1,1,1,200, 915, "+                                                    +");
-	writeSomething(1,1,1,200, 900, "+              YOU FAILED              +");
-    writeSomething(1,1,1,200, 885, "+                                                    +");
-    writeSomething(1,1,1,200, 870, "++++++++++++++++++++++++");
-	writeSomething(1,1,1,200, 800, "Your score :");
-	writeSomething(1,1,1,450, 800, str);
-    writeSomething(1,1,1,200, 750, "Ennemy killed :");
-	writeSomething(1,1,1,450, 750, strn);
+	writeSomething(0.03, 0.49, 0.13, 200, 930, "++++++++++++++++++++++++");    
+    writeSomething(0.03, 0.49, 0.13, 200, 915, "+                                                    +");
+	writeSomething(1, 1, 1, 200, 900, "               YOU FAILED               ");
+    writeSomething(0.03, 0.49, 0.13, 200, 900, "+                                                    +");
+    writeSomething(0.03, 0.49, 0.13, 200, 885, "+                                                    +");
+    writeSomething(0.03, 0.49, 0.13, 200, 870, "++++++++++++++++++++++++");
+	writeSomething(1, 1, 1, 200, 800, "Your score :");
+	writeSomething(0.03, 0.49, 0.13, 450, 800, str);
+    writeSomething(1, 1, 1, 200, 750, "Ennemy killed :");
+	writeSomething(0.03, 0.49, 0.13, 450, 750, strn);
+    writeSomething(1, 1, 1, 100, 700, "   (beta)    Objet bonus utilises :            ");
+    writeSomething(1, 1, 1, 100, 650, "   (beta)    Obstacles degats :                ");
+    writeSomething(1, 1, 1, 100, 600, "   (beta)    Obstacle emprisonnes :            ");
+    writeSomething(0.03, 0.49, 0.13, 450, 700, "0");
+    writeSomething(0.03, 0.49, 0.13, 450, 650, "0");
+    writeSomething(0.03, 0.49, 0.13, 450,  600, "0");
 
-    drawSquare(1,1,1);
+    glColor3f(0.03, 0.49, 0.13);
+    frameDraw(0.03, 0.49, 0.13, 50, 430, 210, 0);
+    glColor3f(1,1,1);
+    
+    glRasterPos3f(50, 430, 1);
+    char msg[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
+    for(int i = 0; i <strlen(msg);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg[i]);
+
+    glutKeyboardFunc(keyboardFunc);
+
+    glutSwapBuffers();
+}
+
+// ------------------------------------------------------------------ //
+
+void WinDisplay()
+{	
+   // int tick;
+	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glColor3f(0.03, 0.49, 0.13);
+    glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+    int a = hero->current_xp;
+	char str[10];
+
+	sprintf(str, "%d", a);
+
+    int b = hero->killed;
+    
+    char strn[10];
+    sprintf(strn, "%d", b);
+
+	writeSomething(0.03, 0.49, 0.13, 200, 930, "++++++++++++++++++++++++");    
+    writeSomething(0.03, 0.49, 0.13, 200, 915, "+                                                    +");
+	writeSomething(1, 1, 1, 200, 900, "                   YOU WIN              ");
+    writeSomething(0.03, 0.49, 0.13, 200, 900, "+                                                    +");
+    writeSomething(0.03, 0.49, 0.13, 200, 885, "+                                                    +");
+    writeSomething(0.03, 0.49, 0.13, 200, 870, "++++++++++++++++++++++++");
+	writeSomething(1, 1, 1, 200, 800, "Your score :");
+	writeSomething(0.03, 0.49, 0.13, 450, 800, str);
+    writeSomething(1, 1, 1, 200, 750, "Ennemy killed :");
+	writeSomething(0.03, 0.49, 0.13, 450, 750, strn);
+    writeSomething(1, 1, 1, 100, 700, "   (beta)    Objet bonus utilises :            ");
+    writeSomething(1, 1, 1, 100, 650, "   (beta)    Obstacles degats :                ");
+    writeSomething(1, 1, 1, 100, 600, "   (beta)    Obstacle emprisonnes :            ");
+    writeSomething(0.03, 0.49, 0.13, 450, 700, "0");
+    writeSomething(0.03, 0.49, 0.13, 450, 650, "0");
+    writeSomething(0.03, 0.49, 0.13, 450,  600, "0");
+
+    glColor3f(0.03, 0.49, 0.13);
+    frameDraw(0.03, 0.49, 0.13, 50, 430, 210, 0);
+    glColor3f(1,1,1);
+    
+    glRasterPos3f(50, 430, 1);
+    char msg[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
+    for(int i = 0; i <strlen(msg);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg[i]);
+
+    glutKeyboardFunc(keyboardFunc);
 
 
     glutSwapBuffers();
 }
 // ------------------------------------------------------------------ //
 
-
+// Create the options display while inside the WelcomeDisplay (o)
 
 void DisplayOptions()
 {	
 
-
+    int x = (SCREEN_WIDTH/2)-80;
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glColor3f(0.03, 0.49, 0.13);
 
+    frameDraw(0.03,0.49,0.13, x+30, 850, 630, 1);
 
-    glRasterPos3f(50, 800, 1);
-    char msg1[]="OPTIONS";
+    glColor3f(1, 1, 1);
+
+    glRasterPos3f(x-30, 850, 1);
+    char msg1[]="O    P    T    I    O    N    S";
     for(int i = 0; i <strlen(msg1);i++)
     	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
 
-    glRasterPos3f(50, 780, 1);
-    char msg2[]="------------";
-    for(int i = 0; i <strlen(msg2);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-    glColor3f(1, 0, 0);
 
-    glRasterPos3f(50, 750, 0);
-    char msg3[]="LOREM IPSUM (...)";
+// ~~~~~~~~~~~~~~~~~~~~~~~~~ // 
+
+    glColor3f(1, 1, 1);
+    frameDraw(1,1,1, x, 750, 210, 0);
+
+    glRasterPos3f(x, 750, 1);
+    char msg3[]="DIFFICULTE :  EXTREME  ('d')";
     for(int i = 0; i <strlen(msg3);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
 
+
+    frameDraw(1,1,1, x, 700, 210, 0);
+
+
+    glRasterPos3f(x, 700, 1);
+    char msg4[]="TOUCHES    :  Z Q S D  ('k')";
+    for(int i = 0; i <strlen(msg4);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
+
+
+    frameDraw(1,1,1, x, 650, 210, 0);
+
+    glRasterPos3f(x, 650, 1);
+    char msg5[]="ECRAN      :  VERTICAL ('s')";
+    for(int i = 0; i <strlen(msg5);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg5[i]);
+
+    frameDraw(1,1,1, x, 600, 210, 0);
+
+    glRasterPos3f(x, 600, 1);
+    char msg6[]="CHEAT MODE :  ENABLED  ('z')";
+    for(int i = 0; i <strlen(msg6);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
+
+    glColor3f(0.03, 0.49, 0.13);
+    frameDraw(0.03, 0.49, 0.13, x, 500, 210, 0);
+    glColor3f(1,1,1);
     
+
+    glRasterPos3f(x, 500, 1);
+    char msg7[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
+    for(int i = 0; i <strlen(msg7);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
+
+    
+
     glutSwapBuffers();
 }
 
 // ------------------------------------------------------------------ //
+
+// Create the gameplay display while inside the WelcomeDisplay (g)
 
 void DisplayGameplay()
 {	
@@ -168,28 +370,85 @@ void DisplayGameplay()
     //drawWall(mX, mY);
     glColor3f(0.03, 0.49, 0.13);
 
+    int x = (SCREEN_WIDTH/2)-80;
 
-    glRasterPos3f(50, 800, 1);
-    char msg1[]="GAMEPLAY";
+    frameDraw(0.03,0.49,0.13, x+30, 850, 630, 1);
+
+    glColor3f(1, 1, 1);
+
+    glRasterPos3f(x-30, 850, 1);
+    char msg1[]="G   A   M   E   P   L   A   Y";
     for(int i = 0; i <strlen(msg1);i++)
     	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
 
-    glRasterPos3f(50, 780, 1);
-    char msg2[]="---------------";
-    for(int i = 0; i <strlen(msg2);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-    glColor3f(1, 0, 0);
+
+    glColor3f(1, 1, 1);
 
     glRasterPos3f(50, 750, 0);
-    char msg3[]="LOREM IPSUM (...)";
+    char msg3[]="Il suffit de deplacer le personnage avec les touches choisies. ";
     for(int i = 0; i <strlen(msg3);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
 
+    glRasterPos3f(50, 730, 0);
+    char msg4[]="Ensuite, vous pouvez tirer avec la barre d'espace. ";
+    for(int i = 0; i <strlen(msg4);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
+
+    glRasterPos3f(50, 690, 0);
+    char msg5[]="Le personnage possede : ";
+    for(int i = 0; i <strlen(msg5);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg5[i]);
+
+    glRasterPos3f(50, 670, 0);
+    char msg6[]="- Un nombre de points de vie (3 au debut),";
+    for(int i = 0; i <strlen(msg6);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
+
+    glRasterPos3f(50, 650, 0);
+    char msg7[]="- Un nombre de points d'attaques (3 au debut),";
+    for(int i = 0; i <strlen(msg7);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
+
+    glRasterPos3f(50, 610, 0);
+    char msg8[]="Le but du jeu est d'eliminer le maximum d'ennemis avant que votre vie ne tombe a 0.";
+    for(int i = 0; i <strlen(msg8);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg8[i]);
+
+    glRasterPos3f(50, 570, 0);
+    char msg9[]="Chaque ennemi possède trois points de vie (au debut).";
+    for(int i = 0; i <strlen(msg9);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg9[i]);    
+
+    glRasterPos3f(50, 550, 0);
+    char msg10[]="Un ennemi elimine rapporte 50 points";
+    for(int i = 0; i <strlen(msg10);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg10[i]);
+
+    glRasterPos3f(50, 530, 0);
+    char msg11[]="Une collision avec un ennemi enleve 1 point de vie, et retire 50 points.";
+    for(int i = 0; i <strlen(msg11);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg11[i]);
     
+    glRasterPos3f(50, 510, 0);
+    char msg12[]="Un ennemi arrivant en bas de la map enleve 1 point de vie, et retire 50 points.";
+    for(int i = 0; i <strlen(msg12);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg12[i]);
+
+    glColor3f(0.03, 0.49, 0.13);
+    frameDraw(0.03, 0.49, 0.13, 50, 430, 210, 0);
+    glColor3f(1,1,1);
+    
+    glRasterPos3f(50, 430, 1);
+    char msg13[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
+    for(int i = 0; i <strlen(msg13);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg13[i]);
+
     glutSwapBuffers();
 }
 
 // ------------------------------------------------------------------ //
+
+// Create the ending display while inside the WelcomeDisplay when you want to exit the game (x)
 
 void DisplayEnding()
 {	
@@ -198,28 +457,39 @@ void DisplayEnding()
 
     glColor3f(0.03, 0.49, 0.13);
 
-    glRasterPos3f(50, 800, 1);
-    char msg1[]="SEE YOU LATER !";
+    frameDraw(0.03,0.49,0.13, (SCREEN_WIDTH/2)-50, 850, 630, 1);
+
+    glColor3f(1, 1, 1);
+
+    glRasterPos3f(300, 850, 1);
+    char msg1[]="A   B  I  E  N  T  O  T ";
     for(int i = 0; i <strlen(msg1);i++)
     	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
 
-    glRasterPos3f(50, 780, 1);
-    char msg2[]="-----------------";
-    for(int i = 0; i <strlen(msg2);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-    glColor3f(1, 0, 0);
+    glColor3f(1, 1, 1);
+
+    frameDraw(1,1,1, 50, 750, 210, 0);
 
     glRasterPos3f(50, 750, 0);
-    char msg3[]="CREDITS (...)";
-    for(int i = 0; i <strlen(msg3);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
-
+    char msg2[]="CREDITS";
+    for(int i = 0; i <strlen(msg2);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
     
+
+    glColor3f(0.03, 0.49, 0.13);
+
+    glRasterPos3f(50, 720, 0);
+        char msg3[]="LOUYS RAPHAEL";
+        for(int i = 0; i <strlen(msg3);i++)
+            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
+
     glutSwapBuffers();
-    wait();
+    wait(); // used to wait until a certain time, before exitting
 }
 
 // ------------------------------------------------------------------ //
+
+// Create the RIGHT_BUTTON_CLICK menu
 
 void myMenu(int id){
 	switch(id){

@@ -10,7 +10,7 @@
 /*** FUNCTIONS ***/
 
 void Keyboard(unsigned char key, int x, int y);
-void game(int *mX, int *mY, player p, listeEn e, listetirsP t);
+void game(int *mX, int *mY, Hero hero, EnemyList e, listetirsP t);
 void checkCollisionTirsEnnemis (enemy e, tirsP p);
 void drawAllTirs(listetirsP t);
 

@@ -6,16 +6,20 @@
 #include <stdbool.h>
 #include <time.h>
 
+/*** FILES ***/
+
 #include "game_graphics.h"
 #include "enemies.h"
 #include "menus_graphics.h"
 
-/*** FUNCTIONS ***/
-// --------------------------------------------------------------------- // 
 
-listeEn initialListEnemies()
+bool startgame; 
+
+/*** FUNCTIONS ***/
+
+EnemyList initialListEnemies()
 {
-	listeEn e = malloc(sizeof(listeEnemies));
+	EnemyList e = malloc(sizeof(ListEnemy));
 	if (e == NULL)
 	{
 		exit(EXIT_FAILURE);
@@ -48,7 +52,7 @@ enemy createEnemy(int *maxY)
 
 // --------------------------------------------------------------------- // 
 
-void insertionEnemies(listeEn e, enemy base)
+void insertionEnemies(EnemyList e, enemy base)
 {
 	//if(e->quantite <= 10){
 	enemy new = malloc(sizeof(enemies));
@@ -74,8 +78,9 @@ void insertionEnemies(listeEn e, enemy base)
 
 // --------------------------------------------------------------------- // 
 
-void suppressionEnemies(listeEn e, bool test)
+void suppressionEnemies(EnemyList e, bool test)
 {
+
 	test = false;
 	if (e->first != NULL)
 	{
@@ -115,14 +120,19 @@ void suppressionEnemies(listeEn e, bool test)
 				}
 				free(deleted);
 				e->quantite--;
-				if(p->current_xp < 1000)
+
+				if(startgame==true && hero->health != 0 && hero->current_xp != 200)
 				{
-				p->current_xp += 50;
+					hero->current_xp += 50;
 				}
-				printf("Score : %i\n", p->current_xp);
-				if(p->current_xp == 500)
+
+				//printf("Score : %f\n", hero->current_xp);
+
+				
+				if(hero->current_xp == 200)
 				{
-						glutDisplayFunc(EndGameDisplay);
+						
+						glutDisplayFunc(WinDisplay);
 				}
 
 			}

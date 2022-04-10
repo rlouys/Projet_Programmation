@@ -2,7 +2,7 @@
 
 #include <GL/glut.h>
 #include "game_graphics.h"
-#include "characters.h"
+#include "hero.h"
 #include "tirs.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,12 +28,12 @@ listetirsP  initialListeTirs()
 
 // ---------------------------------------------------------------------------------- //
 
-tirsP createTirs(player p)
+tirsP createTirs(Hero hero)
 {
 	
 
-	int x = (p->pos.x)*2;
-	int y = ((p->pos.y)*2) + 2; 
+	int x = (hero->pos.x)*2;
+	int y = ((hero->pos.y)*2) + 2; 
 	tirsP new = malloc(sizeof(tirs));
 	if (new == NULL)
 	{
@@ -120,9 +120,9 @@ void suppressionTirs(listetirsP t, bool test)
 
 // ---------------------------------------------------------------------------------- //
 
-void tirer(player p, listetirsP t)
+void tirer(Hero hero, listetirsP t)
 {
-	tirsP new = createTirs(p);
+	tirsP new = createTirs(hero);
 	insertionTirs(t, new);
 }
 // ---------------------------------------------------------------------------------- //

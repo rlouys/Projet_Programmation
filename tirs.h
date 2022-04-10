@@ -4,7 +4,7 @@
 /*** LIBS ***/ 
 
 #include <stdbool.h>
-#include "characters.h"
+#include "hero.h"
 #include "game_graphics.h"
 
 /*** STRUCTURES ***/ 
@@ -37,11 +37,11 @@ struct listeTirs
 
 typedef struct tirs *tirsP; 
 typedef struct listeTirs *listetirsP;
-tirsP createTirs(player p);
+tirsP createTirs(Hero hero);
 listetirsP  initialListeTirs();
 void insertionTirs(listetirsP t, tirsP base);
 void suppressionTirs(listetirsP t, bool test);
-void tirer(player p, listetirsP t);
+void tirer(Hero hero, listetirsP t);
 tirsP r;
 listetirsP t;
 

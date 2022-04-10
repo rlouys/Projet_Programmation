@@ -5,6 +5,10 @@
         "stdlib.h": "c",
         "enemies.h": "c",
         "game.h": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "characters.h": "c",
+        "timers_and_effects.h": "c",
+        "hero.h": "c",
+        "menus_graphics.h": "c"
     }
 }

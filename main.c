@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-#include "characters.h"
+#include "hero.h"
 #include "game_graphics.h"
 #include "menus_graphics.h"
 #include "timers_and_effects.h"
@@ -41,9 +41,9 @@ void wait()
 {
     int timerwait;
 
-    for(timerwait = 0; timerwait < 100000; timerwait++)
+    for(timerwait = 0; timerwait < 120000; timerwait++)
     {
-            printf("timerwait : %i\n", timerwait);
+            printf("wait : %i\n", timerwait);
     }
     exit(0);
 }
@@ -106,7 +106,7 @@ void DisplayGame()
 	glClearColor(0.1f,0.1f,0.1f,0.1f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    game(&mX, &mY, p,e,t);
+    game(&mX, &mY, hero,e,t);
 
     glFlush();
 
@@ -147,6 +147,17 @@ void keyboardFunc(unsigned char Key, int x, int y) {
         if(try==true) wait();
         
     	break;
+    
+
+    case 'r':
+            startgame = false;
+            hero->current_xp = 0;
+            hero->health = 3;
+            hero->killed = 0;
+            e->quantite = 0;
+            glutDisplayFunc(WelcomeDisplay);
+            glutPostRedisplay();
+            break;
 
 	case 'g':
 		glutDisplayFunc(DisplayGameplay);
@@ -223,7 +234,7 @@ int main(int argc, char *argv[])
 	loadMap(&mX, &mY);     //Charge la carte
 	
 
-     p = createPlayer(&mX, &mY);
+     hero = createHero(&mX, &mY);
      e = initialListEnemies();
      t = initialListeTirs();
 	glutInit(&argc, argv);
