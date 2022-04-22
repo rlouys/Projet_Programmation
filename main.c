@@ -46,7 +46,7 @@ void wait()
 {
     int timerwait;
 
-    for(timerwait = 0; timerwait < 120000; timerwait++)
+    for(timerwait = 0; timerwait < 200000; timerwait++)
     {
             printf("wait : %i\n", timerwait);
     }
@@ -136,6 +136,7 @@ int main(int argc, char *argv[])
      hero = createHero(&mX, &mY);
      e = initialListEnemies();
      t = initialListeTirs();
+     o = initialListObstacles();
 
      // GLUT initialisations
 
@@ -151,6 +152,8 @@ int main(int argc, char *argv[])
     glutSpecialFunc(arrowFunc);
     glutMouseFunc(mouse);    	
 
+// 26/4 - 13/43 
+// 26/4 - 11/60 
 
 // MENU CLIC DROIT
 
@@ -159,13 +162,17 @@ int main(int argc, char *argv[])
 
 // TIMERS
     glutTimerFunc(50, scrolling, 0);
-    glutTimerFunc(10, updateCollisions, 0);
+    glutTimerFunc(100, updateCollisions, 0);
     glutTimerFunc(200, updateEnemies, 1);
     glutTimerFunc(50, updateTirs, 2);
     glutTimerFunc(50, updateNewEnemies, 3);
     glutTimerFunc(10, updateDeleteEnemies, 4);
     glutTimerFunc(10, updateDeleteTirs, 5);
-    
+    glutTimerFunc(50, updateObstacle, 6);
+	glutTimerFunc(10, updateNewObstacles, 7);
+	//glutTimerFunc(10, updateDeleteObstacles, 8);
+	//glutTimerFunc(10, updateCollisionsHE, 10);
+
     glEnable(GL_DEPTH_TEST);
 	glutMainLoop();
         

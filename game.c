@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "menus_graphics.h"
 #include "game_graphics.h"
 #include "tirs.h"
 #include "enemies.h"
@@ -70,7 +71,7 @@ void arrowFunction(int key, int x, int y) {
 
 // dessine le jeu et lance la partie, fait apparaitre les ennemis et les tirs
 
-void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t)
+void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t, ObstacleList o)
 {		
 
 	glPushMatrix();
@@ -80,8 +81,12 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t)
 	if (e->first != NULL || e->last != NULL)
 	{
 		drawAllEnnemis(e);
-	}		
+	}
 
+	if (o->first != NULL || o->last != NULL)
+	{
+		drawAllObstacles(o);
+	}
 
 	if (t->first != NULL || t->last != NULL)
 	{
@@ -141,7 +146,7 @@ void checkCollisionTirsEnnemis (enemy e, tir_Struct w)
 			key = 0;
 			
 		}
-	
+
 	if (Collide)
 	{
 		CHECKCOLLISION = true;
@@ -167,41 +172,93 @@ void checkCollisionTirsEnnemis (enemy e, tir_Struct w)
 
 
 // ------------------------------------------------------------ // 
-/*
-void checkCollisionHeroEnnemis (enemy e)
-{	
-	bool Collide = false;
-	int key = 1;
 
-	if (hero->pos.x == e->pos.x && e->pos.y == hero->pos.y && key != 0)
-		{
-			Collide = true;
-			key = 0;
-			
-		}
+// vérifie s'il y a une collision entre l'obstacle et le tir allié, le cas échéant, lui enlève de la vie ou le supprime, et augmente le score
+void checkCollisionTirsObstacles (tir_Struct w, obstacles o)
+{	
+	bool CollideO = false;
+	//int key = 1;
+	printf("-------------------------\n\n");
+	printf("w->pos.x : %f\n",w->pos.x);
+	printf("w->pos.y : %f\n",w->pos.y);
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("o->pos.x : %f\n",o->pos.x);
+	printf("o->pos.y : %f\n",o->pos.y);
+	printf("-------------------------\n\n");
+
 	
-	if (Collide)
+	if(( ((w->pos.x/2) == o->pos.x) || (((w->pos.x/2)+1) == o->pos.x) || (((w->pos.x/2)+2) == o->pos.x)) && ((w->pos.y <= o->pos.y) && (o->pos.y > w->pos.y))    )
+
+	{
+		
+
+
+			CollideO = true;
+			//key = 0;
+			printf("collide true!\n");
+		
+	}
+
+	if (CollideO)
 	{
 		CHECKCOLLISION = true;
 	}
 	if (CHECKCOLLISION)
 	{	
 		
-		e->vie = 0;
-		printf( "vie ennemi : %i", e->vie);
+		w->active = false;
+		printf("bye tir! \n");
+		CHECKCOLLISION = false;
+	}
+	
+}
+
+// ------------------------------------- //
+
+void checkCollisionAlliesEnemy (enemy en)
+{	
+	bool CollideO = false;
+	int key = 1;
+	printf("-------------------------\n\n");
+	printf("hero->pos.x : %f\n",hero->pos.x);
+	printf("hero->pos.y : %f\n",hero->pos.y);
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("en->pos.x : %f\n",en->pos.x);
+	printf("en->pos.y : %f\n",en->pos.y);
+	printf("-------------------------\n\n");
+
+	
+	if( (en->pos.x == hero->pos.x) && ((en->pos.y == hero->pos.y +1) || (en->pos.y == hero->pos.y +1))   && key != 0   )
+
+	{
+			printf("collide true!\n");
+
+			CollideO = true;
+			key = 0;
+			printf("collide true!\n");
+		
+	}
+
+	if (CollideO)
+	{
+		CHECKCOLLISION = true;
+	}
+	if (CHECKCOLLISION)
+	{	
 		hero->health -= 1;
-		printf("vie hero : %i", hero->health);
+		en->vie -=1;
+		printf("Vie -1 ! \n");
 
-
-		if(e->vie == 0)
-		{
-		e->active = false;
-		hero->killed += 1;
-
+		if(hero->health == 0){
+			glutDisplayFunc(EndGameDisplay);
 		}
 
+		if(en->vie == 0){
+			en->active = false;
+		}
+
+		printf("bye tir! \n");
 		CHECKCOLLISION = false;
 	}
 	
 } 
-*/

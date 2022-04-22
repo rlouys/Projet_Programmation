@@ -11,9 +11,13 @@
 /*** CONSTANTES ***/
 
 #define ENNEMI_SPEED 150 // 10 = ultraspeed/hardcore | 1000 = slow
-#define ENNEMI_PER_TEN_SECOND 5
+#define ENNEMI_PER_TEN_SECOND 10
 #define RANGE_MAX 120
-#define ATTACK_SPEED 5 // 1 is superfast, 1000 is slow
+#define ATTACK_SPEED 20 // 1 is superfast, 1000 is slow
+#define OBSTACLE_SPEED 600 // 10 = ultraspeed/hardcore | 1000 = slow
+#define OBSTACLES_PER_TEN_SECOND 1
+
+#define MAX_SCORE 100
 
 /*** VARIABLES ***/
 
@@ -48,6 +52,8 @@ void scrolling(int valeur) {
 
   // printf("startgame :::: \n");
 }
+
+// ---------------------------------------------------------------------------------- //
 
 // ---------------------------------------------------------------------------------- //
 
@@ -122,56 +128,73 @@ void updateCollisions(int valeur)
 	glutTimerFunc(10, updateCollisions, 0);
 }
 
-// ---------------------------------------------------------------------------------- //
+// --------------------------------------------------- // 
 
 // timer qui gère les changements de statut de l'ennemi
 
 void updateEnemies(int valeur)
 {
-	if(startgame==true && hero->health != 0 && hero->current_xp != 200){ 
+	if(startgame==true && hero->health != 0 && hero->current_xp != MAX_SCORE)
+	{ 
 
-	car = e->first;
-	if (e->first != NULL)
-	{
-		car->pos.y -= 1;
-		if (car->pos.y == 0)
+		car = e->first;
+		if (e->first != NULL)
 		{
-			car->pos.y = 40;
-			hero->current_xp -= 50;
-			//("score : %f\n", hero->current_xp);
-			e->quantite--;
-			hero->health -= 1;
-			hero->killed +=1;
-		//	printf("vie : %i\n", hero->health);
-			drawHealth(hero);
+			car->pos.y -= 1;
+			checkCollisionAlliesEnemy(car);
 
-			if(hero->health == 0){
-					glutDisplayFunc(EndGameDisplay);
-
-				}
-
-		}
-		while (car->next != NULL)
-		{
-			car = car->next;
-			car->pos.y -=1;
 			if (car->pos.y == 0)
 			{
 				car->pos.y = 40;
 				hero->current_xp -= 50;
 				e->quantite--;
 				hero->health -= 1;
-
+				hero->killed +=1;
 				drawHealth(hero);
 
-				if(hero->health == 0){
-					glutDisplayFunc(EndGameDisplay);
 
+				if(hero->health == 0)
+					{
+						startgame = false;
+						glutDisplayFunc(EndGameDisplay);
+						
+					}
+
+			}
+			while (car->next != NULL)
+			{
+				car = car->next;
+				car->pos.y -=1;
+				checkCollisionAlliesEnemy(car);
+
+				if (car->pos.y == 0)
+				{
+					car->pos.y = 40;
+					hero->current_xp -= 50;
+					e->quantite--;
+					hero->health -= 1;
+					drawHealth(hero);
+
+					if(hero->health == 0)
+					{
+						startgame = false;
+						glutDisplayFunc(EndGameDisplay);
+
+					}
 				}
 			}
 		}
-	}
-	}
+
+		}else if (hero->current_xp == MAX_SCORE){
+
+			startgame = false;
+			//suppressionEnemies(e, true);
+			
+			hero->current_xp = 0;
+
+			glutDisplayFunc(WinDisplay);
+
+		}
 	glutPostRedisplay();
 	glutTimerFunc(ENNEMI_SPEED, updateEnemies, 1);
 }
@@ -235,10 +258,13 @@ void updateDeleteEnemies(int valeur)
 {
 	if(startgame==true){ 
 
-	if (e->first != NULL || e->last != NULL)
-	{
-		suppressionEnemies(e, test);
-	}
+		if (e->first != NULL || e->last != NULL)
+		{
+			suppressionEnemies(e, false);
+		}
+
+		
+
 	}
 	glutPostRedisplay();
 	glutTimerFunc(10, updateDeleteEnemies, 4);
@@ -263,6 +289,97 @@ void updateDeleteTirs(int valeur)
 
 // ---------------------------------------------------------------------------------- //
 
+void updateObstacle(int valeur)
+{
+	if(startgame==true && hero->health != 0 && hero->current_xp != 200){ 
 
+	fence = o->first;
+	if (o->first != NULL)
+	{
+		fence->pos.y -= 1;
+
+		if (fence->pos.y == 0)
+		{
+			fence->pos.y = 40;
+			hero->current_xp -= 10;
+			//("score : %f\n", hero->current_xp);
+			o->quantite--;
+			
+		//	printf("vie : %i\n", hero->health);
+			//drawHealth(hero);
+
+			if(hero->health == 0){
+					glutDisplayFunc(EndGameDisplay);
+
+				}
+
+		}
+		while (fence->next != NULL)
+		{
+			fence = fence->next;
+			fence->pos.y -=1;
+
+			if (fence->pos.y == 0)
+			{
+				fence->pos.y = 40;
+				//hero->current_xp -= 50;
+				o->quantite--;
+				//hero->health -= 1;
+
+				//drawHealth(hero);
+
+				/*if(hero->health == 0){
+					glutDisplayFunc(EndGameDisplay);
+
+				}*/
+			}
+		}
+	}
+	}
+	glutPostRedisplay();
+	glutTimerFunc(OBSTACLE_SPEED, updateObstacle, 6);
+
+
+}
+
+// ---------------------------------------------------------------------------------- //
+
+void updateNewObstacles(int valeur)
+{
+	if(startgame==true){ 
+
+		obstacles new = createObstacle((&mX));
+		insertionObstacles(o, new);
+		
+		
+	}
+	
+	glutPostRedisplay();
+	glutTimerFunc(10000/OBSTACLES_PER_TEN_SECOND, updateNewObstacles, 7);
+
+
+}
+// ---------------------------------------------------------------------------------- //
+
+/*void updateDeleteObstacles(int valeur)
+{
+	if(startgame==true){ 
+
+		if (o->first != NULL || o->last != NULL)
+		{
+			suppressionObstacles(o, test);
+		}
+
+	}
+	glutPostRedisplay();
+	glutTimerFunc(10, updateDeleteObstacles, 8);
+
+
+}*/
+// ---------------------------------------------------------------------------------- //
+
+// ---------------------------------------------------------------------------------- //
+
+// ---------------------------------------------------------------------------------- //
 
 

@@ -21,7 +21,11 @@
 
 #define MAP "map-test.txt" 
 #define FOND 0.0
-#define HEART_SIZE 0.8 //(0.1 = little || 1 = big)
+#define HEART_SIZE 0.695 //(0.1 = little || 1 = big)
+#define NB_COEURS 5
+#define EMERALD 0.03, 0.49, 0.13
+#define WHITE 1, 1, 1
+
 
 /***  VARIABLES  ***/
 
@@ -89,8 +93,8 @@ void drawHealth(Hero hero){
 
 	int i;
 
-	int x = 700;
-	int y = 980;
+	int x = 680;
+	int y = 920;
 
 	glTranslatef(x,y,0);
 
@@ -99,10 +103,57 @@ void drawHealth(Hero hero){
 	{	
 		
 		drawHeart(1,0,0);
-		glTranslatef(Square_size*2,0,0);
+		glTranslatef((Square_size*1.5),0,0);
 
+		if(i % 5 == 0)
+		{
+
+			glTranslatef(-( (Square_size*1.5) * NB_COEURS) , -(Square_size*2), 0);
+
+		}
 	}
 
+	writeSomething(0,0,0,690,1000,"HEALTH");
+
+	glColor3f(EMERALD);
+	frameDraw(EMERALD, 690, 1005, 113, 0);
+
+	for (i = 0 ; i < 30 ; i++)
+	{
+		glRasterPos3f(790,1020-i, 1); // DRAW RIGHT LINE FRAME
+            char msg2[]="|";
+            for(int i = 0; i <strlen(msg2);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
+            
+	}
+
+	frameDraw(EMERALD, 690, 960, 113, 0);
+
+	for (i = 0 ; i < 30 ; i++)
+	{
+		glRasterPos3f(790,975-i, 1); // DRAW RIGHT LINE FRAME
+            char msg2[]="|";
+            for(int i = 0; i <strlen(msg2);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
+            
+	}
+
+	glTranslatef(700,965,0);
+	drawHeart(0,0,0);
+
+	int a = hero->health;
+
+	char str[10];
+
+	sprintf(str, "%d", a);
+
+	writeSomething(0, 0, 0, 728, 955, str);
+
+	glTranslatef(780,965,0);
+	drawHeart(0,0,0);
+
+
+	
 }
 
 // --------------------------------------------------------------------------------------------_//
@@ -114,8 +165,8 @@ void drawScore(Hero hero)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	int i;
 
-	
 	int a = hero->current_xp;
 
 	char str[10];
@@ -123,9 +174,19 @@ void drawScore(Hero hero)
 	sprintf(str, "%d", a);
 
 
-	writeSomething(0,0,0,700, 780, "SCORE");
-	writeSomething(0,0,0,690, 760, "-------");
-	writeSomething(0,0,0,700, 738, str);
+	writeSomething(0,0,0,700, 500, "SCORE");
+	writeSomething(0,0,0,700, 458, str);
+	glColor3f(EMERALD);
+	frameDraw(EMERALD, 690, 505, 120, 0);
+
+	for (i = 0 ; i < 30 ; i++)
+	{
+		glRasterPos3f(800,520-i, 1); // DRAW RIGHT LINE FRAME
+            char msg2[]="|";
+            for(int i = 0; i <strlen(msg2);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
+            
+	}
 
 }
 
@@ -455,8 +516,7 @@ void drawMap(int *mX, int *mY, Hero hero)
 		}
 	}
 	drawHealth(hero);
-	writeSomething(0,0,0,690,1010,"HEALTH");
-	writeSomething(0,0,0,680,995,"---------");
+	
 	
 	drawScore(hero);
 
@@ -507,6 +567,30 @@ void drawEnemy(enemy e)
 	glVertex3f(0.0f,Square_size,0.0f);
 	glEnd();
 }
+
+// ------------------------------------------------------------------ //
+
+//dessine les obstacles
+
+void drawObstacles(obstacles o)
+{
+	int i, j;
+	i = o->pos.x;
+	j = o->pos.y;
+	glColor3f(1.0f,1.0f, 0.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(i*Square_size,j*Square_size,0.0f);
+	glBegin(GL_QUADS);
+	glVertex3f(0.0f,0.0f,0.0f);
+	glVertex3f(Square_size,0.0f,0.0f);
+	glVertex3f(Square_size,Square_size,0.0f);
+	glVertex3f(0.0f,Square_size,0.0f);
+	glEnd();
+}
+
+
+
 
 // ------------------------------------------------------------------ //
 
@@ -572,6 +656,31 @@ void drawAllEnnemis(EnemyList e)
 
 // ------------------------------------------------------------- //
 
+// dessine des obstacles à la chaine (utilise drawObstacles à la chaine)
+
+void drawAllObstacles(ObstacleList o)
+{	
+	obstacles first = malloc(sizeof(obstacle));
+	obstacles next = malloc(sizeof(obstacle));
+	first = o->first;
+	next = o->first->next;
+	if (o->first != NULL || o->last != NULL) // test existence
+	{
+		drawObstacles(first);
+		if (o->first->next != NULL)
+		{
+			drawObstacles(next);
+			while (next->next != NULL)
+			{
+				next = next->next;
+				drawObstacles(next);
+			}
+		}
+	}
+}
+
+// ------------------------------------------------------------- //
+
 // dessine les tirs à la chaine (utilise drawTirs à la chaîne)
 
 void drawAllTirs(listetir_Struct t)
@@ -606,7 +715,7 @@ void DisplayGame()
 	glClearColor(0.1f,0.1f,0.1f,0.1f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    game(&mX, &mY, hero,e,t);
+    game(&mX, &mY, hero,e,t, o);
 
     glFlush();
 

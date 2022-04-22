@@ -68,10 +68,10 @@ void keyboardFunc(unsigned char Key, int x, int y) {
     
     case 'r':
             startgame = false;
-            hero->current_xp = 0;
-            hero->health = 3;
+            hero->health = 42;
             hero->killed = 0;
-            e->quantite = 0;
+
+            
             glutDisplayFunc(WelcomeDisplay);
             glutPostRedisplay();
             break;
@@ -90,6 +90,7 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 		glutDisplayFunc(WelcomeDisplay);
 		glutPostRedisplay();	
 		break;	
+    
     };
    
 }
@@ -110,25 +111,26 @@ void frameDraw(int red, int green, int blue, int x, int y, int length, int title
     if (title == 0){
 
         for (i = 0; i < 30; i++){ 
-            glRasterPos3f(x_left, y_down+i, 1); // DRAW UP LINE FRAME
+            glRasterPos3f(x_left, y_down+i, 1); // DRAW LEFT LINE FRAME
             char msg1[]="|";
             for(int i = 0; i <strlen(msg1);i++)
                 glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
 
-            glRasterPos3f(x_right, y_down+i, 1); // DRAW DOWN LINE FRAME
+            glRasterPos3f(x_right, y_down+i, 1); // DRAW RIGHT LINE FRAME
             char msg2[]="|";
             for(int i = 0; i <strlen(msg2);i++)
                 glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
+            
         }
 
         for(j = 0; j <= length; j++)
         {
-            glRasterPos3f(x_left+j, y_down, 1); // DRAW RIGHT LINE FRAME
+            glRasterPos3f(x_left+j, y_down, 1); // DRAW DOWN LINE FRAME
             char msg3[]="-";
             for(int i = 0; i <strlen(msg3);i++)
                 glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
 
-            glRasterPos3f(x_left+j, y_up, 1); // DRAW LEFT LINE FRAME
+            glRasterPos3f(x_left+j, y_up, 1); // DRAW UP LINE FRAME
             char msg4[]="-";
             for(int i = 0; i <strlen(msg4);i++)
                 glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
@@ -407,7 +409,8 @@ void DisplayOptions()
     for(int i = 0; i <strlen(msg7);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
 
-    
+    glutKeyboardFunc(keyboardFunc);
+
 
     glutSwapBuffers();
 }

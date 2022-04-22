@@ -11,8 +11,8 @@
 
 struct positionP
 {
-	int x;
-	int y;
+	float x;
+	float y;
 };
 
 // Définition du héro //

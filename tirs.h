@@ -8,10 +8,11 @@
 
 struct positionT
 {
-	int x;
-	int y;
+	float x;
+	float y;
 };
 typedef struct tirs tirs;
+
 struct tirs
 {
 	struct positionT pos;

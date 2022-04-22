@@ -36,7 +36,7 @@ Hero createHero(int *maxX, int *maxY)
 
 	// Stats initialisation
 	hero = malloc(sizeof(Hero));
-	hero->health = 3;
+	hero->health = 20;
 	hero->pos.x = x;
 	hero->pos.y = y;
 	hero->current_xp = 0;

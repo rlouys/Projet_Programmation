@@ -66,11 +66,17 @@ void drawPlayer(Hero hero);
 // dessine un ennemi et le place sur la carte
 void drawEnemy(enemy e); 
 
+//dessine les obstacles
+void drawObstacles(obstacles o);
+
 // dessine les tirs envoyés du joueur
 void drawTirs(tir_Struct p); 
 
 // dessine des ennemis à la chaine (utilise drawEnemy à la chaine)
 void drawAllEnnemis(EnemyList e); 
+
+// dessine les tirs à la chaine (utilise drawTirs à la chaîne)
+void drawAllObstacles(ObstacleList t);
 
 // dessine les tirs à la chaine (utilise drawTirs à la chaîne)
 void drawAllTirs(listetir_Struct t);
