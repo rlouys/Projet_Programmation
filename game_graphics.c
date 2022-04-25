@@ -383,6 +383,27 @@ void writeSomething(float red, float green, float blue, int x, int y, char *txt)
 
 // --------------------------------------------------------------------------------------------_//
 
+// écrit un texte aux couleurs et positions voulues
+
+void writeSomethingArray(float red, float green, float blue, int x, int y, char txt[])
+{
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glColor3f(red, green, blue);
+	glRasterPos3f(x, y, 0);
+
+    for(int i = 0; txt[i] != '\0';i++)
+	{
+    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, txt[i]);
+	}
+
+
+
+}
+// --------------------------------------------------------------------------------------------_//
+
 // dessine la map et tout les éléments statiques (score, murs)
 
 void drawMap(int *mX, int *mY, Hero hero)			

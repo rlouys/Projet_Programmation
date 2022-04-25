@@ -11,6 +11,7 @@
 #include <stdbool.h>
 
 
+
 /*** VARIABLES ***/
 
 int mX;
@@ -21,17 +22,30 @@ int mY;
 // initialise les fonctions au clavier lorsque dans un menu
 void keyboardFunc(unsigned char Key, int x, int y); 
 
+// sert à afficher une lettre que l'on écrit
+void Alphabet(unsigned char Key, int x, int y)
+
+
+// initialise les fonctions au clavier lorsque dans un menu
+void keyboardFuncOpt(unsigned char Key, int x, int y); 
+
 // Dessine un cadre autour d'un texte
 void frameDraw(int red, int green, int blue, int x, int y, int length, int title); 
 
 // Crée l'écran de DÉMARRAGE
 void WelcomeDisplay(); 
 
+// Crée l'écran de demande de Username
+void UsernameDisplay();
+
 // Crée le menu de FIN en cas d'ÉCHEC (you failed...)
 void EndGameDisplay(); 
 
 // Crée le menu de FIN en cas de VICTOIRE (you win!)
 void WinDisplay(); 
+
+// initialise les options dynamiques à l'écran avant la première touche pressée
+void options_keys(int option_number);
 
 // Crée et affiche l'écran des OPTIONS
 void DisplayOptions(); 
