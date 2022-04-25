@@ -19,6 +19,8 @@
 float *value;
 float *deplacement_fenetre;
 
+char username[20];
+
 bool UP = false;
 bool LEFT = false;
 bool RIGHT = false;
@@ -140,7 +142,7 @@ void checkCollisionTirsEnnemis (enemy e, tir_Struct w)
 	bool Collide = false;
 	int key = 1;
 
-	if ((w->pos.x/2) == e->pos.x && e->pos.y == ((w->pos.y-2)/2)-1 && key != 0)
+	if ((w->pos.x/2) == e->pos.x && e->pos.y <= ((w->pos.y-2)/2)+1.5 && key != 0)
 		{
 			Collide = true;
 			key = 0;
@@ -228,7 +230,7 @@ void checkCollisionAlliesEnemy (enemy en)
 	printf("-------------------------\n\n");
 
 	
-	if( (en->pos.x == hero->pos.x) && ((en->pos.y == hero->pos.y +1) || (en->pos.y == hero->pos.y +1))   && key != 0   )
+	if( (en->pos.x == hero->pos.x) && ((en->pos.y <= hero->pos.y +0.1) || (en->pos.y <= hero->pos.y +0.1))   && key != 0   )
 
 	{
 			printf("collide true!\n");
@@ -262,3 +264,21 @@ void checkCollisionAlliesEnemy (enemy en)
 	}
 	
 } 
+
+// ------------------------------------- // 
+
+// charge la map
+
+void saveScore(Hero hero)		
+{
+    FILE *f = NULL;
+	f = fopen("scores.txt","a");
+
+	int score = hero->current_xp;
+	
+	fprintf(f, "%s       ", "HARUHIKO");
+	fprintf(f,"%i \n", score);
+	fclose(f);
+
+
+}		

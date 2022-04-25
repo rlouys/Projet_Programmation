@@ -5,7 +5,7 @@
 #include "menus_graphics.h"
 #include "timers_and_effects.h"
 #include "hero.h"
-
+#include "game.h"
 
 #include <GL/glut.h>
 
@@ -15,6 +15,9 @@
 #include <string.h>
 #include <stdbool.h>
 #include <string.h>
+
+
+
 
 /*** CONSTANTES ***/
 
@@ -31,7 +34,20 @@ float *deplacement_fenetre = &df;
 bool frame = true;
 bool startgame;
 bool try;
+int counterAlpha = 0;
+char* letter = " ";
+// options_keys var
+int difficulty = 1;
+char* difficulty_str;
+bool screen;
+char* screen_str;
+bool gameplay_keys;
+char* gameplay_keys_str;
+bool cheatMode;
+char* cheatmode_str;
 
+char username[20];
+char* usernameScore;
 
 /*** FUNCTIONS ***/
 
@@ -48,8 +64,8 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 		break;
 
 	case 'n':
-        startgame = !startgame;
-		glutDisplayFunc(DisplayGame);
+
+		glutDisplayFunc(UsernameDisplay);
 		glutPostRedisplay();
 		break;
 
@@ -94,6 +110,286 @@ void keyboardFunc(unsigned char Key, int x, int y) {
     };
    
 }
+
+// ----------------------------------------------------------------- //
+
+void Alphabet(unsigned char Key, int x, int y)
+{
+
+    switch (Key) {
+    
+        case 'a':
+            username[counterAlpha] = 'A';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+
+
+        case 'b':
+            username[counterAlpha] = 'B';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'c':
+            username[counterAlpha] = 'C';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'd':
+            username[counterAlpha] = 'D';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'e':
+            username[counterAlpha] = 'E';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'f':
+            username[counterAlpha] = 'F';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'g':
+            username[counterAlpha] = 'G';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'h':
+            username[counterAlpha] = 'H';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'i':
+            username[counterAlpha] = 'I';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'j':
+            username[counterAlpha] = 'J';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'k':
+            username[counterAlpha] = 'K';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'l':
+            username[counterAlpha] = 'L';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'm':
+            username[counterAlpha] = 'M';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'n':
+            username[counterAlpha] = 'N';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+
+        case 'o':
+            username[counterAlpha] = 'O';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'p':
+            username[counterAlpha] = 'P';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'q':
+            username[counterAlpha] = 'Q';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+
+        case 'r':
+            username[counterAlpha] = 'R';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 's':
+            username[counterAlpha] = 'S';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 't':
+            username[counterAlpha] = 'T';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+
+        case 'u':
+            username[counterAlpha] = 'U';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'v':
+            username[counterAlpha] = 'V';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'w':
+            username[counterAlpha] = 'W';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'x':
+            username[counterAlpha] = 'X';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'y':
+            username[counterAlpha] = 'Y';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 'z':
+            username[counterAlpha] = 'Z';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
+        case 0x08: 
+
+            if(counterAlpha>0)
+            {            letter = "_";
+
+            glTranslatef(-10,0,0);
+            username[counterAlpha-1] = '\0';
+            counterAlpha--;
+            }
+
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            break;
+        case 13:
+
+            startgame = !startgame;
+            glutDisplayFunc(DisplayGame);
+            glutPostRedisplay();
+            break;
+
+        case 27 :
+
+        
+            glutDisplayFunc(WelcomeDisplay);
+            glutPostRedisplay();
+            break;
+
+
+        };
+    
+    
+
+}
+// ----------------------------------------------------------------- //
+
+void keyboardFuncOpt(unsigned char Key, int x, int y) {
+
+    switch (Key) {
+   
+    case 'd':
+        difficulty += 1;
+        if((difficulty) == 5)
+        {
+            difficulty = 1;
+        } 
+		glutDisplayFunc(DisplayOptions);
+		glutPostRedisplay();
+		break;
+
+	case 'k':
+        gameplay_keys = !gameplay_keys;
+		glutDisplayFunc(DisplayOptions);
+		glutPostRedisplay();
+		break;
+
+	case 's':
+        screen = !screen;
+        //screen disposition = !screen disposition {code en attente}
+		glutDisplayFunc(DisplayOptions);
+		glutPostRedisplay();
+    	break;
+
+    case 'z':
+
+        cheatMode = !cheatMode;
+        //screen disposition = !screen disposition {code en attente}
+		glutDisplayFunc(DisplayOptions);
+		glutPostRedisplay();
+
+    	break;
+    case 'r':
+
+		glutDisplayFunc(WelcomeDisplay);
+        glutKeyboardFunc(keyboardFunc);
+		glutPostRedisplay();
+		break;
+
+    	
+    
+    };
+   
+}
+
+
+
 
 // ----------------------------------------------------------------- //
 
@@ -239,11 +535,81 @@ void WelcomeDisplay()
 
 // ------------------------------------------------------------------ //
 
+void UsernameDisplay()
+{
+	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glColor3f(EMERALD);
+    glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+    
+    int i;
+    int j;
+
+    for (i = 0; i < 48; i++){ 
+            glRasterPos3f(175, 750+i, 1); // DRAW LEFT LINE FRAME
+            char msg1[]="|";
+            for(int i = 0; i <strlen(msg1);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
+
+            glRasterPos3f(650, 750+i, 1); // DRAW RIGHT LINE FRAME
+            char msg2[]="|";
+            for(int i = 0; i <strlen(msg2);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
+            
+        }
+
+        for(j = 0; j <= 475; j++)
+        {
+            glRasterPos3f(175+j, 800, 1); // DRAW DOWN LINE FRAME
+            char msg3[]="-";
+            for(int i = 0; i <strlen(msg3);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
+
+            glRasterPos3f(175+j, 750, 1); // DRAW UP LINE FRAME
+            char msg4[]="-";
+            for(int i = 0; i <strlen(msg4);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
+        }
+
+
+    glColor3f(EMERALD);
+    frameDraw(EMERALD, 50, 580, 210, 0);
+    glColor3f(WHITE);
+
+    glRasterPos3f(50, 580, 0);
+    char msg7[]="<<<<<<<<<<<<<<<<<<<<<< ('ESC')";
+    for(int i = 0; i <strlen(msg7);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
+
+
+    frameDraw(0.03,0.49,0.13, 210, 850, 630, 1);
+	//writeSomething(EMERALD, 310, 770, "H  A  R  U  H  I  K  O");    
+	writeSomething(EMERALD, 180, 850, "E N T R E Z    V O T R E     U S E R N A M E :"); 
+
+
+    writeSomethingArray(EMERALD, 330, 770, username);
+        
+    
+    
+    
+    glutKeyboardFunc(Alphabet);
+
+
+
+
+
+
+    glutSwapBuffers();
+
+}
+
+// ------------------------------------------------------------------ //
+
 // Crée le menu de FIN en cas d'ÉCHEC (you failed...)
 
 void EndGameDisplay()
 {	
-   // int tick;
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glColor3f(EMERALD);
@@ -345,6 +711,92 @@ void WinDisplay()
 }
 // ------------------------------------------------------------------ //
 
+// initialise les options dynamiques à l'écran avant la première touche pressée
+void options_keys(int option_number)
+{   
+    
+        switch (option_number) {
+
+            case 1:
+        
+                if(screen == true)
+                { 
+                    screen_str = "ECRAN     :  V R T C   ('s')";
+                }
+                else
+                {
+                    screen_str = "ECRAN     :  H R Z T   ('s')"; 
+                }
+                
+                break;
+
+            case 2:
+                if(difficulty == 1)
+                { 
+                    difficulty_str = "DIFFICULTE:  FACILE    ('d')";
+                    //level++;
+                }
+                else if (difficulty == 2)
+                {
+                    difficulty_str = "DIFFICULTE:  NORMAL    ('d')"; 
+                    //level++;
+                }
+                else if (difficulty == 3)
+                {
+                    difficulty_str = "DIFFICULTE:  DIFFICILE ('d')"; 
+                }
+                else if (difficulty == 4)
+                {
+                    difficulty_str = "DIFFICULTE:  EXTREME   ('d')"; 
+                }
+
+                break;
+
+            case 3:
+
+                if(cheatMode == true)
+                { 
+                    cheatmode_str = "CHEAT MODE:  ENABLED   ('z')";
+                }
+                else
+                {
+                    cheatmode_str = "CHEAT MODE:  DISABLED  ('z')"; 
+                }
+                break;
+
+            case 4:
+                
+                if(gameplay_keys == true)
+                { 
+                    gameplay_keys_str = "TOUCHES   :  Z Q S D   ('k')";
+                }
+                else
+                {
+                    gameplay_keys_str = "TOUCHES   :  A R R O W ('k')"; 
+                }
+
+                break;
+
+                
+            
+            };
+   
+}
+
+
+
+
+
+
+
+        
+
+
+    
+
+
+// ------------------------------------------------------------------ //
+
 // Crée et affiche l'écran des OPTIONS
 
 void DisplayOptions()
@@ -364,6 +816,7 @@ void DisplayOptions()
     for(int i = 0; i <strlen(msg1);i++)
     	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
 
+    //options_keys(0);
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~ // 
 
@@ -371,31 +824,38 @@ void DisplayOptions()
     frameDraw(WHITE, x, 750, 210, 0);
 
     glRasterPos3f(x, 750, 1);
-    char msg3[]="DIFFICULTE :  EXTREME  ('d')";
+
+    options_keys(2);
+
+    char* msg3 = difficulty_str;
     for(int i = 0; i <strlen(msg3);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
 
 
     frameDraw(WHITE, x, 700, 210, 0);
 
-
+    options_keys(4);
     glRasterPos3f(x, 700, 1);
-    char msg4[]="TOUCHES    :  Z Q S D  ('k')";
+    char* msg4 = gameplay_keys_str;
     for(int i = 0; i <strlen(msg4);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
 
 
     frameDraw(WHITE, x, 650, 210, 0);
 
+
+    options_keys(1);
     glRasterPos3f(x, 650, 1);
-    char msg5[]="ECRAN      :  VERTICAL ('s')";
+    char* msg5 = screen_str;
     for(int i = 0; i <strlen(msg5);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg5[i]);
-
     frameDraw(WHITE, x, 600, 210, 0);
 
+
+
+    options_keys(3);
     glRasterPos3f(x, 600, 1);
-    char msg6[]="CHEAT MODE :  ENABLED  ('z')";
+    char* msg6 = cheatmode_str;
     for(int i = 0; i <strlen(msg6);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
 
@@ -409,7 +869,7 @@ void DisplayOptions()
     for(int i = 0; i <strlen(msg7);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
 
-    glutKeyboardFunc(keyboardFunc);
+    glutKeyboardFunc(keyboardFuncOpt);
 
 
     glutSwapBuffers();

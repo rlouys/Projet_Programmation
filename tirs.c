@@ -37,8 +37,8 @@ tir_Struct createTirs(Hero hero)
 {
 	
 
-	int x = (hero->pos.x)*2;
-	int y = ((hero->pos.y)*2) + 2; 
+	float x = (hero->pos.x)*2;
+	float y = ((hero->pos.y)*2) + 2; 
 	tir_Struct newTir = malloc(sizeof(tirs));
 	if (newTir == NULL)
 	{

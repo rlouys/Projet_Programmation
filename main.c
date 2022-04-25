@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
     glutTimerFunc(50, scrolling, 0);
     glutTimerFunc(100, updateCollisions, 0);
     glutTimerFunc(200, updateEnemies, 1);
-    glutTimerFunc(50, updateTirs, 2);
+    glutTimerFunc(1, updateTirs, 2);
     glutTimerFunc(50, updateNewEnemies, 3);
     glutTimerFunc(10, updateDeleteEnemies, 4);
     glutTimerFunc(10, updateDeleteTirs, 5);

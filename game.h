@@ -7,6 +7,9 @@
 #include <stdlib.h>
 
 
+
+
+
 /*** FUNCTIONS ***/
 
 // definition de la fonction Keyboard permettant de quitter/tirer
@@ -30,5 +33,7 @@ void checkCollisionTirsObstacles (tir_Struct w, obstacles o);
 // vérifie s'il y a une collision entre l'ennemi et l'allié, le cas échéant, enlève de la vie aux deux persos
 void checkCollisionAlliesEnemy (enemy en);
 
+//sauvegarde le score de la dernière partie et l'enregistre dans un fichier txt
+void saveScore(Hero hero);
 
 #endif

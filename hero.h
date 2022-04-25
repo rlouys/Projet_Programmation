@@ -23,7 +23,7 @@ struct Hero
 		int health;
 		int attack;
 		struct positionP pos;
-		float current_xp;
+		int current_xp;
 		int weapon_type;
 		int killed;
 

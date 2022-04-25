@@ -48,7 +48,7 @@ enemy createEnemy(int *maxY)
 	} 
 	new->vie = 1;
 	new->pos.x = x;
-	new->pos.y = 51;
+	new->pos.y = 65;
 	new->next = NULL;
 	new->previous = NULL;
 	new->active = true;

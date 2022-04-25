@@ -57,6 +57,9 @@ void drawCircle(float red, float green, float blue, int posx, int posy, float ra
 // écrit un texte aux couleurs et positions voulues
 void writeSomething(float red, float green, float blue, int x, int y, char *txt); 
 
+// écrit un texte aux couleurs et positions voulues (avec un tableau)
+void writeSomethingArray(float red, float green, float blue, int x, int y, char txt[]);
+
 // dessine la map et tout les éléments statiques (score, murs)
 void drawMap(int *mX, int *mY, Hero hero); 
 
