@@ -20,11 +20,18 @@
 /***  CONSTANTES  ***/
 
 #define MAP "map-test.txt" 
-#define FOND 0.0
 #define HEART_SIZE 0.695 //(0.1 = little || 1 = big)
 #define NB_COEURS 5
+
+//COLORS//
 #define EMERALD 0.03, 0.49, 0.13
 #define WHITE 1, 1, 1
+#define BLACK 0, 0, 0
+#define GREY 0.5, 0.5, 0.5
+#define BROWN 0.30, 0.23, 0.12
+#define SAND 0.94, 0.87, 0.70
+#define RED 1.0, 0, 0
+#define YELLOW 1, 1, 0
 
 
 /***  VARIABLES  ***/
@@ -33,6 +40,9 @@
 float *value;
 int mX;
 int mY;
+char username[20];
+
+bool optionSwitch;
 
 
 /*** FUNCTIONS ***/ 
@@ -93,7 +103,7 @@ void drawHealth(Hero hero){
 
 	int i;
 
-	int x = 680;
+	int x = 750;
 	int y = 920;
 
 	glTranslatef(x,y,0);
@@ -113,33 +123,33 @@ void drawHealth(Hero hero){
 		}
 	}
 
-	writeSomething(0,0,0,690,1000,"HEALTH");
+	writeSomething(BLACK,760,1000,"HEALTH");
 
 	glColor3f(EMERALD);
-	frameDraw(EMERALD, 690, 1005, 113, 0);
+	frameDraw(EMERALD, 750, 1005, 130, 0);
 
 	for (i = 0 ; i < 30 ; i++)
 	{
-		glRasterPos3f(790,1020-i, 1); // DRAW RIGHT LINE FRAME
+		glRasterPos3f(870,1020-i, 1); // DRAW RIGHT LINE FRAME
             char msg2[]="|";
             for(int i = 0; i <strlen(msg2);i++)
                 glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
             
 	}
 
-	frameDraw(EMERALD, 690, 960, 113, 0);
+	frameDraw(EMERALD, 750, 960, 130, 0);
 
 	for (i = 0 ; i < 30 ; i++)
 	{
-		glRasterPos3f(790,975-i, 1); // DRAW RIGHT LINE FRAME
+		glRasterPos3f(870,975-i, 1); // DRAW RIGHT LINE FRAME
             char msg2[]="|";
             for(int i = 0; i <strlen(msg2);i++)
                 glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
             
 	}
 
-	glTranslatef(700,965,0);
-	drawHeart(0,0,0);
+	glTranslatef(770,965,0);
+	drawHeart(BLACK);
 
 	int a = hero->health;
 
@@ -147,14 +157,43 @@ void drawHealth(Hero hero){
 
 	sprintf(str, "%d", a);
 
-	writeSomething(0, 0, 0, 728, 955, str);
+	writeSomething(BLACK, 798, 955, str);
 
-	glTranslatef(780,965,0);
-	drawHeart(0,0,0);
-
+	glTranslatef(850,965,0);
+	drawHeart(BLACK);
 
 	
+	
 }
+// --------------------------------------------------------------------------------------------_//
+
+// affiche le score du joueur en temps réel
+
+void drawUsername()
+{
+
+	int i;
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+    writeSomethingArray(BLACK, 745, 260, username);
+
+	writeSomething(BLACK,760, 300, "PSEUDO");
+	glColor3f(EMERALD);
+	frameDraw(EMERALD, 750, 305, 130, 0);
+
+	for (i = 0 ; i < 30 ; i++)
+	{
+		glRasterPos3f(870,320-i, 1); // DRAW RIGHT LINE FRAME
+            char msg2[]="|";
+            for(int i = 0; i <strlen(msg2);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
+            
+	}
+
+}
+
 
 // --------------------------------------------------------------------------------------------_//
 
@@ -174,14 +213,14 @@ void drawScore(Hero hero)
 	sprintf(str, "%d", a);
 
 
-	writeSomething(0,0,0,700, 500, "SCORE");
-	writeSomething(0,0,0,700, 458, str);
+	writeSomething(BLACK,770, 500, "SCORE");
+	writeSomething(BLACK,790, 458, str);
 	glColor3f(EMERALD);
-	frameDraw(EMERALD, 690, 505, 120, 0);
+	frameDraw(EMERALD, 750, 505, 130, 0);
 
 	for (i = 0 ; i < 30 ; i++)
 	{
-		glRasterPos3f(800,520-i, 1); // DRAW RIGHT LINE FRAME
+		glRasterPos3f(870,520-i, 1); // DRAW RIGHT LINE FRAME
             char msg2[]="|";
             for(int i = 0; i <strlen(msg2);i++)
                 glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
@@ -228,18 +267,14 @@ void drawLine(float red, float green, float blue)
 	glVertex3f(line*2,Square_size, 0.0f);
 	glVertex3f(line,Square_size, 0.0f);
 
-	red = FOND;
-	green = FOND;
-	blue = FOND;
-
-	glColor3f(red,green,blue);
+	glColor3f(BLACK);
 
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(line, 0.0f, 0.0f);
 	glVertex3f(line,Square_size, 0.0f);
 	glVertex3f(0,Square_size, 0.0f);
 
-	glColor3f(red,green,blue);
+	glColor3f(BLACK);
 
 	glVertex3f(line*2, 0.0f,0.0f);
 	glVertex3f(line*3, 0.0f,0.0f);
@@ -303,15 +338,15 @@ void drawLineBorder(float red, float green, float blue, int border) //border 0 =
 // les couleurs doivent être entrées en paramètre
 // dessine un carré aux couleurs voulues
 
-void drawSquare(float red, float green, float blue)
+void drawSquare(float red, float green, float blue, int size)
 {
 	glBegin(GL_QUADS);
 	glColor3f(red,green,blue);
 
 		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(Square_size, 0.0f, 0.0f);
-		glVertex3f(Square_size,Square_size, 0.0f);
-		glVertex3f(0.0f,Square_size, 0.0f);
+		glVertex3f((Square_size*size), 0.0f, 0.0f);
+		glVertex3f((Square_size*size),(Square_size*size), 0.0f);
+		glVertex3f(0.0f,(Square_size*size), 0.0f);
 		
 	
 	glEnd();
@@ -383,11 +418,34 @@ void writeSomething(float red, float green, float blue, int x, int y, char *txt)
 
 // --------------------------------------------------------------------------------------------_//
 
+// écrit un texte aux couleurs et positions voulues en helvetica taille 18
+
+void writeSomethingHelvetica(float red, float green, float blue, int x, int y, char *txt){
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glColor3f(red, green, blue);
+	glRasterPos3f(x, y, 0);
+    char *msg1= txt;
+
+    for(int i = 0; i <strlen(msg1);i++)
+	{
+    	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, msg1[i]);
+	}
+
+
+
+}
+
+// --------------------------------------------------------------------------------------------_//
+
+
 // écrit un texte aux couleurs et positions voulues
 
 void writeSomethingArray(float red, float green, float blue, int x, int y, char txt[])
 {
-
+	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -427,9 +485,9 @@ void drawMap(int *mX, int *mY, Hero hero)
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 				glTranslatef(0,-(*value),0);
 
-				drawSquare(0.30, 0.23, 0.12);	
-				drawLineBorder(0.5,0.5,0.5,0);
-				drawLineBorder(0.0,0.0,0.0,3);
+				drawSquare(BROWN, 1);	
+				drawLineBorder(GREY,0);
+				drawLineBorder(BLACK,3);
 
 				
 
@@ -444,9 +502,9 @@ void drawMap(int *mX, int *mY, Hero hero)
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 				glTranslatef(0,-(*value),0);
 
-				drawSquare(0.30, 0.23, 0.12);	
-				drawLineBorder(0.5,0.5,0.5,1);
-				drawLineBorder(0.0,0.0,0.0,2);
+				drawSquare(BROWN, 1);	
+				drawLineBorder(GREY,1);
+				drawLineBorder(BLACK,2);
 
 			}
 
@@ -457,7 +515,7 @@ void drawMap(int *mX, int *mY, Hero hero)
 
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 
-				drawSquare(0.94, 0.87, 0.70);
+				drawSquare(SAND, 1);
 			}
 		
 			if (*(*(map + j) + i) == '|') // lignes centrales
@@ -469,8 +527,7 @@ void drawMap(int *mX, int *mY, Hero hero)
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 				glTranslatef(0,-(*value),0);
 
-				//drawLine(1, 1, 0);
-				drawLine(1, 1, 1);
+				drawLine(WHITE);
 
 			}
 
@@ -483,7 +540,7 @@ void drawMap(int *mX, int *mY, Hero hero)
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 				glTranslatef(0,-(*value),0);
 
-				drawLine(1, 1, 1);
+				drawLine(WHITE);
 
 
 			}
@@ -496,7 +553,7 @@ void drawMap(int *mX, int *mY, Hero hero)
 
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 
-				drawSquare(1.0, 0.0, 0.0);
+				drawSquare(RED, 1);
 
 			}
 
@@ -509,7 +566,7 @@ void drawMap(int *mX, int *mY, Hero hero)
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 				glTranslatef(0,-(*value),0);
 
-				drawSquare(FOND, FOND, FOND);
+				drawSquare(BLACK, 1);
 
 			}
 
@@ -520,7 +577,7 @@ void drawMap(int *mX, int *mY, Hero hero)
 
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 
-				drawSquare(1, 1, 1);
+				drawSquare(WHITE, 1);
 
 			}
 			
@@ -531,14 +588,15 @@ void drawMap(int *mX, int *mY, Hero hero)
 
 				glTranslatef(i*Square_size,j*Square_size,0.0f);
 
-				drawSquare(1.0, 1.0, 1.0);
+				drawSquare(WHITE, 1);
 		
 			}
 		}
 	}
 	drawHealth(hero);
 	
-	
+	drawUsername();
+
 	drawScore(hero);
 
 
@@ -562,10 +620,8 @@ void drawPlayer(Hero hero)
 	glLoadIdentity();
 
 	glTranslatef(i*Square_size,j*Square_size,0.0f);
-	glColor3f(0.0f,1.0f,0.0f);
 
-	//drawSquare(1.0, 0.0, 1.0);	
-	drawHero(0.03, 0.49, 0.13);
+	drawHero(EMERALD);
 }
 
 // ------------------------------------------------------------------ //
@@ -577,7 +633,7 @@ void drawEnemy(enemy e)
 	int i, j;
 	i = e->pos.x;
 	j = e->pos.y;
-	glColor3f(1.0f,0.0F,0.0f);
+	glColor3f(RED);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(i*Square_size,j*Square_size,0.0f);
@@ -598,7 +654,7 @@ void drawObstacles(obstacles o)
 	int i, j;
 	i = o->pos.x;
 	j = o->pos.y;
-	glColor3f(1.0f,1.0f, 0.0f);
+	glColor3f(YELLOW);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(i*Square_size,j*Square_size,0.0f);
@@ -624,8 +680,7 @@ void drawTirs(tir_Struct t)
 	j = t->pos.x;
 	i = t->pos.y;
 
-	//glColor3f(0.141f, 0.901, 0.0f);
-	glColor3f(1,1,0);
+	glColor3f(YELLOW);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -739,6 +794,12 @@ void DisplayGame()
     game(&mX, &mY, hero,e,t, o);
 
     glFlush();
+
+	if(optionSwitch == true)
+	{
+		glutDisplayFunc(GameOptionsDisplay);
+
+	}
 
 }
 

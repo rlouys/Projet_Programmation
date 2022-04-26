@@ -11,13 +11,13 @@
 /*** CONSTANTES ***/
 
 #define ENNEMI_SPEED 1 // 10 = ultraspeed/hardcore | 1000 = slow
-#define ENNEMI_PER_HUNDRED_SECOND 150
+#define ENNEMI_PER_HUNDRED_SECOND 125
 #define RANGE_MAX 120
 #define ATTACK_SPEED 1 // 1 is superfast, 1000 is slow
 #define OBSTACLE_SPEED 600 // 10 = ultraspeed/hardcore | 1000 = slow
-#define OBSTACLES_PER_TEN_SECOND 1
+#define OBSTACLES_PER_TEN_SECOND 5
 
-#define MAX_SCORE 10000
+#define MAX_SCORE 200
 
 /*** VARIABLES ***/
 
@@ -145,7 +145,7 @@ void updateEnemies(int valeur)
 
 			if (car->pos.y <= 0)
 			{
-				hero->current_xp -= 50;
+				hero->current_xp -= 10;
 				e->quantite--;
 				hero->health -= 1;
 				hero->killed +=1;
@@ -172,7 +172,7 @@ void updateEnemies(int valeur)
 				if (car->pos.y <= 0)
 				{
 					//car->pos.y = 40;
-					hero->current_xp -= 50;
+					hero->current_xp -= 10;
 					e->quantite--;
 					car->active = false;
 					hero->health -= 1;
@@ -192,12 +192,17 @@ void updateEnemies(int valeur)
 		}else if (hero->current_xp == MAX_SCORE){
 
 			startgame = false;
-			//suppressionEnemies(e, true);
+			
+			suppressionEnemiesEndGame(e);
+			suppressionObstaclesEndGame(o);
+			suppressionTirsEndGame(t);
 			saveScore(hero);
 
 			hero->current_xp = 0;
+			//wait();
 
-			//glutDisplayFunc(WinDisplay);
+			//startgame = true;
+			glutDisplayFunc(DisplayGame);
 
 		}
 	glutPostRedisplay();
@@ -233,7 +238,7 @@ void updateTirs(int valeur)
 	shoot = t->first;
 	if (t->first != NULL)
 	{
-		shoot->pos.y += 0.5;
+		shoot->pos.y += 1;
 		if (shoot->pos.y >= RANGE_MAX)
 		{
 			shoot->active = false;
@@ -241,7 +246,7 @@ void updateTirs(int valeur)
 		while (shoot->next != NULL)
 		{
 			shoot = shoot->next;
-			shoot->pos.y += 0.5;
+			shoot->pos.y += 1;
 			if (shoot->pos.y >= RANGE_MAX)
 			{
 				shoot->active = false;

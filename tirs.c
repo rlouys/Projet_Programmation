@@ -80,6 +80,33 @@ void insertionTirs(listetir_Struct t, tir_Struct base)
 
 // ---------------------------------------------------------------------------------- //
 
+// supprime tous les tirs en fin de niveau
+
+void suppressionTirsEndGame(listetir_Struct t)
+{
+	tir_Struct newTir = malloc(sizeof(tirs));
+
+		if(newTir == NULL)
+		{
+			exit(EXIT_FAILURE);	
+		}
+
+		newTir = t->first;
+
+		while(newTir != NULL)
+		{
+			newTir->active = false;
+			tir_Struct deleted = malloc(sizeof(tirs));
+			deleted = newTir;
+			newTir = newTir->next;
+			free(deleted);
+
+		}
+
+}
+
+// ---------------------------------------------------------------------------------- //
+
 //supprime le tir s'il y a une collision (booléen renvoyé depuis timers_and_effects.h suite à un test)
 
 void suppressionTirs(listetir_Struct t, bool test)

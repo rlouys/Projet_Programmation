@@ -54,6 +54,9 @@ tir_Struct createTirs(Hero hero);
 //dessine le tir sur la map et incrémente la liste
 void insertionTirs(listetir_Struct t, tir_Struct base);
 
+// supprime tous les tirs en fin de niveau
+void suppressionTirsEndGame(listetir_Struct t);
+
 //supprime le tir s'il y a une collision (booléen renvoyé depuis timers_and_effects.h suite à un test)
 void suppressionTirs(listetir_Struct t, bool test);
 

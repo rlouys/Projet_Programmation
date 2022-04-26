@@ -45,6 +45,7 @@ struct obstacle
 {
 	struct positionE pos;
 	bool jailed;
+	bool active;
 	struct obstacle *previous;
 	struct obstacle *next;
 };
@@ -90,9 +91,14 @@ void insertionEnemies(EnemyList e, enemy car);
 //Supprime un ennemi et l'enleve de la liste
 void deleteAllEnemies(EnemyList e); 
 
+//Supprime tous les ennemis en fin de niveau
+void suppressionObstaclesEndGame(ObstacleList o);
+
+//Supprime tous les ennemis en fin de niveau
+void suppressionEnemiesEndGame(EnemyList e);
+
 //Supprime un ennemi et l'enleve de la liste
 void suppressionEnemies(EnemyList e, bool test); 
-
 
 // Initialise une liste d'obstacles vide
 ObstacleList initialListObstacles(); 

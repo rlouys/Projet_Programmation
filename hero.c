@@ -35,13 +35,14 @@ Hero createHero(int *maxX, int *maxY)
 	}
 
 	// Stats initialisation
-	hero = malloc(sizeof(Hero));
-	hero->health = 3;
+	hero = malloc(sizeof(Hero)+50);
+	hero->health = 40;
 	hero->pos.x = x;
 	hero->pos.y = y;
 	hero->current_xp = 0;
 	hero->attack = 1;
 	hero->killed = 0;
+	hero->weapon_type = false;
 
 	return hero;
 }
@@ -117,3 +118,7 @@ void moveLeft(Hero hero)
 
 // ------------------------------------------------------------------ //
 
+void switchWeapon(Hero hero)
+{
+	hero->weapon_type = !(hero->weapon_type);
+}

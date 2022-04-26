@@ -23,8 +23,12 @@
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 1000
+
 #define EMERALD 0.03, 0.49, 0.13
 #define WHITE 1, 1, 1
+#define BLACK 0, 0, 0
+#define GREY 0.5, 0.5, 0.5
+#define DARK_GREY 0.1, 0.1, 0.1
 
 
 /*** VARIABLES ***/
@@ -48,6 +52,11 @@ char* cheatmode_str;
 
 char username[20];
 char* usernameScore;
+
+bool optionSwitch = false;
+
+
+int optionSwitchKey;
 
 /*** FUNCTIONS ***/
 
@@ -93,11 +102,13 @@ void keyboardFunc(unsigned char Key, int x, int y) {
             break;
 
 	case 'g':
+
 		glutDisplayFunc(DisplayGameplay);
 		glutPostRedisplay();
 		break;
 
 	case 'o':
+
 		glutDisplayFunc(DisplayOptions);		
 		glutPostRedisplay();
 		break;	    
@@ -327,12 +338,10 @@ void Alphabet(unsigned char Key, int x, int y)
 
         case 27 :
 
-        
             glutDisplayFunc(WelcomeDisplay);
+            glutKeyboardFunc(keyboardFunc);
             glutPostRedisplay();
             break;
-
-
         };
     
     
@@ -344,41 +353,57 @@ void keyboardFuncOpt(unsigned char Key, int x, int y) {
 
     switch (Key) {
    
-    case 'd':
-        difficulty += 1;
-        if((difficulty) == 5)
-        {
-            difficulty = 1;
-        } 
-		glutDisplayFunc(DisplayOptions);
-		glutPostRedisplay();
-		break;
 
-	case 'k':
-        gameplay_keys = !gameplay_keys;
-		glutDisplayFunc(DisplayOptions);
-		glutPostRedisplay();
-		break;
+    if(!optionSwitch)
+    {
+        case 'd':
+            difficulty += 1;
+            if((difficulty) == 5)
+            {
+                difficulty = 1;
+            } 
+            glutDisplayFunc(DisplayOptions);
+            glutPostRedisplay();
+            break;
 
-	case 's':
-        screen = !screen;
-        //screen disposition = !screen disposition {code en attente}
-		glutDisplayFunc(DisplayOptions);
-		glutPostRedisplay();
-    	break;
+        case 'k':
+            gameplay_keys = !gameplay_keys;
+            glutDisplayFunc(DisplayOptions);
+            glutPostRedisplay();
+            break;
 
-    case 'z':
+        case 's':
+            screen = !screen;
+            //screen disposition = !screen disposition {code en attente}
+            glutDisplayFunc(DisplayOptions);
+            glutPostRedisplay();
+            break;
 
-        cheatMode = !cheatMode;
-        //screen disposition = !screen disposition {code en attente}
-		glutDisplayFunc(DisplayOptions);
-		glutPostRedisplay();
+        case 'z':
 
-    	break;
+            cheatMode = !cheatMode;
+            //screen disposition = !screen disposition {code en attente}
+            glutDisplayFunc(DisplayOptions);
+            glutPostRedisplay();
+
+            break;
+    }
     case 'r':
 
-		glutDisplayFunc(WelcomeDisplay);
-        glutKeyboardFunc(keyboardFunc);
+        if(optionSwitch == false)
+        {
+            glutDisplayFunc(WelcomeDisplay);
+            glutKeyboardFunc(keyboardFunc);
+        }
+        else
+        {
+            glutDisplayFunc(DisplayGame);
+
+            glutKeyboardFunc(keyboardFunc);
+        }
+
+        optionSwitchKey = 1;
+
 		glutPostRedisplay();
 		break;
 
@@ -388,7 +413,98 @@ void keyboardFuncOpt(unsigned char Key, int x, int y) {
    
 }
 
+// ----------------------------------------------------------------- //
 
+// clavier lié au menu pause en jeu
+
+void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
+
+    switch (Key) {
+   
+    case 'g':
+        optionSwitch = !optionSwitch;
+        
+        if(optionSwitchKey == 1){
+            optionSwitch = !optionSwitch;
+            optionSwitchKey = 0;
+        }
+
+
+		glutDisplayFunc(DisplayGameplay);
+        glutKeyboardFunc(keyboardFuncOpt);
+		glutPostRedisplay();
+		break;
+
+	case 'o':
+        
+        optionSwitch = !optionSwitch;
+
+        if(optionSwitchKey == 1){
+            optionSwitch = !optionSwitch;
+            optionSwitchKey = 0;
+        }
+
+		glutDisplayFunc(DisplayOptions);
+		glutPostRedisplay();
+		break;
+
+	case 'd':
+       
+		optionSwitch = !optionSwitch;
+        
+        if(optionSwitchKey == 1){
+            optionSwitch = !optionSwitch;
+            optionSwitchKey = 0;
+        }
+
+
+		glutDisplayFunc(DisplayCredits);
+        glutKeyboardFunc(keyboardFuncOpt);
+		glutPostRedisplay();
+		break;
+
+    case 'r':
+
+        
+        if(optionSwitch == true)
+        {
+            glutDisplayFunc(WelcomeDisplay);
+            glutKeyboardFunc(keyboardFunc);
+        }
+        else
+        {
+            glutDisplayFunc(GameOptionsDisplay);
+
+            glutDisplayFunc(DisplayGame);
+
+            glutKeyboardFunc(keyboardFunc);
+        }
+
+        
+
+		glutPostRedisplay();
+
+    	break;
+    
+    case 27:
+			startgame = !startgame;
+			glutDisplayFunc(DisplayGame);
+			glutPostRedisplay();
+			break;
+
+    case 'x':
+			glutDisplayFunc(DisplayEnding);
+			glutPostRedisplay();
+			break;        
+    	
+    case 'c':
+    		startgame = !startgame;
+			glutDisplayFunc(DisplayGame);
+			glutPostRedisplay();
+			break;  
+    };
+   
+}
 
 
 // ----------------------------------------------------------------- //
@@ -512,8 +628,8 @@ void WelcomeDisplay()
     for(int i = 0; i <strlen(msg6);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
 
-    glColor3f(0.03, 0.49, 0.13);
-    frameDraw(0.03, 0.49, 0.13, 50, 580, 210, 0);
+    glColor3f(EMERALD);
+    frameDraw(EMERALD, 50, 580, 210, 0);
     glColor3f(WHITE);
 
     glRasterPos3f(50, 580, 0);
@@ -532,6 +648,42 @@ void WelcomeDisplay()
 
     
 }
+
+// ------------------------------------------------------------------ //
+
+void GameOptionsDisplay()
+{
+    glColor3f(EMERALD);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glTranslatef(200,400,0);
+    drawSquare(EMERALD, 20);
+
+    glTranslatef(0,400,0);
+
+    for(int i = 0; i < 29; i++)
+    {
+    drawSquare(DARK_GREY, 6);
+    glTranslatef(10,0,0);
+    }
+
+
+    frameDraw(EMERALD, 210, 850, 630, 1);
+	writeSomething(EMERALD, 243, 850, "P A U S E D  ~  O P T I O N S");
+
+    writeSomethingHelvetica(DARK_GREY, 243, 760, "('c')   CONTINUE >>>>");
+    writeSomethingHelvetica(DARK_GREY, 243, 700, "('g')   GAMEPLAY >>>>");
+    writeSomethingHelvetica(DARK_GREY, 243, 640, "('o')   OPTIONS >>>>");
+    writeSomethingHelvetica(DARK_GREY, 243, 580, "('d')   CREDITS >>>>");
+    writeSomethingHelvetica(DARK_GREY, 243, 440, "('x')   QUIT AND SAVE >>>>");
+
+
+    glutKeyboardFunc(keyboardFuncPausedInGame);
+
+    glutSwapBuffers(); 
+}
+
 
 // ------------------------------------------------------------------ //
 
@@ -578,19 +730,22 @@ void UsernameDisplay()
     glColor3f(WHITE);
 
     glRasterPos3f(50, 580, 0);
-    char msg7[]="<<<<<<<<<<<<<<<<<<<<<< ('ESC')";
-    for(int i = 0; i <strlen(msg7);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
+    char msg0[]="<<<<<<<<<<<<<<<<<<<<<< ('ESC')";
+    for(int i = 0; i <strlen(msg0);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg0[i]);
 
 
-    frameDraw(0.03,0.49,0.13, 210, 850, 630, 1);
+    frameDraw(EMERALD, 210, 850, 630, 1);
 	//writeSomething(EMERALD, 310, 770, "H  A  R  U  H  I  K  O");    
 	writeSomething(EMERALD, 180, 850, "E N T R E Z    V O T R E     U S E R N A M E :"); 
 
 
-    writeSomethingArray(EMERALD, 330, 770, username);
+    writeSomethingArray(WHITE, 330, 770, username);
         
-    
+    glRasterPos3f(550, 730, 0);
+    char msg1[]= "PRESS ENTER";
+    for(int i = 0; i <strlen(msg1);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
     
     
     glutKeyboardFunc(Alphabet);
@@ -807,7 +962,7 @@ void DisplayOptions()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glColor3f(EMERALD);
 
-    frameDraw(0.03,0.49,0.13, x+30, 850, 630, 1);
+    frameDraw(EMERALD, x+30, 850, 630, 1);
 
     glColor3f(WHITE);
 
@@ -973,7 +1128,7 @@ void DisplayEnding()
 
     glColor3f(EMERALD);
 
-    frameDraw(0.03,0.49,0.13, (SCREEN_WIDTH/2)-50, 850, 630, 1);
+    frameDraw(EMERALD, (SCREEN_WIDTH/2)-50, 850, 630, 1);
 
     glColor3f(WHITE);
 
@@ -1001,9 +1156,51 @@ void DisplayEnding()
 
     glutSwapBuffers();
     wait(); // used to wait until a certain time, before exitting
+    exit(0);
 }
 
 // ------------------------------------------------------------------ //
+
+// Crée et affiche l'écran de crédits
+
+void DisplayCredits()
+{	
+	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glColor3f(EMERALD);
+
+    frameDraw(EMERALD, (SCREEN_WIDTH/2)-50, 850, 630, 1);
+
+    glColor3f(WHITE);
+
+    glRasterPos3f(300, 850, 1);
+    char msg1[]="   C  R  E  D  I  T  S  ";
+    for(int i = 0; i <strlen(msg1);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
+
+    glColor3f(WHITE);
+
+    frameDraw(WHITE, 50, 750, 210, 0);
+
+    glRasterPos3f(50, 750, 0);
+    char msg2[]="CREDITS";
+    for(int i = 0; i <strlen(msg2);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
+    
+
+    glColor3f(EMERALD);
+
+    glRasterPos3f(50, 720, 0);
+        char msg3[]="LOUYS RAPHAEL";
+        for(int i = 0; i <strlen(msg3);i++)
+            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
+
+    glutSwapBuffers();
+    
+}
+
+// ---------------------------------------------------------------- //
 
 // Crée le menu clic droit
 

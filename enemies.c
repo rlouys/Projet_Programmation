@@ -41,7 +41,7 @@ enemy createEnemy(int *maxY)
 {
 	
 	enemy new = malloc(sizeof(enemies));
-	int x = (rand() % (30-5+1) +5);
+	int x = (rand() % (30-6+1) + 6);
 	if (new == NULL)
 	{
 		exit(EXIT_FAILURE);
@@ -109,6 +109,59 @@ void insertionEnemies(EnemyList e, enemy car)
 
 
 // --------------------------------------------------------------------- // 
+//Supprime tous les ennemis en fin de niveau
+
+void suppressionEnemiesEndGame(EnemyList e)
+{
+	
+		enemy newEnemy = malloc(sizeof(enemies));
+
+		if(newEnemy == NULL)
+		{
+			exit(EXIT_FAILURE);	
+		}
+
+		newEnemy = e->first;
+
+		enemy deleted = malloc(sizeof(enemies));
+
+		while(newEnemy != NULL)
+		{
+			newEnemy->active = false;
+			deleted = newEnemy;
+			newEnemy = newEnemy->next;
+			free(deleted);
+
+		}
+
+}
+// --------------------------------------------------------------------- // 
+
+void suppressionObstaclesEndGame(ObstacleList o)
+{
+	
+		obstacles newObstacle = malloc(sizeof(obstacle));
+
+		if(newObstacle == NULL)
+		{
+			exit(EXIT_FAILURE);	
+		}
+
+		newObstacle = o->first;
+
+		obstacles deleted = malloc(sizeof(obstacle));
+
+		while(newObstacle != NULL)
+		{
+			newObstacle->active = false;
+			deleted = newObstacle;
+			newObstacle = newObstacle->next;
+			free(deleted);
+
+		}
+
+}
+// --------------------------------------------------------------------- // 
 
 //Supprime un ennemi et l'enleve de la liste
 
@@ -120,7 +173,7 @@ void suppressionEnemies(EnemyList e, bool test)
 		enemy newEnemy = malloc(sizeof(enemies));
 		if (newEnemy == NULL)
 		{
-		//	exit(EXIT_FAILURE);
+			//exit(EXIT_FAILURE);
 		}
 		newEnemy = e->first;
 		while (newEnemy != NULL)
@@ -152,11 +205,11 @@ void suppressionEnemies(EnemyList e, bool test)
 					deleted->next->previous = deleted->previous;
 					deleted->previous->next = deleted->next;
 				}
-				//free(deleted);
+				free(deleted);
 
 				e->quantite--;
 
-				if(startgame==true && hero->health != 0 && hero->current_xp != 200)
+				if(startgame==true && hero->health != 0)
 				{
 					hero->current_xp += 50;
 				}			

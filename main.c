@@ -50,7 +50,6 @@ void wait()
     {
             printf("wait : %i\n", timerwait);
     }
-    exit(0);
 }
 
 // ------------------------------------------------------------------ //
@@ -127,7 +126,7 @@ int main(int argc, char *argv[])
     // VARIABLES // 
 
     mX = 80;
-    mY = 41;
+    mY = 45;
     srand(time(NULL));
 
     // map & jeu

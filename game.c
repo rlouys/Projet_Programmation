@@ -18,6 +18,7 @@
 
 float *value;
 float *deplacement_fenetre;
+bool startgame;
 
 char username[20];
 
@@ -39,8 +40,10 @@ void Keyboard(unsigned char key, int x, int y)
 	switch(key)
 	{
 		case 27:
-			//glutDisplayFunc(WelcomeDisplay);
-			exit(0);
+			startgame = !startgame;
+			glutDisplayFunc(GameOptionsDisplay);
+			glutPostRedisplay();
+			break;
 	
 		case 32:
 			SHOOT = true;
@@ -230,7 +233,7 @@ void checkCollisionAlliesEnemy (enemy en)
 	printf("-------------------------\n\n");
 
 	
-	if( (en->pos.x == hero->pos.x) && ((en->pos.y <= hero->pos.y +0.1) || (en->pos.y <= hero->pos.y +0.1))   && key != 0   )
+	if( (en->pos.x == hero->pos.x) && ((en->pos.y <= hero->pos.y +0.1) && (en->pos.y > hero->pos.y -1))   && key != 0   )
 
 	{
 			printf("collide true!\n");

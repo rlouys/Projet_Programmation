@@ -36,6 +36,9 @@ void drawHealth(Hero hero);
 // affiche le score du joueur en temps réel
 void drawScore(Hero hero);  
 
+// affiche le username du joueur en temps réel
+void drawUsername();  
+
 // dessine un coeur aux couleurs voulues
 void drawHeart(float red, float green, float blue);
 
@@ -46,7 +49,7 @@ void drawLine(float red, float green, float blue);
 void drawLineBorder(float red, float green, float blue, int border); 
 
 // dessine un carré aux couleurs voulues
-void drawSquare(float red, float green, float blue); 
+void drawSquare(float red, float green, float blue, int size); 
 
 // dessine le héro (design du hero)
 void drawHero(float red, float green, float blue); 
@@ -56,6 +59,9 @@ void drawCircle(float red, float green, float blue, int posx, int posy, float ra
 
 // écrit un texte aux couleurs et positions voulues
 void writeSomething(float red, float green, float blue, int x, int y, char *txt); 
+
+// écrit un texte aux couleurs et positions voulues en helvetica taille 18
+void writeSomethingHelvetica(float red, float green, float blue, int x, int y, char *txt);
 
 // écrit un texte aux couleurs et positions voulues (avec un tableau)
 void writeSomethingArray(float red, float green, float blue, int x, int y, char txt[]);

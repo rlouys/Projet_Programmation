@@ -24,9 +24,8 @@ struct Hero
 		int attack;
 		struct positionP pos;
 		int current_xp;
-		int weapon_type;
+		bool weapon_type; // false: normal weapon | true:  bubble weapon
 		int killed;
-
 	};
 
 typedef struct Hero* Hero;
@@ -53,6 +52,10 @@ void moveUp(Hero hero);
 void moveDown(Hero hero); 
 void moveRight(Hero hero); 
 void moveLeft(Hero hero); 
+
+
+// change l'arme tenue par le héro (arme à feu et canon à bulles);
+void switchWeapon(Hero hero);
 
 // -------------------- // 
 
