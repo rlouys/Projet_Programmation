@@ -15,6 +15,7 @@
 /*** VARIABLES ***/
 
 bool startgame; 
+bool endmap;
 
 /*** FUNCTIONS ***/
 
@@ -30,6 +31,7 @@ EnemyList initialListEnemies()
 	e->first = NULL;
 	e->last = NULL;
 	e->quantite = 0;
+
 	return e;
 }
 
@@ -52,6 +54,7 @@ enemy createEnemy(int *maxY)
 	new->next = NULL;
 	new->previous = NULL;
 	new->active = true;
+	
 	return new;
 }
 
@@ -87,30 +90,7 @@ void insertionEnemies(EnemyList e, enemy car)
 
 // --------------------------------------------------------------------- // 
 
-//Clean la map des ennemis
-
-/*void deleteAllEnemies(EnemyList e)
-{
-
-	
-	//int i;
-
-	//for(i = 0; i <= e->quantite; i++)
-	//{
-
-		if(e->first != NULL){
-
-			suppressionEnemies(e, true);
-		}
-
-	//}
-
-}*/
-
-
-// --------------------------------------------------------------------- // 
 //Supprime tous les ennemis en fin de niveau
-
 void suppressionEnemiesEndGame(EnemyList e)
 {
 	
@@ -136,6 +116,7 @@ void suppressionEnemiesEndGame(EnemyList e)
 
 }
 // --------------------------------------------------------------------- // 
+//Supprime tous les obstacles en fin de niveau
 
 void suppressionObstaclesEndGame(ObstacleList o)
 {
@@ -209,10 +190,11 @@ void suppressionEnemies(EnemyList e, bool test)
 
 				e->quantite--;
 
-				if(startgame==true && hero->health != 0)
+				if(startgame==true && hero->health != 0 && endmap == false)
 				{
 					hero->current_xp += 50;
-				}			
+				}	
+				endmap = false;		
 
 			}
 			else
@@ -249,7 +231,7 @@ obstacles createObstacle(int *maxY)
 {
 	
 	obstacles new = malloc(sizeof(obstacle));
-	int x = (rand() % (30-5+1) +5);
+	int x = (rand() % (30-6+1) +6);
 	if (new == NULL)
 	{
 		exit(EXIT_FAILURE);
@@ -260,6 +242,7 @@ obstacles createObstacle(int *maxY)
 	new->next = NULL;
 	new->previous = NULL;
 	new->jailed = false;
+	new->active = true;
 
 	return new;
 }
@@ -295,30 +278,30 @@ void insertionObstacles(ObstacleList o, obstacles fence)
 }
 
 // --------------------------------------------------------------------- // 
-/*
-Supprime un obstacle et l'enleve de la liste
+
+//Supprime un obstacle et l'enleve de la liste
 
 void suppressionObstacles(ObstacleList o, bool test)
 {
 
-	test = false;
 	if (o->first != NULL)
 	{
 		obstacles newObstacle = malloc(sizeof(obstacle));
 		if (newObstacle == NULL)
 		{
-			exit(EXIT_FAILURE);
+			//exit(EXIT_FAILURE);
 		}
 		newObstacle = o->first;
 		while (newObstacle != NULL)
 		{
-			if (newObstacle->jailed == test)
+			if (newObstacle->active == test)
 			{
 				obstacles deleted = malloc(sizeof(obstacle));
 				deleted = newObstacle;
 				newObstacle = newObstacle->next;
 				if (o->first == deleted && o->last == deleted)
 				{
+				//	enemy undeleted = malloc(sizeof(enemies));
 					o->first = NULL;
 					o->last = NULL;
 				}
@@ -339,26 +322,22 @@ void suppressionObstacles(ObstacleList o, bool test)
 					deleted->previous->next = deleted->next;
 				}
 				free(deleted);
+
 				o->quantite--;
 
-				if(startgame==true && hero->health != 0 && hero->current_xp != 200)
+				if(startgame==true && hero->health != 0 && endmap == false)
 				{
 					hero->current_xp += 10;
-				}
-
-				if(hero->current_xp == 200)
-				{
-						glutDisplayFunc(WinDisplay);
-				}
+				}	
+				endmap = false;		
 
 			}
 			else
 			{
-				newObstacle->next = newObstacle->next;
+				newObstacle = newObstacle->next;
 			}
 		}
 	}
 }
 
 // --------------------------------------------------------------------- // 
-*/
