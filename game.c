@@ -76,7 +76,7 @@ void arrowFunction(int key, int x, int y) {
 
 // dessine le jeu et lance la partie, fait apparaitre les ennemis et les tirs
 
-void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t, ObstacleList o)
+void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t, ObstacleList o, BonusList b)
 {		
 
 	glPushMatrix();
@@ -96,6 +96,10 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t, Obsta
 	if (t->first != NULL || t->last != NULL)
 	{
 		drawAllTirs(t);
+	}
+	if(b->first != NULL || b->last != NULL)
+	{
+		drawAllBonus(b);
 	}
 
 	
@@ -179,29 +183,27 @@ void checkCollisionTirsEnnemis (enemy e, tir_Struct w)
 // ------------------------------------------------------------ // 
 
 // vérifie s'il y a une collision entre l'obstacle et le tir allié, le cas échéant, lui enlève de la vie ou le supprime, et augmente le score
-void checkCollisionTirsObstacles (tir_Struct w, obstacles o)
+void checkCollisionTirsObstacles (obstacles o, tir_Struct w)
 {	
 	bool CollideO = false;
-	//int key = 1;
+	int key = 1;
 	printf("-------------------------\n\n");
 	printf("w->pos.x : %f\n",w->pos.x);
 	printf("w->pos.y : %f\n",w->pos.y);
 	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 	printf("o->pos.x : %f\n",o->pos.x);
 	printf("o->pos.y : %f\n",o->pos.y);
-	printf("-------------------------\n\n");
+	printf("-------------------------\n\n"); // 30 /  60 || 31 / 61
 
-	
-	if(( ((w->pos.x/2) == o->pos.x) || (((w->pos.x/2)+1) == o->pos.x) || (((w->pos.x/2)+2) == o->pos.x)) && ((w->pos.y <= o->pos.y) && (o->pos.y > w->pos.y))    )
+	// Si le tir arrive à la position de l'obstacle en x ou en x+1, alors suppression ennemi
+	if (    
+	((((w->pos.x/2) == o->pos.x) && (o->pos.y <= (((w->pos.y-2)/2)+1.5))) /**/ 
+	||  ((((w->pos.x/2)) == (o->pos.x+1)) && (o->pos.y <=  (((w->pos.y-2)/2)+1.5))))                                                                                     /**/
+	&& key != 0)
 
 	{
-		
-
-
 			CollideO = true;
-			//key = 0;
-			printf("collide true!\n");
-		
+			key = 0;
 	}
 
 	if (CollideO)
@@ -210,9 +212,7 @@ void checkCollisionTirsObstacles (tir_Struct w, obstacles o)
 	}
 	if (CHECKCOLLISION)
 	{	
-		
 		w->active = false;
-		printf("bye tir! \n");
 		CHECKCOLLISION = false;
 	}
 	
@@ -224,25 +224,23 @@ void checkCollisionAlliesEnemy (enemy en)
 {	
 	bool CollideO = false;
 	int key = 1;
-	printf("-------------------------\n\n");
+	/*printf("-------------------------\n\n");
 	printf("hero->pos.x : %f\n",hero->pos.x);
 	printf("hero->pos.y : %f\n",hero->pos.y);
 	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 	printf("en->pos.x : %f\n",en->pos.x);
 	printf("en->pos.y : %f\n",en->pos.y);
-	printf("-------------------------\n\n");
+	printf("-------------------------\n\n");*/
 
 	
-	if( (en->pos.x == hero->pos.x) && ((en->pos.y <= hero->pos.y +0.1) && (en->pos.y > hero->pos.y -1))   && key != 0   )
+	if( (en->pos.x == hero->pos.x) && (((en->pos.y) <= hero->pos.y +0.1) && ((en->pos.y) > hero->pos.y -1))   && key != 0   )
 
 	{
-			printf("collide true!\n");
 
 			CollideO = true;
 			key = 0;
-			printf("collide true!\n");
 		
-	}
+	} 
 
 	if (CollideO)
 	{
@@ -252,7 +250,7 @@ void checkCollisionAlliesEnemy (enemy en)
 	{	
 		hero->health -= 1;
 		en->vie -=1;
-		printf("Vie -1 ! \n");
+		hero->color_type = false;
 
 		if(hero->health == 0){
 			glutDisplayFunc(EndGameDisplay);
@@ -262,10 +260,65 @@ void checkCollisionAlliesEnemy (enemy en)
 			en->active = false;
 		}
 
-		printf("bye tir! \n");
 		CHECKCOLLISION = false;
 	}
 	
+} 
+
+
+// ------------------------------------- //
+
+void checkCollisionAlliesObstacles (obstacles fence)
+{	
+	bool CollideO = false;
+	int key = 1;
+	/*printf("-------------------------\n\n");
+	printf("hero->pos.x : %f\n",hero->pos.x);
+	printf("hero->pos.y : %f\n",hero->pos.y);
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("fence->pos.x : %f\n",fence->pos.x);
+	printf("fence->pos.y : %f\n",fence->pos.y);
+	printf("-------------------------\n\n");*/
+
+	
+	if( 
+	/**/ ( ((fence->pos.x == hero->pos.x) &&  (fence->pos.y <= (hero->pos.y +0.1)) && (fence->pos.y > (hero->pos.y -0.1)) )
+	/**/ ||
+	/**/  ( ((fence->pos.x+1) == hero->pos.x) && (fence->pos.y <= (hero->pos.y +0.1)) && (fence->pos.y > (hero->pos.y -0.1)) ))
+	/**/  && key != 0   )
+
+	{
+
+			CollideO = true;
+
+			key = 0;
+		
+	
+
+			if (CollideO)
+			{
+				CHECKCOLLISION = true;
+			}
+			
+			if (CHECKCOLLISION)
+			{	
+				if(key == 0)
+				{
+				hero->health -= 1; // ENLEVE 5 !! A CORRIGER !! 
+				fence->pos.y -= 0.1;
+				key = 1;
+				hero->color_type = false;
+				}
+				hero->obstacles_taken += 1;
+
+				if(hero->health == 0){
+					glutDisplayFunc(EndGameDisplay);
+				}
+
+
+				CHECKCOLLISION = false;
+			}
+	}
 } 
 
 // ------------------------------------- // 
@@ -285,3 +338,83 @@ void saveScore(Hero hero)
 
 
 }		
+// ------------------------------------- //
+
+void checkCollisionAlliesBonus (bonus_objet bns)
+{	
+	bool CollideO = false;
+	int key = 1;
+	printf("-------------------------\n\n");
+	printf("hero->pos.x : %f\n",hero->pos.x);
+	printf("hero->pos.y : %f\n",hero->pos.y);
+	printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+	printf("bonus->pos.x : %f\n",bns->pos.x);
+	printf("bonus->pos.y : %f\n",bns->pos.y);
+	printf("-------------------------\n\n");
+
+	
+	if( (bns->pos.x == hero->pos.x) && (((bns->pos.y) <= hero->pos.y +1) && ((bns->pos.y) > hero->pos.y -1))   && key != 0   )
+
+	{
+
+			CollideO = true;
+			key = 0;
+		
+	} 
+
+	if (CollideO)
+	{
+		CHECKCOLLISION = true;
+	}
+	if (CHECKCOLLISION)
+	{	
+		hero->health += 5;
+		drawHealth(hero);
+
+		if(hero->health == 0){
+			glutDisplayFunc(EndGameDisplay);
+		}
+
+		bns->active = false;
+		
+
+		CHECKCOLLISION = false;
+	}
+	
+} 
+
+
+// ------------------------------------- //
+
+// vérifie s'il y a une collision entre l'ennemi et le tir allié, le cas échéant, lui enlève de la vie ou le supprime, et augmente le score
+void checkCollisionTirsBonus (bonus_objet b, tir_Struct w)
+{	
+	bool Collide = false;
+	int key = 1;
+
+	if ((w->pos.x/2) == b->pos.x && b->pos.y <= ((w->pos.y-2)/2)+1.5 && key != 0)
+		{
+			Collide = true;
+			key = 0;
+			
+		}
+
+	if (Collide)
+	{
+		CHECKCOLLISION = true;
+	}
+	if (CHECKCOLLISION)
+	{	
+		
+
+		hero->color_type = true;
+		b->active = false;
+		//hero->bonus_taken += 1;
+
+		
+
+		w->active = false;
+		CHECKCOLLISION = false;
+	}
+	
+} 

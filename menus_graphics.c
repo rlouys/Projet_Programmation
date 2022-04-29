@@ -354,8 +354,7 @@ void keyboardFuncOpt(unsigned char Key, int x, int y) {
     switch (Key) {
    
 
-    if(!optionSwitch)
-    {
+    
         case 'd':
             difficulty += 1;
             if((difficulty) == 5)
@@ -387,7 +386,7 @@ void keyboardFuncOpt(unsigned char Key, int x, int y) {
             glutPostRedisplay();
 
             break;
-    }
+    
     case 'r':
 
         if(optionSwitch == false)
@@ -487,7 +486,8 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
     	break;
     
     case 27:
-			startgame = !startgame;
+			startgame = !startgame; 
+            optionSwitch = !optionSwitch;
 			glutDisplayFunc(DisplayGame);
 			glutPostRedisplay();
 			break;
@@ -697,7 +697,7 @@ void UsernameDisplay()
     
     int i;
     int j;
-
+    
     for (i = 0; i < 48; i++){ 
             glRasterPos3f(175, 750+i, 1); // DRAW LEFT LINE FRAME
             char msg1[]="|";
@@ -770,15 +770,18 @@ void EndGameDisplay()
     glColor3f(EMERALD);
     glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
     int a = hero->current_xp;
 	char str[10];
-
 	sprintf(str, "%d", a);
 
     int b = hero->killed;
-    
     char strn[10];
     sprintf(strn, "%d", b);
+
+    int c = hero->obstacles_taken;
+    char strng[10];
+    sprintf(strng, "%d", c);
 
 	writeSomething(EMERALD, 200, 930, "++++++++++++++++++++++++");    
     writeSomething(EMERALD, 200, 915, "+                                                    +");
@@ -786,16 +789,18 @@ void EndGameDisplay()
     writeSomething(EMERALD, 200, 900, "+                                                    +");
     writeSomething(EMERALD, 200, 885, "+                                                    +");
     writeSomething(EMERALD, 200, 870, "++++++++++++++++++++++++");
-	writeSomething(WHITE, 200, 800, "Your score :");
-	writeSomething(EMERALD, 450, 800, str);
-    writeSomething(WHITE, 200, 750, "Ennemy killed :");
-	writeSomething(EMERALD, 450, 750, strn);
-    writeSomething(WHITE, 100, 700, "   (beta)    Objet bonus utilises :            ");
-    writeSomething(WHITE, 100, 650, "   (beta)    Obstacles degats :                ");
-    writeSomething(WHITE, 100, 600, "   (beta)    Obstacle emprisonnes :            ");
-    writeSomething(EMERALD, 450, 700, "0");
+    writeSomething(WHITE, 200,800, "PLAYER NAME : ");
+    writeSomethingArray(EMERALD, 450, 800, username);
+	writeSomething(WHITE, 200, 750, "Your score :");
+	writeSomething(EMERALD, 450, 750, str);
+    writeSomething(WHITE, 200, 700, "Ennemy killed :");
+	writeSomething(EMERALD, 450, 700, strn);
+    writeSomething(WHITE, 100, 650, "   (beta)    Objet bonus utilises :            ");
+    writeSomething(WHITE, 100, 600, "   (beta)    Obstacles pris :                ");
+    writeSomething(WHITE, 100, 550, "   (beta)    Obstacle emprisonnes :            ");
     writeSomething(EMERALD, 450, 650, "0");
-    writeSomething(EMERALD, 450,  600, "0");
+    writeSomething(EMERALD, 450, 600, strng);
+    writeSomething(EMERALD, 450,  550, "0");
 
     glColor3f(EMERALD);
     frameDraw(EMERALD, 50, 430, 210, 0);

@@ -136,6 +136,7 @@ int main(int argc, char *argv[])
      e = initialListEnemies();
      t = initialListeTirs();
      o = initialListObstacles();
+     b = initialListeBonus();
 
      // GLUT initialisations
 
@@ -161,16 +162,20 @@ int main(int argc, char *argv[])
 
 // TIMERS
     glutTimerFunc(50, scrolling, 0);
-    glutTimerFunc(100, updateCollisions, 0);
-    glutTimerFunc(200, updateEnemies, 1);
-    glutTimerFunc(1, updateTirs, 2);
-    glutTimerFunc(50, updateNewEnemies, 3);
-    glutTimerFunc(10, updateDeleteEnemies, 4);
-    glutTimerFunc(10, updateDeleteTirs, 5);
-    glutTimerFunc(50, updateObstacle, 6);
-	glutTimerFunc(10, updateNewObstacles, 7);
-	//glutTimerFunc(10, updateDeleteObstacles, 8);
-	//glutTimerFunc(10, updateCollisionsHE, 10);
+    glutTimerFunc(100, updateCollisions, 1);
+    glutTimerFunc(200, updateEnemies, 2);
+    glutTimerFunc(1, updateTirs, 3);
+    glutTimerFunc(50, updateNewEnemies, 4);
+    glutTimerFunc(10, updateDeleteEnemies, 5);
+    glutTimerFunc(10, updateDeleteTirs, 6);
+    glutTimerFunc(50, updateObstacle, 7);
+	glutTimerFunc(10, updateNewObstacles, 8);
+	glutTimerFunc(10, updateDeleteObstacles, 9);
+	glutTimerFunc(10, updateBonus, 10);
+    glutTimerFunc(10, updateNewBonus, 11);
+    glutTimerFunc(10, updateDeleteBonus, 12);
+
+
 
     glEnable(GL_DEPTH_TEST);
 	glutMainLoop();

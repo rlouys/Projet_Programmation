@@ -34,8 +34,8 @@ struct ListEnemy
 	struct enemies *last;
 	
 };
-typedef struct ListEnemy ListEnemy;
 
+typedef struct ListEnemy ListEnemy;
 typedef struct enemies *enemy; 
 typedef struct ListEnemy *EnemyList;
 
@@ -57,8 +57,8 @@ struct ListObstacles
 	struct obstacle *first;
 	struct obstacle *last;
 };
-typedef struct ListObstacles ListObstacles;
 
+typedef struct ListObstacles ListObstacles;
 typedef struct obstacle *obstacles;
 typedef struct ListObstacles *ObstacleList;
 

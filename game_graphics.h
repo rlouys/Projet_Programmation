@@ -30,6 +30,9 @@ int mY;
 // charge la map
 bool loadMap(int *mX, int *mY); 
 
+// dessine le niveau en cours
+void drawLevel();
+
 // affiche la vitalité du joueur en temps réel
 void drawHealth(Hero hero); 
 
@@ -78,6 +81,10 @@ void drawEnemy(enemy e);
 //dessine les obstacles
 void drawObstacles(obstacles o);
 
+//dessine les objets bonus
+void drawBonus(bonus_objet BONUS);
+
+
 // dessine les tirs envoyés du joueur
 void drawTirs(tir_Struct p); 
 
@@ -89,6 +96,10 @@ void drawAllObstacles(ObstacleList t);
 
 // dessine les tirs à la chaine (utilise drawTirs à la chaîne)
 void drawAllTirs(listetir_Struct t);
+
+// dessine des bonus à la chaine (utilise drawBonus à la chaine)
+void drawAllBonus(BonusList b);
+
 
 // affiche le jeu à l'écran
 void DisplayGame();
