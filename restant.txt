@@ -1,0 +1,14 @@
+- Tirs ennemis -> créer une structure listeTir par ennemi
+- Collisions tirsennemi_alliés !
+
+
+- régler le problème options en jeu
+- appliquer les textures
+- adapter le niveau du jeu, et accélérer en fonction du score
+- arme qui peut emprisonner les obstacles
+
+
+- adapter format MAC
+- mettre un max de commentaires 
+
+faire se déplacer les bonus !

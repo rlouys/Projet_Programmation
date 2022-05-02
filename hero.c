@@ -25,7 +25,8 @@ Hero createHero(int *maxX, int *maxY)
 {
 	Hero hero;
 
-	int x = 0, y = 0;
+	// position à 0, et on commence à chercher dans le fichier map
+	int x = 0, y = 0; 
 
 	for (int i = 0; i < *maxX; ++i)
 	{
@@ -33,6 +34,7 @@ Hero createHero(int *maxX, int *maxY)
 		{
 			if(*(*(map + i) + j) == 'X')
 			{
+				// quand 'X' trouvé sur la map, on note les coordonnées
 				x = j;
 				y = i;
 			}
@@ -64,7 +66,8 @@ void moveUp(Hero hero)
 	int y = 0;
 
 	y = hero->pos.y+1;
-     	
+    
+	// pos Y max du héro == 10
 	if (hero->pos.y < 11)
 	{
 		hero->pos.y = y;
@@ -77,12 +80,10 @@ void moveUp(Hero hero)
 
 void moveDown(Hero hero)		//la fonction va vérifier si on peut se déplacer vers la droite et le faire le cas échéant
 {
-	int x = 0, y = 0;
-	
-	x = hero->pos.x;
-	y = hero->pos.y-1;
+	int y = hero->pos.y-1;
 
-     	if (*(*(map + y) + x)!='#' )
+	// fixe la nouvelle position si pas déjà tout en bas
+	if(hero->pos.y != 1)
 	{
 		hero->pos.y = y;
 	}
@@ -99,6 +100,7 @@ void moveRight(Hero hero)
 	x = hero->pos.x+1;
 	y = hero->pos.y;
 
+	// SI LES MURS DROITS NE BLOQUENT PAS LE HERO
 	if (*(*(map + y) + x)!='@')
 	{
 		hero->pos.x = x;
@@ -117,6 +119,7 @@ void moveLeft(Hero hero)
 	x = hero->pos.x-1;
 	y = hero->pos.y;
 
+	// SI LES MURS GAUCHES NE BLOQUENT PAS LE HERO
 	if (*(*(map + y) + x) !='#')
 	{
 		hero->pos.x = x;
@@ -124,6 +127,8 @@ void moveLeft(Hero hero)
 }
 
 // ------------------------------------------------------------------ //
+
+// switch l'arme du héro de fusil à canon à bulles et inversement
 
 void switchWeapon(Hero hero)
 {
@@ -137,10 +142,12 @@ void switchWeapon(Hero hero)
 BonusList initialListeBonus()
 {
 	BonusList b = malloc(sizeof(ListeBonus));
+
 	if (b == NULL)
 	{
 		exit(EXIT_FAILURE);
 	}
+
 	b->first = NULL;
 	b->last = NULL;
 	b->quantite = 0;
@@ -156,19 +163,25 @@ bonus_objet createBonus(int *maxY)
 {
 	
 	bonus_objet new = malloc(sizeof(objet_bonus));
-	int x = (rand() % (30-6+1) + 6);
+
+	// donne la position x de départ du bonus
+	int x = (rand() % ((37+1)-11) + 11);
+
 	if (new == NULL)
 	{
 		exit(EXIT_FAILURE);
 	} 
-	//new->type = rand()%4;
-
 
 	new->pos.x = x;
-	new->pos.y = 65;
+	new->pos.y = 50;
 	new->next = NULL;
 	new->previous = NULL;
 	new->active = true;
+
+	// ceux qui popent du côté droit descendent vers la gauche
+	if(x > 22) new->side = 1;
+	// ceux qui popent du côté gauche descendent vers la droite
+	else new->side = 0;
 
 	return new;
 }
@@ -188,22 +201,110 @@ void insertionBonus(BonusList b, bonus_objet bonus)
 
 	newBonus = bonus;
 
+	// si liste vide, le bonus inséré est le premier ET le dernier
 	if (b->first == NULL || b->last == NULL)
 	{
 		b->last= newBonus;
 		b->first = newBonus;
 	}
+
+	// si liste non vide, on le rajoute à la fin de la liste
 	else
 	{
 		newBonus->next = b->first;
 		b->first->previous = newBonus;
 		b->first = newBonus;
 	}
+
 	e->quantite += 1;
-	//}
+	
 }
 
 // --------------------------------------------------------------------- // 
+
+//Supprime un bonus et l'enleve de la liste
+void suppressionBonus(BonusList b, bool test)
+{
+	if (b->first != NULL)
+	{
+		bonus_objet newBonus = malloc(sizeof(objet_bonus));
+
+		if (newBonus == NULL)
+		{
+			exit(EXIT_FAILURE);
+		}
+
+		newBonus = b->first;
+
+		// si bonus existe, on vérifie quand il passe inactive
+		// à ce moment là on le compare avec un booléen test false
+		// si false, alors on supprime l'ennemi en le mettant
+		// dans une structure "poubelle"
+		while (newBonus != NULL)
+		{
+			if (newBonus->active == test)
+			{
+				bonus_objet deleted = malloc(sizeof(objet_bonus));
+				deleted = newBonus;
+				newBonus = newBonus->next;
+
+				// si liste avec un seul élement (newBonus)
+				// alors on supprime toute la liste via first/last == NULL
+				if (b->first == deleted && b->last == deleted)
+				{
+					b->first = NULL;
+					b->last = NULL;
+				}
+
+				// si newBonus est le dernier element de la liste
+				// on place la limite de la liste un cran en arrière
+				// ce qui a pour effet de supprimer l'objet bonus
+				else if (b->first != deleted && b->last == deleted)
+				{
+					b->last = deleted->previous;
+					b->last->next = NULL;
+				}
+
+				// si newBonus est le premier element de la liste
+				// on place le départ de la liste un cran en avant
+				// ce qui a pour effet de supprimer l'objet bonus
+				else if (b->first == deleted && b->first != deleted)
+				{
+					b->first  = deleted->next;
+					b->first->previous = NULL;	
+				}
+
+				else
+				{
+					deleted->next->previous = deleted->previous;
+					deleted->previous->next = deleted->next;
+				}
+
+				free(deleted);
+
+
+				b->quantite--;
+
+
+				// si le jeu est en cours, que le héro n'est pas à cours de vie
+				// que le bonus n'est pas arrivé à la fin de la map
+				// alors le joueur récupère 50 d'expérience.
+				if(startgame==true && hero->health != 0 && endmap == false)
+				{
+					hero->current_xp += 50;
+				}	
+			}
+
+			else
+			{
+				newBonus = newBonus->next;
+			}
+		}
+	}
+}
+
+// --------------------------------------------------------------------- // 
+
 //Supprime tous les objets bonus en fin de niveau
 
 void suppressionBonusEndGame(BonusList b)
@@ -220,6 +321,8 @@ void suppressionBonusEndGame(BonusList b)
 
 		bonus_objet deleted = malloc(sizeof(objet_bonus));
 
+		// désactivation e tous les bonus et mise du bonus dans une
+		// structure "poubelle" pour free();
 		while(newBonus != NULL)
 		{
 			newBonus->active = false;
@@ -230,67 +333,3 @@ void suppressionBonusEndGame(BonusList b)
 		}
 
 }
-
-// --------------------------------------------------------------------- // 
-
-//Supprime un bonus et l'enleve de la liste
-void suppressionBonus(BonusList b, bool test)
-{
-
-	if (b->first != NULL)
-	{
-		bonus_objet newBonus = malloc(sizeof(objet_bonus));
-		if (newBonus == NULL)
-		{
-			//exit(EXIT_FAILURE);
-		}
-		newBonus = b->first;
-		while (newBonus != NULL)
-		{
-			if (newBonus->active == test)
-			{
-				bonus_objet deleted = malloc(sizeof(objet_bonus));
-				deleted = newBonus;
-				newBonus = newBonus->next;
-				if (b->first == deleted && b->last == deleted)
-				{
-				//	enemy undeleted = malloc(sizeof(enemies));
-					b->first = NULL;
-					b->last = NULL;
-				}
-				else if (b->first != deleted && b->last == deleted)
-				{
-					b->last = deleted->previous;
-					b->last->next = NULL;
-				}
-				else if (b->first == deleted && b->first != deleted)
-				{
-					b->first  = deleted->next;
-					b->first->previous = NULL;
-					
-				}
-				else
-				{
-					deleted->next->previous = deleted->previous;
-					deleted->previous->next = deleted->next;
-				}
-				free(deleted);
-
-				b->quantite--;
-
-				if(startgame==true && hero->health != 0 && endmap == false)
-				{
-					hero->current_xp += 50;
-				}	
-				endmap = false;		
-
-			}
-			else
-			{
-				newBonus = newBonus->next;
-			}
-		}
-	}
-}
-
-// --------------------------------------------------------------------- // 

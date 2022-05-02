@@ -3,6 +3,7 @@
 
 /*** LIBS ***/ 
 #include <stdbool.h>
+#include "hero.h"
 
 /*** STRUCTURES ***/ 
 
@@ -31,8 +32,17 @@ struct listeTirs
 	
 };
 
+typedef struct listeTirsEnemy listeTirsEnemy;
+struct listeTirsEnemy
+{
+	int quantite;
+	struct tirs *first;
+	struct tirs *last;
+};
+
 typedef struct tirs *tir_Struct; 
 typedef struct listeTirs *listetir_Struct;
+typedef struct listeTirsEnemy *listetir_StructEnemy;
 
 
 
@@ -40,29 +50,64 @@ typedef struct listeTirs *listetir_Struct;
 
 tir_Struct shoot;
 listetir_Struct t;
+listetir_StructEnemy te;
 
 /*** FUNCTIONS ***/
 
+					/******************
+					 * INITIALISATION *
+					 ******************/
 
 // initialise une liste qui contient les tirs et leur "stats"
-listetir_Struct  initialListeTirs();
+listetir_Struct  initialListeTirsHero();
+
+// initialise une liste qui contient les tirs et leur "stats"
+listetir_StructEnemy  initialListeTirsEnemy();
 
 // positionne le tir sur la map devant le héro
-tir_Struct createTirs(Hero hero);
+tir_Struct createTirsHero(Hero hero);
+
+// positionne le tir sur la map devant l'ennemi
+tir_Struct createTirsEnemy(enemy en);
 
 
-//dessine le tir sur la map et incrémente la liste
-void insertionTirs(listetir_Struct t, tir_Struct base);
+					/***************
+					 * ALLOCATIONS *
+					 ***************/
+
+
+//dessine le tir allié sur la map et incrémente la liste
+void insertionTirsHero(listetir_Struct t, tir_Struct base);
+
+//dessine le tir ennemi sur la map et incrémente la liste
+void insertionTirsEnemy(listetir_StructEnemy te, tir_Struct base);
+
+
+					/****************
+					 * SUPPRESSIONS *
+					 ****************/
+
+//supprime le tir allié s'il y a une collision (booléen renvoyé depuis timers_and_effects.h suite à un test)
+void suppressionTirsHero(listetir_Struct t, bool test);
+
+//supprime le tir ennemi s'il y a une collision (booléen renvoyé depuis timers_and_effects.h suite à un test)
+void suppressionTirsEnemy(listetir_StructEnemy te, bool test);
 
 // supprime tous les tirs en fin de niveau
 void suppressionTirsEndGame(listetir_Struct t);
 
-//supprime le tir s'il y a une collision (booléen renvoyé depuis timers_and_effects.h suite à un test)
-void suppressionTirs(listetir_Struct t, bool test);
 
-// permet au héro de tirer (createTirs + insertionTirs)
+						/***********
+						 * ACTIONS *
+						 ***********/
+
+// permet au héro de tirer (createTirs + insertionTirs) 
+//lié à la barre d'espace
 void tirer(Hero hero, listetir_Struct t);
 
+// permet à l'ennemi de tirer (createTirs + insertionTirs) 
+//lié à la barre d'espace
+void tirer_enemy(enemy en, listetir_StructEnemy te);
 
 
 

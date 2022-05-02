@@ -33,32 +33,39 @@
 
 /*** VARIABLES ***/
 
-float df = 5;
-float *deplacement_fenetre = &df;
-bool frame = true;
-bool startgame;
-bool try;
-int counterAlpha = 0;
-char* letter = " ";
-// options_keys var
-int difficulty = 1;
-char* difficulty_str;
-bool screen;
-char* screen_str;
-bool gameplay_keys;
-char* gameplay_keys_str;
-bool cheatMode;
-char* cheatmode_str;
+int c = 0; // void mouse
+int counterAlpha = 0; // compteur pour affichage du pseudo
+int optionSwitchKey; // pour que les options ramènent en jeu ou non
+// en fonction d'où on se trouvait avant de rentrer dans les options
+int difficulty = 1; // niveau de difficulté
 
+// pour l'affichage des options dynamiques
+char* letter = " ";
+char* difficulty_str;
+char* screen_str;
+char* gameplay_keys_str;
+char* cheatmode_str;
 char username[20];
 char* usernameScore;
 
+
+bool cheatMode;
+bool gameplay_keys;
+bool screen;
+bool frame = true;
+bool startgame;
+bool try;
 bool optionSwitch = false;
 
 
-int optionSwitchKey;
 
 /*** FUNCTIONS ***/
+
+
+                /**********************
+                 * KEYBOARD FUNCTIONS *
+                 **********************/
+
 
 // initialise les fonctions au clavier lorsque dans un menu
 
@@ -67,10 +74,12 @@ void keyboardFunc(unsigned char Key, int x, int y) {
     switch (Key) {
    
     case 'c':
+
         startgame = !startgame;
 		glutDisplayFunc(DisplayGame);
 		glutPostRedisplay();
 		break;
+
 
 	case 'n':
 
@@ -78,45 +87,44 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 		glutPostRedisplay();
 		break;
 
+
 	case 'x':
-        if(try==false){
-		glutDisplayFunc(DisplayEnding);
-		glutPostRedisplay();
+
+        if(try==false)
+        {
+            glutDisplayFunc(DisplayEnding);
+            glutPostRedisplay();
         }
 
-       // wait();
-        //exit(0);
-
         if(try==true) wait();
-        
     	break;
     
     case 'r':
+
             startgame = false;
             hero->health = 42;
-            hero->killed = 0;
-
-            
+            hero->killed = 0;            
             glutDisplayFunc(WelcomeDisplay);
             glutPostRedisplay();
             break;
 
 	case 'g':
 
-		glutDisplayFunc(DisplayGameplay);
-		glutPostRedisplay();
-		break;
+            glutDisplayFunc(DisplayGameplay);
+            glutPostRedisplay();
+            break;
 
 	case 'o':
 
-		glutDisplayFunc(DisplayOptions);		
-		glutPostRedisplay();
-		break;	    
+            glutDisplayFunc(DisplayOptions);		
+            glutPostRedisplay();
+            break;	    
 
 	case 'm':
-		glutDisplayFunc(WelcomeDisplay);
-		glutPostRedisplay();	
-		break;	
+
+            glutDisplayFunc(WelcomeDisplay);
+            glutPostRedisplay();	
+            break;	
     
     };
    
@@ -124,12 +132,16 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 
 // ----------------------------------------------------------------- //
 
+// clavier virtuel permettant d'afficher ce que l'on écrit
+// dans la demande de pseudo 'n'
+
 void Alphabet(unsigned char Key, int x, int y)
 {
 
     switch (Key) {
     
         case 'a':
+
             username[counterAlpha] = 'A';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -137,8 +149,8 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
 
-
         case 'b':
+
             username[counterAlpha] = 'B';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -146,6 +158,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'c':
+
             username[counterAlpha] = 'C';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -153,6 +166,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'd':
+
             username[counterAlpha] = 'D';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -160,6 +174,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'e':
+
             username[counterAlpha] = 'E';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -167,6 +182,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'f':
+
             username[counterAlpha] = 'F';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -174,6 +190,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'g':
+
             username[counterAlpha] = 'G';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -181,6 +198,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'h':
+
             username[counterAlpha] = 'H';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -188,6 +206,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'i':
+
             username[counterAlpha] = 'I';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -195,6 +214,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'j':
+
             username[counterAlpha] = 'J';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -202,6 +222,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'k':
+
             username[counterAlpha] = 'K';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -209,6 +230,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'l':
+
             username[counterAlpha] = 'L';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -216,6 +238,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'm':
+
             username[counterAlpha] = 'M';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -223,6 +246,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'n':
+
             username[counterAlpha] = 'N';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -231,6 +255,7 @@ void Alphabet(unsigned char Key, int x, int y)
 
 
         case 'o':
+
             username[counterAlpha] = 'O';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -238,6 +263,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'p':
+
             username[counterAlpha] = 'P';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -245,6 +271,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'q':
+
             username[counterAlpha] = 'Q';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -253,6 +280,7 @@ void Alphabet(unsigned char Key, int x, int y)
 
 
         case 'r':
+
             username[counterAlpha] = 'R';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -260,6 +288,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 's':
+
             username[counterAlpha] = 'S';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -267,6 +296,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 't':
+
             username[counterAlpha] = 'T';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -275,6 +305,7 @@ void Alphabet(unsigned char Key, int x, int y)
 
 
         case 'u':
+
             username[counterAlpha] = 'U';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -282,6 +313,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'v':
+
             username[counterAlpha] = 'V';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -289,6 +321,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'w':
+
             username[counterAlpha] = 'W';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -296,6 +329,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'x':
+
             username[counterAlpha] = 'X';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -303,6 +337,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'y':
+
             username[counterAlpha] = 'Y';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
@@ -310,25 +345,28 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 'z':
+
             username[counterAlpha] = 'Z';
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
             counterAlpha++;
             break;
 
+        // BACKSPACE == SUPPRIME LA LETTRE
         case 0x08: 
 
             if(counterAlpha>0)
             {            letter = "_";
 
-            glTranslatef(-10,0,0);
-            username[counterAlpha-1] = '\0';
-            counterAlpha--;
+                glTranslatef(-10,0,0);
+                username[counterAlpha-1] = '\0';
+                counterAlpha--;
             }
 
             glutDisplayFunc(UsernameDisplay);
             glutPostRedisplay();
             break;
+
         case 13:
 
             startgame = !startgame;
@@ -349,12 +387,12 @@ void Alphabet(unsigned char Key, int x, int y)
 }
 // ----------------------------------------------------------------- //
 
+// actions clavier du menu des options
+
 void keyboardFuncOpt(unsigned char Key, int x, int y) {
 
     switch (Key) {
-   
-
-    
+       
         case 'd':
             difficulty += 1;
             if((difficulty) == 5)
@@ -389,6 +427,10 @@ void keyboardFuncOpt(unsigned char Key, int x, int y) {
     
     case 'r':
 
+        // si on fait un retour en arriere
+        // on vérifie si on était en jeu ou hors jeu
+        // relance ou non le jeu
+        // réaffiche le menu de démarrage ou non
         if(optionSwitch == false)
         {
             glutDisplayFunc(WelcomeDisplay);
@@ -412,6 +454,8 @@ void keyboardFuncOpt(unsigned char Key, int x, int y) {
    
 }
 
+
+
 // ----------------------------------------------------------------- //
 
 // clavier lié au menu pause en jeu
@@ -421,9 +465,11 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
     switch (Key) {
    
     case 'g':
+
         optionSwitch = !optionSwitch;
         
-        if(optionSwitchKey == 1){
+        if(optionSwitchKey == 1)
+        {
             optionSwitch = !optionSwitch;
             optionSwitchKey = 0;
         }
@@ -438,7 +484,8 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
         
         optionSwitch = !optionSwitch;
 
-        if(optionSwitchKey == 1){
+        if(optionSwitchKey == 1)
+        {
             optionSwitch = !optionSwitch;
             optionSwitchKey = 0;
         }
@@ -451,11 +498,11 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
        
 		optionSwitch = !optionSwitch;
         
-        if(optionSwitchKey == 1){
+        if(optionSwitchKey == 1)
+        {
             optionSwitch = !optionSwitch;
             optionSwitchKey = 0;
         }
-
 
 		glutDisplayFunc(DisplayCredits);
         glutKeyboardFunc(keyboardFuncOpt);
@@ -464,7 +511,6 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
 
     case 'r':
 
-        
         if(optionSwitch == true)
         {
             glutDisplayFunc(WelcomeDisplay);
@@ -473,19 +519,15 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
         else
         {
             glutDisplayFunc(GameOptionsDisplay);
-
             glutDisplayFunc(DisplayGame);
-
             glutKeyboardFunc(keyboardFunc);
         }
 
-        
-
 		glutPostRedisplay();
-
     	break;
     
     case 27:
+
 			startgame = !startgame; 
             optionSwitch = !optionSwitch;
 			glutDisplayFunc(DisplayGame);
@@ -493,23 +535,56 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
 			break;
 
     case 'x':
-			glutDisplayFunc(DisplayEnding);
+            // ouvrir un fichier, enregistrer tout ce qu'il faut, et aller rechercher dans ce fichier par après !!
+			glutDisplayFunc(WelcomeDisplay);
 			glutPostRedisplay();
 			break;        
     	
     case 'c':
-    		startgame = !startgame;
+    		startgame = true;
 			glutDisplayFunc(DisplayGame);
 			glutPostRedisplay();
 			break;  
+    
+    case 'm':
+            // ouvrir un fichier, enregistrer tout ce qu'il faut, et aller rechercher dans ce fichier par après !!
+            //glutDisplayFunc(DisplayGame);
+            //glutPostRedisplay();
+            break;
     };
    
 }
 
 
-// ----------------------------------------------------------------- //
 
-// Dessine un cadre autour d'un texte
+                        /***************
+                         * MENU SOURIS *
+                         ***************/
+
+
+// action à la souris || Clic gauche : indique la position d'où on se trouve || Clic droit(comment) : ferme la fenêtre (exit(0)). 
+
+void mouse(int bouton,int etat,int x,int y) { // action à la souris || Clic gauche : indique la position d'où on se trouve || Clic droit : ferme la fenêtre (exit(0)). 
+  if ( etat == GLUT_DOWN )
+  {
+    switch ( bouton ) {
+        // donne la position du clic
+      case GLUT_LEFT_BUTTON  : c = (c+1)%7; 
+                               printf("%4d %4d\n",x,y); 
+                               glutPostRedisplay();
+                               break ;
+      /*case GLUT_RIGHT_BUTTON : exit(0);
+                               break; */
+    }
+  }
+}
+
+
+                    /******************
+                     * SHAPE DRAWINGS *
+                     ******************/
+
+// Dessine un cadre autour d'un texte choisi
 
 void frameDraw(int red, int green, int blue, int x, int y, int length, int title)
 {
@@ -520,6 +595,7 @@ void frameDraw(int red, int green, int blue, int x, int y, int length, int title
     int y_up = y + 15;
     int y_down = y - 15;  
 
+    // si c'est un titre, alors le cadre s'étire à toute la fenêtre
     if (title == 0){
 
         for (i = 0; i < 30; i++){ 
@@ -584,7 +660,11 @@ void frameDraw(int red, int green, int blue, int x, int y, int length, int title
         }
 }
 
-// -------------------------------------------------------------- //
+
+                        /**********
+                         * ÉCRANS *
+                         **********/
+
 
 // Crée l'écran de DÉMARRAGE
 
@@ -592,12 +672,14 @@ void WelcomeDisplay()
 {	
 
 	int x = (SCREEN_WIDTH/2)-80;
+
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glColor3f(EMERALD);
 
     frameDraw(EMERALD, x+30, 850, 630, 1);
 
+    // couleur
     glColor3f(WHITE);
 
     glRasterPos3f(x-130, 850, 1);
@@ -652,8 +734,10 @@ void WelcomeDisplay()
 // ------------------------------------------------------------------ //
 
 void GameOptionsDisplay()
-{
+{   
+    //couleur
     glColor3f(EMERALD);
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -662,10 +746,11 @@ void GameOptionsDisplay()
 
     glTranslatef(0,400,0);
 
+    // dessine le fond du menu option in game
     for(int i = 0; i < 29; i++)
     {
-    drawSquare(DARK_GREY, 6);
-    glTranslatef(10,0,0);
+        drawSquare(DARK_GREY, 6);
+        glTranslatef(10,0,0);
     }
 
 
@@ -676,6 +761,8 @@ void GameOptionsDisplay()
     writeSomethingHelvetica(DARK_GREY, 243, 700, "('g')   GAMEPLAY >>>>");
     writeSomethingHelvetica(DARK_GREY, 243, 640, "('o')   OPTIONS >>>>");
     writeSomethingHelvetica(DARK_GREY, 243, 580, "('d')   CREDITS >>>>");
+    writeSomethingHelvetica(DARK_GREY, 243, 470, "('m')  TO MENU AND SAVE >>>>");
+    
     writeSomethingHelvetica(DARK_GREY, 243, 440, "('x')   QUIT AND SAVE >>>>");
 
 
@@ -687,11 +774,16 @@ void GameOptionsDisplay()
 
 // ------------------------------------------------------------------ //
 
+// fenetre demandant le pseudo du joueur lors d'une nouvelle partie
+
 void UsernameDisplay()
 {
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // couleurs
     glColor3f(EMERALD);
+
     glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
     
@@ -739,7 +831,7 @@ void UsernameDisplay()
 	//writeSomething(EMERALD, 310, 770, "H  A  R  U  H  I  K  O");    
 	writeSomething(EMERALD, 180, 850, "E N T R E Z    V O T R E     U S E R N A M E :"); 
 
-
+    // affiche le username, qui est alimenté par la fonction Keyboard(Alphabet)
     writeSomethingArray(WHITE, 330, 770, username);
         
     glRasterPos3f(550, 730, 0);
@@ -747,13 +839,7 @@ void UsernameDisplay()
     for(int i = 0; i <strlen(msg1);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
     
-    
     glutKeyboardFunc(Alphabet);
-
-
-
-
-
 
     glutSwapBuffers();
 
@@ -767,10 +853,16 @@ void EndGameDisplay()
 {	
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // couleurs
     glColor3f(EMERALD);
+
     glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+
+    // transformation des variables numériques en format texte pour affichage
+    // j'aurai pu réutiliser "a" à chaque fois, mais ce serait moins propre.
     int a = hero->current_xp;
 	char str[10];
 	sprintf(str, "%d", a);
@@ -825,16 +917,18 @@ void WinDisplay()
    // int tick;
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // couleurs
     glColor3f(EMERALD);
+
     glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
     int a = hero->current_xp;
 	char str[10];
-
 	sprintf(str, "%d", a);
 
     int b = hero->killed;
-    
     char strn[10];
     sprintf(strn, "%d", b);
 
@@ -866,93 +960,8 @@ void WinDisplay()
 
     glutKeyboardFunc(keyboardFunc);
 
-
     glutSwapBuffers();
 }
-// ------------------------------------------------------------------ //
-
-// initialise les options dynamiques à l'écran avant la première touche pressée
-void options_keys(int option_number)
-{   
-    
-        switch (option_number) {
-
-            case 1:
-        
-                if(screen == true)
-                { 
-                    screen_str = "ECRAN     :  V R T C   ('s')";
-                }
-                else
-                {
-                    screen_str = "ECRAN     :  H R Z T   ('s')"; 
-                }
-                
-                break;
-
-            case 2:
-                if(difficulty == 1)
-                { 
-                    difficulty_str = "DIFFICULTE:  FACILE    ('d')";
-                    //level++;
-                }
-                else if (difficulty == 2)
-                {
-                    difficulty_str = "DIFFICULTE:  NORMAL    ('d')"; 
-                    //level++;
-                }
-                else if (difficulty == 3)
-                {
-                    difficulty_str = "DIFFICULTE:  DIFFICILE ('d')"; 
-                }
-                else if (difficulty == 4)
-                {
-                    difficulty_str = "DIFFICULTE:  EXTREME   ('d')"; 
-                }
-
-                break;
-
-            case 3:
-
-                if(cheatMode == true)
-                { 
-                    cheatmode_str = "CHEAT MODE:  ENABLED   ('z')";
-                }
-                else
-                {
-                    cheatmode_str = "CHEAT MODE:  DISABLED  ('z')"; 
-                }
-                break;
-
-            case 4:
-                
-                if(gameplay_keys == true)
-                { 
-                    gameplay_keys_str = "TOUCHES   :  Z Q S D   ('k')";
-                }
-                else
-                {
-                    gameplay_keys_str = "TOUCHES   :  A R R O W ('k')"; 
-                }
-
-                break;
-
-                
-            
-            };
-   
-}
-
-
-
-
-
-
-
-        
-
-
-    
 
 
 // ------------------------------------------------------------------ //
@@ -962,9 +971,20 @@ void options_keys(int option_number)
 void DisplayOptions()
 {	
 
+
     int x = (SCREEN_WIDTH/2)-80;
+
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    // initialise les variables affichées dans les options 
+    options_keys(1);
+    options_keys(2);
+    options_keys(3);
+    options_keys(4);
+
+    // couleurs
     glColor3f(EMERALD);
 
     frameDraw(EMERALD, x+30, 850, 630, 1);
@@ -976,54 +996,41 @@ void DisplayOptions()
     for(int i = 0; i <strlen(msg1);i++)
     	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
 
-    //options_keys(0);
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~~ // 
-
     glColor3f(WHITE);
+
+
+    // affiche la difficulté en cours
     frameDraw(WHITE, x, 750, 210, 0);
-
     glRasterPos3f(x, 750, 1);
-
-    options_keys(2);
-
     char* msg3 = difficulty_str;
     for(int i = 0; i <strlen(msg3);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
 
-
+    // affiche les touches de jeu actives
     frameDraw(WHITE, x, 700, 210, 0);
-
-    options_keys(4);
     glRasterPos3f(x, 700, 1);
     char* msg4 = gameplay_keys_str;
     for(int i = 0; i <strlen(msg4);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
 
-
+    // affiche l'inclinaison de la map
     frameDraw(WHITE, x, 650, 210, 0);
-
-
-    options_keys(1);
     glRasterPos3f(x, 650, 1);
     char* msg5 = screen_str;
     for(int i = 0; i <strlen(msg5);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg5[i]);
+
+    // affiche si le cheat mode est actif ou non
     frameDraw(WHITE, x, 600, 210, 0);
-
-
-
-    options_keys(3);
     glRasterPos3f(x, 600, 1);
     char* msg6 = cheatmode_str;
     for(int i = 0; i <strlen(msg6);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
 
+    // affiche le bouton pour quitter
     glColor3f(EMERALD);
     frameDraw(EMERALD, x, 500, 210, 0);
     glColor3f(WHITE);
-    
-
     glRasterPos3f(x, 500, 1);
     char msg7[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
     for(int i = 0; i <strlen(msg7);i++)
@@ -1081,7 +1088,7 @@ void DisplayGameplay()
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
 
     glRasterPos3f(50, 650, 0);
-    char msg7[]="- Un nombre de points d'attaques (3 au debut),";
+    char msg7[]="- Un nombre de points d'attaques (1 au debut),";
     for(int i = 0; i <strlen(msg7);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
 
@@ -1091,33 +1098,44 @@ void DisplayGameplay()
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg8[i]);
 
     glRasterPos3f(50, 570, 0);
-    char msg9[]="Chaque ennemi possède trois points de vie (au debut).";
+    char msg9[]=" - Chaque ennemi possede 3 points de vie (au debut).";
     for(int i = 0; i <strlen(msg9);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg9[i]);    
 
     glRasterPos3f(50, 550, 0);
-    char msg10[]="Un ennemi elimine rapporte 50 points";
+    char msg10[]=" - Un ennemi elimine rapporte 50 points";
     for(int i = 0; i <strlen(msg10);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg10[i]);
 
     glRasterPos3f(50, 530, 0);
-    char msg11[]="Une collision avec un ennemi enleve 1 point de vie, et retire 50 points.";
+    char msg11[]=" - Une collision avec un ennemi enleve 1 point de vie, et retire 100 points.";
     for(int i = 0; i <strlen(msg11);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg11[i]);
     
     glRasterPos3f(50, 510, 0);
-    char msg12[]="Un ennemi arrivant en bas de la map enleve 1 point de vie, et retire 50 points.";
+    char msg12[]=" - Un ennemi arrivant en bas de la map enleve 1 point de vie, et retire 100 points.";
     for(int i = 0; i <strlen(msg12);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg12[i]);
 
-    glColor3f(EMERALD);
-    frameDraw(EMERALD, 50, 430, 210, 0);
-    glColor3f(WHITE);
-    
-    glRasterPos3f(50, 430, 1);
-    char msg13[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
+
+    glRasterPos3f(50, 490, 0);
+    char msg13[]=" - Un bonus attrapé rajoute 1 point d'attaque au héro";
     for(int i = 0; i <strlen(msg13);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg13[i]);
+
+    glRasterPos3f(50, 470, 0);
+    char msg14[]=" - Un bonus detruit n'apporte aucun effet";
+    for(int i = 0; i <strlen(msg14);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg14[i]);
+
+    glColor3f(EMERALD);
+    frameDraw(EMERALD, 50, 390, 210, 0);
+    glColor3f(WHITE);
+    
+    glRasterPos3f(50, 390, 1);
+    char msg15[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
+    for(int i = 0; i <strlen(msg15);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg15[i]);
 
     glutSwapBuffers();
 }
@@ -1176,9 +1194,7 @@ void DisplayCredits()
     glColor3f(EMERALD);
 
     frameDraw(EMERALD, (SCREEN_WIDTH/2)-50, 850, 630, 1);
-
     glColor3f(WHITE);
-
     glRasterPos3f(300, 850, 1);
     char msg1[]="   C  R  E  D  I  T  S  ";
     for(int i = 0; i <strlen(msg1);i++)
@@ -1205,15 +1221,98 @@ void DisplayCredits()
     
 }
 
-// ---------------------------------------------------------------- //
+                        /*********************
+                         * FONCTION D ECRANS *
+                         *********************/
+
+
+// initialise les options dynamiques à l'écran avant la première touche pressée
+void options_keys(int option_number)
+{   
+    
+        switch (option_number) {
+
+            case 1:
+        
+                if(screen == true)
+                { 
+                    screen_str = "ECRAN     :  V R T C   ('s')";
+                }
+                
+                else
+                {
+                    screen_str = "ECRAN     :  H R Z T   ('s')"; 
+                }
+                
+                break;
+
+            case 2:
+
+                if(difficulty == 1)
+                { 
+                    difficulty_str = "DIFFICULTE:  FACILE    ('d')";
+                }
+
+                else if (difficulty == 2)
+                {
+                    difficulty_str = "DIFFICULTE:  NORMAL    ('d')"; 
+                }
+
+                else if (difficulty == 3)
+                {
+                    difficulty_str = "DIFFICULTE:  DIFFICILE ('d')"; 
+                }
+
+                else if (difficulty == 4)
+                {
+                    difficulty_str = "DIFFICULTE:  EXTREME   ('d')"; 
+                }
+
+                break;
+
+            case 3:
+
+                if(cheatMode == false)
+                { 
+                    cheatmode_str = "CHEAT MODE:  DISABLED  ('z')";
+                }
+
+                else
+                {
+                    cheatmode_str = "CHEAT MODE:   ENABLED  ('z')"; 
+                }
+
+                break;
+
+            case 4:
+                
+                if(gameplay_keys == true)
+                { 
+                    gameplay_keys_str = "TOUCHES   :  Z Q S D   ('k')";
+                }
+
+                else
+                {
+                    gameplay_keys_str = "TOUCHES   :  A R R O W ('k')"; 
+                }
+
+                break;
+            };
+}
+
+
+
+                        /*******************
+                         * MENU CLIC DROIT *
+                         *******************/
 
 // Crée le menu clic droit
 
 void init_rightClick_Menu(){
     glutCreateMenu (myMenu);
+
 	glutAddMenuEntry ("|             MENU               |", 0);
 	glutAddMenuEntry ("''''''''''''''''''''''''''''''''''''''''''''''''''",0);
-
 	glutAddMenuEntry ("| Options", 2);
 	glutAddMenuEntry ("| Gameplay", 3);
 	glutAddMenuEntry ("| Pause", 4);
@@ -1235,25 +1334,27 @@ void myMenu(int id){
 	switch(id){
 
 		case 2:
-        	printf("Options\n");	
 
+        	printf("Options\n");	
            // glutDisplayFunc(DisplayOptions);
 			break;
 		case 3:
+
         	printf("Gameplay\n");	
             //glutDisplayFunc(DisplayGameplay);
 			break;
 		case 4:
+
 			printf("Pause\n");	
 			break;
 		case 5:
+
 			printf("_!_Cheat_mode_!_");	
             
 		case 6:
+        
             glutDisplayFunc(DisplayEnding);
 	}
 }
-
-// ------------------------------------------------------------------ //
 
 

@@ -27,97 +27,8 @@
 
 /*** VARIABLES ***/
 
-bool test = false;
-//int tick = 0;
-int direction = 0;
-float vl = 20.0;
-float *value = &vl;
-int c = 0;
-char* cheatMode = "| Cheat mode : disabled";
-//bool cheatModeT = false;
-bool startgame = false;
-bool try = false;
-
-
-/*** FUNCTIONS ***/
-// ------------------------------------------------------------------ //
-
-void wait()
-{
-    int timerwait;
-
-    for(timerwait = 0; timerwait < 200000; timerwait++)
-    {
-            printf("wait : %i\n", timerwait);
-    }
-}
-
-// ------------------------------------------------------------------ //
-
-void arrowFunc(int key, int x, int y) {
-    switch (key) {
-    case GLUT_KEY_UP:
-        direction = 3;
-        break;
-    case GLUT_KEY_DOWN:
-        direction = 1;
-        break;
-    case GLUT_KEY_LEFT:
-        direction = 0;
-        break;
-    case GLUT_KEY_RIGHT:
-        direction = 2;
-        break;
-    }
-}
-
-
-// ------------------------------------------------------------------ //
-
-void initRendering()
-{
-	glEnable(GL_DEPTH_TEST);
-}
-
-// ------------------------------------------------------------------ //
-
-void handleResize(int width,int heigth)
-{
-    glViewport(0, 0, width, heigth);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-    gluOrtho2D(0, width, 0, heigth);
-
-}
-
-// ------------------------------------------------------------------ //
-
-int updatePosition(int value){
-    
-    value = value*1.25;
-    if(value>=500){
-            value = 10;
-        }
-    return value;
-
-}
-
-// ------------------------------------------------------------------ //
-
-// action à la souris || Clic gauche : indique la position d'où on se trouve || Clic droit(comment) : ferme la fenêtre (exit(0)). 
-
-void mouse(int bouton,int etat,int x,int y) { // action à la souris || Clic gauche : indique la position d'où on se trouve || Clic droit : ferme la fenêtre (exit(0)). 
-  if ( etat == GLUT_DOWN )
-    switch ( bouton ) {
-      case GLUT_LEFT_BUTTON  : c = (c+1)%7; 
-                               printf("%4d %4d\n",x,y); 
-                               glutPostRedisplay();
-                               break ;
-      /*case GLUT_RIGHT_BUTTON : exit(0);
-                               break; */
-                               }
-}
-// ------------------------------------------------------------------ //
+//bool test = false;
+//bool startgame = false;
 
 
 int main(int argc, char *argv[])
@@ -126,7 +37,7 @@ int main(int argc, char *argv[])
     // VARIABLES // 
 
     mX = 80;
-    mY = 45;
+    mY = 49;
     srand(time(NULL));
 
     // map & jeu
@@ -134,7 +45,8 @@ int main(int argc, char *argv[])
 	
      hero = createHero(&mX, &mY);
      e = initialListEnemies();
-     t = initialListeTirs();
+     t = initialListeTirsHero();
+     te = initialListeTirsEnemy();
      o = initialListObstacles();
      b = initialListeBonus();
 
@@ -149,11 +61,8 @@ int main(int argc, char *argv[])
 	glutDisplayFunc(WelcomeDisplay);
     glutReshapeFunc(handleResize);
     glutKeyboardFunc(keyboardFunc);
-    glutSpecialFunc(arrowFunc);
     glutMouseFunc(mouse);    	
 
-// 26/4 - 13/43 
-// 26/4 - 11/60 
 
 // MENU CLIC DROIT
 
@@ -161,20 +70,26 @@ int main(int argc, char *argv[])
   
 
 // TIMERS
+
     glutTimerFunc(50, scrolling, 0);
+
     glutTimerFunc(100, updateCollisions, 1);
+
     glutTimerFunc(200, updateEnemies, 2);
-    glutTimerFunc(1, updateTirs, 3);
     glutTimerFunc(50, updateNewEnemies, 4);
     glutTimerFunc(10, updateDeleteEnemies, 5);
-    glutTimerFunc(10, updateDeleteTirs, 6);
+
     glutTimerFunc(50, updateObstacle, 7);
 	glutTimerFunc(10, updateNewObstacles, 8);
 	glutTimerFunc(10, updateDeleteObstacles, 9);
+
 	glutTimerFunc(10, updateBonus, 10);
     glutTimerFunc(10, updateNewBonus, 11);
     glutTimerFunc(10, updateDeleteBonus, 12);
 
+    glutTimerFunc(1, updateTirsHero, 3);
+    glutTimerFunc(1, updateTirsEnemy, 13);
+    glutTimerFunc(10, updateDeleteTirs, 6);
 
 
     glEnable(GL_DEPTH_TEST);
