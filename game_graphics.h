@@ -22,28 +22,38 @@
 /***  VARIABLES  ***/
 
 char **map;
-int mX;
-int mY;
 
 /*** FUNCTIONS ***/ 
 
-// charge la map
+
+                    /***************
+                     * MEM_LOADERS *
+                     ***************/
+
+// charge la map en mémoire
 bool loadMap(int *mX, int *mY); 
 
-// dessine le niveau en cours
-void drawLevel();
 
-// affiche la vitalité du joueur en temps réel
-void drawHealth(Hero hero); 
 
-// affiche le score du joueur en temps réel
-void drawScore(Hero hero);  
+                    /***************
+                     * MAP DRAWING *
+                     ***************/
 
-// affiche le username du joueur en temps réel
-void drawUsername();  
+// dessine la map et tout les éléments statiques (score, murs)
+void drawMap(int *mX, int *mY, Hero hero); 
 
-// dessine un coeur aux couleurs voulues
-void drawHeart(float red, float green, float blue);
+void initRendering();
+void handleResize(int width, int heigth);
+
+                    /******************
+                     * SHAPES DRAWINGS *
+                     ******************/
+
+// dessine un carré aux couleurs voulues
+void drawSquare(float red, float green, float blue, int size); 
+
+// dessine un cercle aux couleurs voulues
+void drawCircle(float red, float green, float blue, int posx, int posy, float rayon); 
 
 // dessine une ligne aux couleurs voulues
 void drawLine(float red, float green, float blue); 
@@ -51,14 +61,80 @@ void drawLine(float red, float green, float blue);
 // dessine une bordure à un carré, aux couleurs voulues et à la disposition voulue || border 0 == gauche | border 1 == droite
 void drawLineBorder(float red, float green, float blue, int border); 
 
-// dessine un carré aux couleurs voulues
-void drawSquare(float red, float green, float blue, int size); 
+// dessine un coeur aux couleurs voulues
+void drawHeart(float red, float green, float blue);
 
-// dessine le héro (design du hero)
-void drawHero(float red, float green, float blue); 
+                    /*****************
+                     * DATAS DRAWINGS *
+                     *****************/
+// dessine le niveau en cours
+void drawLevel();
 
-// dessine un cercle aux couleurs voulues
-void drawCircle(float red, float green, float blue, int posx, int posy, float rayon); 
+// affiche la vitalité du joueur en temps réel
+void drawHealth(Hero hero); 
+
+// affiche l'état des bonus du joueur en temps réel
+void drawAttack();
+
+// affiche les stats du jeu en cours (enemy killed....)
+void drawKills();
+
+// affiche le username du joueur en temps réel
+void drawUsername();  
+
+// affiche le score du joueur en temps réel
+void drawScore(Hero hero);  
+
+                    /***********************
+                     * CHARACTERS DRAWINGS *
+                     ***********************/
+
+// place le héro sur la carte (en le plaçant au bon endroit)
+void drawPlayer(Hero hero); 
+
+// dessine un ennemi et le place sur la carte
+void drawEnemy(enemy e); 
+
+// dessine des ennemis à la chaine (utilise drawEnemy à la chaine)
+void drawAllEnnemis(EnemyList e); 
+
+                    /**************************
+                     * MOBILE OBJECTS DRAWINGS *
+                     **************************/
+                    
+//dessine les obstacles
+void drawObstacles(obstacles o);
+
+// dessine les tirs à la chaine (utilise drawTirs à la chaîne)
+void drawAllObstacles(ObstacleList t);
+
+//dessine les objets bonus
+void drawBonus(bonus_objet BONUS);
+
+// dessine des bonus à la chaine (utilise drawBonus à la chaine)
+void drawAllBonus(BonusList b);
+
+
+// TIRS
+
+// dessine les tirs envoyés du joueur
+void drawTirsHero(tir_Struct p); 
+
+// dessine les tirs alliés à la chaine (utilise drawTirs à la chaîne)
+void drawAllTirsHero(listetir_Struct t);
+
+// dessine les tirs envoyés du joueur
+void drawTirsEnemy(tir_Struct p); 
+
+// dessine les tirs ennemis à la chaine (utilise drawTirs à la chaîne)
+void drawAllTirsEnemy(listetir_StructEnemy t);
+
+
+
+
+                    /***********************
+                     * FREE TEXTS DRAWINGS *
+                     ***********************/
 
 // écrit un texte aux couleurs et positions voulues
 void writeSomething(float red, float green, float blue, int x, int y, char *txt); 
@@ -68,49 +144,6 @@ void writeSomethingHelvetica(float red, float green, float blue, int x, int y, c
 
 // écrit un texte aux couleurs et positions voulues (avec un tableau)
 void writeSomethingArray(float red, float green, float blue, int x, int y, char txt[]);
-
-// dessine la map et tout les éléments statiques (score, murs)
-void drawMap(int *mX, int *mY, Hero hero); 
-
-// place le héro sur la carte (en le plaçant au bon endroit)
-void drawPlayer(Hero hero); 
-
-// dessine un ennemi et le place sur la carte
-void drawEnemy(enemy e); 
-
-//dessine les obstacles
-void drawObstacles(obstacles o);
-
-//dessine les objets bonus
-void drawBonus(bonus_objet BONUS);
-
-
-// dessine les tirs envoyés du joueur
-void drawTirs(tir_Struct p); 
-
-// dessine des ennemis à la chaine (utilise drawEnemy à la chaine)
-void drawAllEnnemis(EnemyList e); 
-
-// dessine les tirs à la chaine (utilise drawTirs à la chaîne)
-void drawAllObstacles(ObstacleList t);
-
-// dessine les tirs à la chaine (utilise drawTirs à la chaîne)
-void drawAllTirs(listetir_Struct t);
-
-// dessine des bonus à la chaine (utilise drawBonus à la chaine)
-void drawAllBonus(BonusList b);
-
-
-// affiche le jeu à l'écran
-void DisplayGame();
-
-
-
-
-
-
-
-
 
 
 
