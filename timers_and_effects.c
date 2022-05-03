@@ -110,7 +110,7 @@ void checkCollisionAlliesEnemy (enemy en)
 		// le héro perd son bonus
 		hero->health -= 1;
 		en->vie -=1;
-		hero->color_type = false;
+		hero->bonus_active = false;
 		
 		// si le héro n'a plus de vie, la partie est finie, on affiche le display de fin
 		if(hero->health == 0){
@@ -154,9 +154,21 @@ void checkCollisionTirsObstacles (obstacles o, tir_Struct w)
 	}
 	if (CHECKCOLLISION)
 	{	
-		// si un tir touche un obstacle, il est supprimé
-		w->active = false;
-		CHECKCOLLISION = false;
+
+		
+			// si un tir touche un obstacle, il est supprimé (le tir)
+			w->active = false;
+		
+		if (hero->weapon_type == true)
+		{
+			o->jailed = true;
+		}
+		if(hero->weapon_type == false && o->jailed == true)
+		{
+			o->active = false;
+		}
+			CHECKCOLLISION = false;
+		
 	}
 	
 }
@@ -204,7 +216,7 @@ void checkCollisionAlliesObstacles (obstacles fence)
 					hero->current_xp -= 100;
 					fence->pos.y -= 0.1;
 					key = 1;
-					hero->color_type = false;
+					hero->bonus_active = false;
 
 
 					// le héro perd 1 bonus d'attaque
@@ -250,6 +262,25 @@ void checkCollisionTirsBonus (bonus_objet b, tir_Struct w)
 	}
 	if (CHECKCOLLISION)
 	{	
+		if(hero->weapon_type == true) // canon à bulles
+		{
+			hero->bonus_active = true;
+			// si collision
+			// le hero gagne des points d'attaque 
+			// le hero récupère de la santé
+			hero->bonus_active = true;
+			hero->attack += 1;
+			if(hero->health <= 45)
+			{
+				hero->health += 1;
+			}
+			else
+			{
+				hero->health = 50;
+			}
+			drawHealth(hero);
+		}
+		
 		// le bonus est désactivé pour suppression
 		b->active = false;
 
@@ -285,11 +316,11 @@ void checkCollisionAlliesBonus (bonus_objet bns)
 		// si collision
 		// le hero gagne des points d'attaque 
 		// le hero récupère de la santé
-		hero->color_type = true;
+		hero->bonus_active = true;
 		hero->attack += 1;
 		if(hero->health <= 45)
 		{
-			hero->health += 5;
+			hero->health += 1;
 		}
 		else
 		{
@@ -367,7 +398,7 @@ void updateCollisions(int valeur)
 		tir_Struct Sht = t->first;
 		obstacles fence = o->first;
 		bonus_objet bonus = b->first;
-
+	
 		// vérifie les listes d'ennemis, et à certaines conditions, vérifie s'il y a une collision
 		// entre les tirs alliés et les ennemies
 		if (e->first != NULL && t->first != NULL)
@@ -608,7 +639,7 @@ void updateEnemies(int valeur)
 				endmap = true;
 				hero->attack = 1;
 				// le hero perd le bonus en cours	
-				hero->color_type = false;
+				hero->bonus_active = false;
 				hero->attack += 3;
 
 				drawHealth(hero); // affiche la santé du héros en permanence
@@ -655,7 +686,7 @@ void updateEnemies(int valeur)
 
 					// le hero perd le bonus en cours	
 					hero->attack -= 1;
-					hero->color_type = false;
+					hero->bonus_active = false;
 
 					drawHealth(hero); // affiche la santé du héros en permanence
 
@@ -744,11 +775,15 @@ void updateObstacle(int valeur)
 	if(startgame==true && hero->health != 0){ 
 
 		fence = o->first;
+
 		if (o->first != NULL)
 		{
-			fence->pos.y -= 0.1;
+			if(fence->jailed == false)
+			{
+				fence->pos.y -= 0.1;
+			}
 			
-				checkCollisionAlliesObstacles(fence);
+			checkCollisionAlliesObstacles(fence);
 			
 			//key = 0;
 			if (fence->pos.y <= 0 && key != 0)
@@ -768,8 +803,12 @@ void updateObstacle(int valeur)
 			while (fence->next != NULL)
 			{
 				fence = fence->next;
-				fence->pos.y -=0.1;
 
+
+			if(fence->jailed == false)
+			{
+				fence->pos.y -= 0.1;
+			}
 				
 					checkCollisionAlliesObstacles(fence);
 				

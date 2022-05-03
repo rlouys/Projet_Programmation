@@ -27,7 +27,7 @@ struct Hero
 		bool weapon_type; // false: normal weapon | true:  bubble weapon
 		int killed; // nombre d'ennemis tués
 		int obstacles_taken; // nombre d'obstacles 'pris'
-		bool color_type; // active si bonus actif
+		bool bonus_active; // active si bonus actif
 	};
 
 typedef struct Hero* Hero;

@@ -69,7 +69,8 @@ void Keyboard(unsigned char key, int x, int y)
 
 		// changement d'arme
 		case 'w':
-			hero->weapon_type = !hero->weapon_type;	
+				hero->weapon_type = !hero->weapon_type;	
+			
 	}	
 }
 

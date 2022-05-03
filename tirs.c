@@ -66,7 +66,6 @@ tir_Struct createTirsHero(Hero hero)
 	{
 		exit(EXIT_FAILURE);
 	}
-
 	newTir->pos.x = x;
 	newTir->pos.y = y;
 	newTir->next = NULL;
@@ -284,11 +283,12 @@ void suppressionTirsEndGame(listetir_Struct t)
 
 }
 
-// ---------------------------------------------------------------------------------- //
 
 						/***********
 						 * ACTIONS *
 						 ***********/
+
+
 
 // permet au héro de tirer (createTirs + insertionTirs) 
 //lié à la barre d'espace

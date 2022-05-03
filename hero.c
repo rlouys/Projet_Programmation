@@ -51,7 +51,7 @@ Hero createHero(int *maxX, int *maxY)
 	hero->killed = 0;
 	hero->weapon_type = false;
 	hero->obstacles_taken = 0;
-	hero->color_type = false;
+	hero->bonus_active = false;
 
 	return hero;
 }

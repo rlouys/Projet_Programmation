@@ -33,6 +33,7 @@
 #define RED 1.0, 0, 0
 #define YELLOW 1, 1, 0
 #define BLUE 0, 0, 1
+#define CYAN 0, 1, 1
 
 
 /***  VARIABLES  ***/
@@ -730,7 +731,7 @@ void drawAllEnnemis(EnemyList e)
 
 //dessine les obstacles
 
-void drawObstacles(obstacles o)
+void drawObstacles(obstacles o, int red, int green, int blue)
 {
 	int i, j;
 
@@ -739,7 +740,7 @@ void drawObstacles(obstacles o)
 	j = o->pos.y;
 
 	// couleur obstacle
-	glColor3f(YELLOW);
+	glColor3f(red, green, blue);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -772,16 +773,45 @@ void drawAllObstacles(ObstacleList o)
 	first = o->first;
 	next = o->first->next;
 
+
 	if (o->first != NULL || o->last != NULL) // test existence de la liste
 	{
-		drawObstacles(first);
+		if(first->jailed == false) 
+		{
+			drawObstacles(first,YELLOW);
+		}
+		else
+		{
+			drawObstacles(first, CYAN);
+		}
+
+
+
+
+		
 		if (o->first->next != NULL)
 		{
-			drawObstacles(next);
+			if(next->jailed == false)
+			{
+				drawObstacles(next, YELLOW);
+			}
+			else
+			{
+				drawObstacles(next, CYAN);
+			}
 			while (next->next != NULL)
 			{
 				next = next->next;
-				drawObstacles(next);
+
+				if(next->jailed == false)
+				{
+					drawObstacles(next, YELLOW);
+				}
+				else
+				{
+					drawObstacles(next, CYAN);
+				}
+
 			}
 		}
 	}
@@ -858,8 +888,8 @@ void drawTirsHero(tir_Struct t)
 	
 	// si le héro est sous l'effet d'un bonus, la couleur du tir devient bleu
 	// par défaut, elle est jaune
-	if(hero->color_type == false) glColor3f(YELLOW);
-	else if(hero->color_type == true) glColor3f(BLUE);
+	if(hero->bonus_active == false) glColor3f(YELLOW);
+	else if(hero->bonus_active == true) glColor3f(BLUE);
 
 
 	glMatrixMode(GL_MODELVIEW);
@@ -889,12 +919,14 @@ void drawTirsHero(tir_Struct t)
 			glVertex2d((Hero_size/5)*1, (Hero_size/2));
 		}
 		glEnd();
+
 		
 	// si le héro tient son canon à bulles en main alors weapon_type == true
 	}
 	else if(hero->weapon_type == true)
 	{
-		drawCircle(RED, i, j, 10);
+		glTranslatef(10,0,0);
+		drawCircle(CYAN, i, j, 10);
 	}
 }
 
@@ -907,11 +939,12 @@ void drawAllTirsHero(listetir_Struct t)
 	tir_Struct first = malloc(sizeof(tirs));
 	tir_Struct next = malloc(sizeof(tirs));
 
-	first = t->first;
+	
 
+	first = t->first;
 	if (t->first != NULL && t->first->next != NULL)
 	{
-	next = t->first->next;
+		next = t->first->next;
 	}
 	if (t->first != NULL || t->last != NULL)
 	{
@@ -922,6 +955,7 @@ void drawAllTirsHero(listetir_Struct t)
 			while (next->next != NULL)
 			{
 				next = next->next;
+
 				drawTirsHero(next);
 			}
 		}

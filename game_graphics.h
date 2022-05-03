@@ -103,7 +103,7 @@ void drawAllEnnemis(EnemyList e);
                      **************************/
                     
 //dessine les obstacles
-void drawObstacles(obstacles o);
+void drawObstacles(obstacles o, int red, int green, int blue);
 
 // dessine les tirs à la chaine (utilise drawTirs à la chaîne)
 void drawAllObstacles(ObstacleList t);
