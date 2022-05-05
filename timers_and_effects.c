@@ -8,9 +8,11 @@
 #include "hero.h"
 #include "menus_graphics.h"
 
+
+
 /*** CONSTANTES ***/
 
-#define ENNEMI_SPEED 50 // 10 = ultraspeed/hardcore | 1000 = slow
+#define ENNEMI_SPEED 30 // 10 = ultraspeed/hardcore | 1000 = slow
 #define ENNEMI_PER_HUNDRED_SECOND 20
 #define RANGE_MAX 120
 #define ATTACK_SPEED 1 // 1 is superfast, 1000 is slow
@@ -63,23 +65,32 @@ void checkCollisionTirsEnnemis (enemy e, tir_Struct w)
 	}
 	if (CHECKCOLLISION)
 	{	
-		// si collision, l'ennemi perd de la vie à hauteur du nombre
-		// de points d'attaque du héro
-		e->vie = (e->vie) - hero->attack;
-
-		// si l'ennemi n'a plus de vie, il passe à désactivé, pour suppression
-		// le compteur d'ennemis tué est incrémenté
-		if(e->vie <= 0)
+		// seulement si c'est le 'gun' et pas le bubble
+		if(w->type == 0)
 		{
-			e->active = false;
-			hero->killed += 1;
+			// si collision, l'ennemi perd de la vie à hauteur du nombre
+			// de point d'attaque du héro
+			e->vie = (e->vie) - hero->attack;
+
+			// si l'ennemi n'a plus de vie, il passe à désactivé, pour suppression
+			// le compteur d'ennemis tué est incrémenté
+			if(e->vie <= 0)
+			{
+				e->active = false;
+				hero->killed += 1;
+			}
 		}
 
-		// tir désactivé pour suppression
-		w->active = false;
+		if(w->type == 1)
+		{
+			e->slowness = 1;
+		}
+			// tir désactivé pour suppression
+			w->active = false;
 
-		// réinitialisation du booléen de collision
-		CHECKCOLLISION = false;
+			// réinitialisation du booléen de collision
+			CHECKCOLLISION = false;
+		
 	}
 	
 } 
@@ -159,11 +170,11 @@ void checkCollisionTirsObstacles (obstacles o, tir_Struct w)
 			// si un tir touche un obstacle, il est supprimé (le tir)
 			w->active = false;
 		
-		if (hero->weapon_type == true)
+		if (w->type == true)
 		{
 			o->jailed = true;
 		}
-		if(hero->weapon_type == false && o->jailed == true)
+		if(w->type == false && o->jailed == true)
 		{
 			o->active = false;
 		}
@@ -215,6 +226,7 @@ void checkCollisionAlliesObstacles (obstacles fence)
 					hero->health -= 1; // ENLEVE 5 !! A CORRIGER !! 
 					hero->current_xp -= 100;
 					fence->pos.y -= 0.1;
+					// pour collision unique fois
 					key = 1;
 					hero->bonus_active = false;
 
@@ -262,11 +274,11 @@ void checkCollisionTirsBonus (bonus_objet b, tir_Struct w)
 	}
 	if (CHECKCOLLISION)
 	{	
-		if(hero->weapon_type == true) // canon à bulles
+		if(w->type == true) // canon à bulles
 		{
 			hero->bonus_active = true;
 			// si collision
-			// le hero gagne des points d'attaque 
+			// le hero gagne des point d'attaque 
 			// le hero récupère de la santé
 			hero->bonus_active = true;
 			hero->attack += 1;
@@ -314,7 +326,7 @@ void checkCollisionAlliesBonus (bonus_objet bns)
 	{	
 
 		// si collision
-		// le hero gagne des points d'attaque 
+		// le hero gagne des point d'attaque 
 		// le hero récupère de la santé
 		hero->bonus_active = true;
 		hero->attack += 1;
@@ -609,8 +621,16 @@ void updateEnemies(int valeur)
 
 		if (e->first != NULL)
 		{
-			car->pos.y -= 0.20;
-
+			// si non ralenti 
+			if(car->slowness == 0)
+			{
+				car->pos.y -= 0.4;
+			}
+			// si ralenti avec bubble
+			else if(car->slowness == 1)
+			{
+				car->pos.y -= 0.2;
+			}
 		// déplacement aléatoire vers la position du héro
 		int a = rand() % 40;
 					if(car->pos.y < 50 && a == 10)
@@ -658,7 +678,15 @@ void updateEnemies(int valeur)
 			while (car->next != NULL)
 			{
 				car = car->next;
-				car->pos.y -= 0.20;
+
+				if(car->slowness == 0)
+				{
+					car->pos.y -= 0.4;
+				}
+				else if(car->slowness == 1)
+				{
+					car->pos.y -= 0.2;
+				}
 
 				// déplacement aléatoire vers la position du héro
 				if(car->pos.y < 50 && a == 10)

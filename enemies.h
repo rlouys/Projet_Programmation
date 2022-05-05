@@ -19,9 +19,10 @@ struct positions
 struct enemies
 
 {
-	float vie;
+	int vie;
 	struct positions pos;
 	bool active;
+	bool slowness;
 	struct enemies *previous;
 	struct enemies *next;
 };
