@@ -5,8 +5,15 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <GL/glut.h>
 #include <stdbool.h>
+
+
+#ifdef __APPLE_CC__
+#include <OpenGL/OpenGL.h>
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
 
 #include "enemies.h" 
 #include "tirs.h"

@@ -3,7 +3,7 @@
 
 /*** LIBS ***/
 
-#include <GL/glut.h>
+//#include <GL/glut.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

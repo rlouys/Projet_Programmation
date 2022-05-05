@@ -1,7 +1,7 @@
 /*** LIBS ***/
 
 
-#include <GL/glut.h>
+//#include <GL/glut.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -32,7 +32,7 @@
 #define SAND 0.94, 0.87, 0.70
 #define RED 1.0, 0, 0
 #define YELLOW 1, 1, 0
-#define BLUE 0, 0, 1
+#define BLUE 0.0, 0.0, 1.0
 #define CYAN 0, 1, 1
 
 
@@ -212,6 +212,15 @@ void drawMap(int *mX, int *mY, Hero hero)
 
 	//dessine le nombre d'ennemis tués
 	drawKills();
+
+	//dessine le type d'arme tenu en main
+	drawWeapon();
+
+	writeSomething(BLACK, 135, 65, "'w'");
+	writeSomething(BLACK, 20, 80, "SWITCH");
+	writeSomething(BLACK, 17, 50, "WEAPON");
+
+
 }
 
 // ------------------------------------------------------------------ //
@@ -241,11 +250,11 @@ void handleResize(int width,int heigth)
 // les couleurs doivent être entrées en paramètre
 // dessine un carré aux couleurs voulues
 
-void drawSquare(float red, float green, float blue, int size)
+void drawSquare(float red, float green, float blue, float size)
 {
 	glBegin(GL_QUADS);
 
-	glColor3f(red,green,blue);
+	glColor3f(red, green, blue);
 
 		glVertex3f(0.0f, 0.0f, 0.0f);
 		glVertex3f((Square_size*size), 0.0f, 0.0f);
@@ -622,6 +631,130 @@ void drawScore(Hero hero)
 
 }
 
+// --------------------------------------------------------------------------------------------_//
+
+// dessine l'arme tenue en main en temps réel
+void drawWeapon()
+{
+	int i;
+
+
+	// dessin du cadre et de l'inscription du type d'arme
+	writeSomething(BLACK,40, 670, "WEAPON");
+	glColor3f(BLACK);
+	frameDraw(BLACK, 30, 675, 140, 0);
+
+	// rafistolage
+	for (i = 0 ; i < 30 ; i++)
+	{
+		glRasterPos3f(157,690-i, 1); // DRAW RIGHT LINE FRAME
+            char msg2[]="|";
+            for(int i = 0; i <strlen(msg2);i++)
+                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
+            
+	}
+
+
+
+	// Condition d'affichage, si gun => affiche gun, si bubble => affiche bubble S
+	if(hero->weapon_type == false)
+	{
+
+		glMatrixMode(GL_MODELVIEW);
+    	glLoadIdentity();
+
+		if(hero->bonus_active == false)
+		{
+
+			writeSomething(BLACK, 60, 627, "G U N");
+
+
+			// left squares
+			glTranslatef(140, 635, 0);
+			drawSquare(BLUE, 0.45);
+			glTranslatef(10, 0, 1);
+			drawSquare(BLUE, 0.45);
+			glTranslatef(0, -10, 0);
+			drawSquare(BLUE, 0.45);
+			glTranslatef(-10, 0, 0);
+			drawSquare(BLUE, 0.45);
+
+			// right squares
+			glTranslatef(-115, 10, 0);
+			drawSquare(BLUE, 0.45);
+			glTranslatef(10, 0, 0);
+			drawSquare(BLUE, 0.45);
+			glTranslatef(0, -10, 0);
+			drawSquare(BLUE, 0.45);
+			glTranslatef(-10, 0, 0);
+			drawSquare(BLUE, 0.45);
+
+
+
+		}
+		else if(hero->bonus_active == true)
+		{
+			writeSomething(BLACK, 60, 627, "G U N");
+
+			// left squares
+			glTranslatef(140, 635, 0);
+			drawSquare(RED, 0.45);
+			glTranslatef(10, 0, 0);
+			drawSquare(RED, 0.45);
+			glTranslatef(0, -10, 0);
+			drawSquare(RED, 0.45);
+			glTranslatef(-10, 0, 0);
+			drawSquare(RED, 0.45);
+
+			// right squares
+			glTranslatef(-115, 10, 0);
+			drawSquare(RED, 0.45);
+			glTranslatef(10, 0, 0);
+			drawSquare(RED, 0.45);
+			glTranslatef(0, -10, 0);
+			drawSquare(RED, 0.45);
+			glTranslatef(-10, 0, 0);
+			drawSquare(RED, 0.45);
+
+
+		}
+
+
+	}
+	else if(hero->weapon_type == true)
+	{
+
+
+		glMatrixMode(GL_MODELVIEW);
+    	glLoadIdentity();
+
+
+		writeSomething(BLACK, 47, 627, "BUBBLE");
+
+		glTranslatef(160,635,0);
+		drawCircle(BLUE, 50, 630, 6);
+		drawCircle(BLUE, 50, 630, 7);
+		drawCircle(BLUE, 50, 630, 10);
+
+		glTranslatef(-130, 0,0);
+		drawCircle(BLUE, 50, 630, 6);
+		drawCircle(BLUE, 50, 630, 7);
+		drawCircle(BLUE, 50, 630, 10);
+
+
+
+
+
+	}
+
+
+
+
+
+
+
+
+}
 
 
 
@@ -731,7 +864,7 @@ void drawAllEnnemis(EnemyList e)
 
 //dessine les obstacles
 
-void drawObstacles(obstacles o, int red, int green, int blue)
+void drawObstacles(obstacles o, float red, float green, float blue)
 {
 	int i, j;
 
@@ -888,8 +1021,8 @@ void drawTirsHero(tir_Struct t)
 	
 	// si le héro est sous l'effet d'un bonus, la couleur du tir devient bleu
 	// par défaut, elle est jaune
-	if(hero->bonus_active == false) glColor3f(YELLOW);
-	else if(hero->bonus_active == true) glColor3f(BLUE);
+	if(hero->bonus_active == false) glColor3f(BLUE);
+	else if(hero->bonus_active == true) glColor3f(RED);
 
 
 	glMatrixMode(GL_MODELVIEW);
@@ -900,7 +1033,7 @@ void drawTirsHero(tir_Struct t)
 
 	// dessin
 	// si le héro tient son arme de base en main alors weapon_type == false
-	if(hero->weapon_type == false)
+	if(t->type == false)
 	{
 		glBegin(GL_QUADS);
 
@@ -914,8 +1047,8 @@ void drawTirsHero(tir_Struct t)
 		else
 		{
 			glVertex2d((Hero_size/5)*1, 0);
-			glVertex2d((Hero_size/5)*4, 0);
-			glVertex2d((Hero_size/5)*4, (Hero_size/2));
+			glVertex2d((Hero_size/5)*3, 0);
+			glVertex2d((Hero_size/5)*3, (Hero_size/2));
 			glVertex2d((Hero_size/5)*1, (Hero_size/2));
 		}
 		glEnd();
@@ -923,9 +1056,10 @@ void drawTirsHero(tir_Struct t)
 		
 	// si le héro tient son canon à bulles en main alors weapon_type == true
 	}
-	else if(hero->weapon_type == true)
+	else if(t->type == true)
 	{
 		glTranslatef(10,0,0);
+		drawCircle(CYAN, i, j, 6);
 		drawCircle(CYAN, i, j, 10);
 	}
 }

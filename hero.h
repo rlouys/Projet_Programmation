@@ -5,7 +5,7 @@
 
 #include <stdbool.h>
 #include <math.h>
-#include <GL/glut.h>
+//#include <GL/glut.h>
 
 /***  STRUCTURES   ***/
 

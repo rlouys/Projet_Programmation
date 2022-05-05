@@ -50,7 +50,7 @@ void handleResize(int width, int heigth);
                      ******************/
 
 // dessine un carré aux couleurs voulues
-void drawSquare(float red, float green, float blue, int size); 
+void drawSquare(float red, float green, float blue, float size); 
 
 // dessine un cercle aux couleurs voulues
 void drawCircle(float red, float green, float blue, int posx, int posy, float rayon); 
@@ -85,6 +85,8 @@ void drawUsername();
 // affiche le score du joueur en temps réel
 void drawScore(Hero hero);  
 
+void drawWeapon();
+
                     /***********************
                      * CHARACTERS DRAWINGS *
                      ***********************/
@@ -103,7 +105,7 @@ void drawAllEnnemis(EnemyList e);
                      **************************/
                     
 //dessine les obstacles
-void drawObstacles(obstacles o, int red, int green, int blue);
+void drawObstacles(obstacles o, float red, float green, float blue);
 
 // dessine les tirs à la chaine (utilise drawTirs à la chaîne)
 void drawAllObstacles(ObstacleList t);

@@ -1,6 +1,6 @@
 /*** LIBS ***/
 
-#include <GL/glut.h>
+//#include <GL/glut.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -75,7 +75,7 @@ enemy createEnemy(int *maxY)
 	enemy new = malloc(sizeof(enemies));
 
 	//l'ennemi apparaitra sur les cases entre la 11eme et 37eme case du plateau
-	int x = (rand() % ((37+1)-11) + 11);
+	float x = (rand() % ((37+1)-11) + 11);
 
 	if (new == NULL)
 	{
@@ -85,10 +85,11 @@ enemy createEnemy(int *maxY)
 	//initialisation des stats de l'ennemi
 	new->vie = 3;
 	new->pos.x = x;
-	new->pos.y = 50;
+	new->pos.y = 50.0;
 	new->next = NULL;
 	new->previous = NULL;
 	new->active = true;
+	new->slowness = 0;
 
 	return new;
 }
@@ -104,7 +105,7 @@ obstacles createObstacle(int *maxY)
 	obstacles new = malloc(sizeof(obstacle));
 
 	// l'ennemi apparaitra sur les cases entre la 11eme et 37eme case du plateau
-	int x = (rand() % ((37+1)-11) + 11);
+	float x = (rand() % ((37+1)-11) + 11);
 
 	if (new == NULL)
 	{

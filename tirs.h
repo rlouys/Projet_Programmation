@@ -18,6 +18,7 @@ struct tirs
 {
 	struct positionT pos;
 	bool active;
+	int type; // 0 = fusil || 1 = bubble
 	struct tirs *previous;
 	struct tirs *next;
 };

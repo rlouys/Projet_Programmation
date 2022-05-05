@@ -42,7 +42,7 @@ Hero createHero(int *maxX, int *maxY)
 	}
 
 	// Stats initialisation
-	hero = malloc(sizeof(Hero)+50);
+	hero = malloc(sizeof(struct Hero));
 	hero->health = 40;
 	hero->pos.x = x;
 	hero->pos.y = y;

@@ -1,6 +1,6 @@
 /*** LIBS ***/
 
-#include <GL/glut.h>
+//#include <GL/glut.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,7 +19,8 @@
 float *value;
 float *deplacement_fenetre;
 bool startgame;
-bool optionSwitch;
+int startgame_option_bug = 1;
+bool gameplay_keys;
 
 
 char username[20];
@@ -33,6 +34,7 @@ bool SHOOT_ENEMY = false;
 
 
 /*** FUNCTIONS ***/
+
 
 // ------------------------------------------------------------ // 
 
@@ -70,8 +72,31 @@ void Keyboard(unsigned char key, int x, int y)
 		// changement d'arme
 		case 'w':
 				hero->weapon_type = !hero->weapon_type;	
+
+		if(gameplay_keys == true)
+		{
+
+			case 'z':
+			hero->pos.y += 1;
+				break;
+
+			case 'q':
+			hero->pos.x -= 1;
+				break;	
 			
-	}	
+			case 's':
+			hero->pos.y -= 1;
+				break;
+
+			case 'd':
+			hero->pos.x += 1;
+				break;
+		}	
+
+
+		
+			
+		}	
 }
 
 // ------------------------------------------------------------ // 
@@ -107,50 +132,54 @@ void arrowFunction(int key, int x, int y)
 
 void move(){
 
-	enemy en = e->first;
-
-	if (LEFT == true)
+	if(startgame == true)
 	{
-		moveLeft(hero);		//va se déplacer vers la gauche si on appuie sur q+
-		LEFT = false;
+		enemy en = e->first;
 
-	}
+		if (LEFT == true)
+		{
+			moveLeft(hero);		//va se déplacer vers la gauche si on appuie sur q+
+			LEFT = false;
 
-	if (RIGHT == true)
-	{
-		moveRight(hero);		//va se déplacer vers la droite si on apppuie sur d
-		RIGHT = false;
-	}
+		}
 
-	if (UP == true)
-	{
-		moveUp(hero);
-		UP = false;
-	}
-	
-	if (DOWN == true)
-	{
-        moveDown(hero);
-		DOWN = false;
-	}
+		if (RIGHT == true)
+		{
+			moveRight(hero);		//va se déplacer vers la droite si on apppuie sur d
+			RIGHT = false;
+		}
 
-	// envoie le tir allié
-	if (SHOOT == true)
-	{
-		tirer(hero, t);
-		SHOOT=false;
-	}
+		if (UP == true)
+		{
+			moveUp(hero);
+			UP = false;
+		}
+		
+		if (DOWN == true)
+		{
+			moveDown(hero);
+			DOWN = false;
+		}
 
-	// envoie le(s) tir(s) ennemi(s)
-	if (SHOOT_ENEMY == true)
-	{
-		tirer_enemy(en, te);
-		SHOOT_ENEMY = false;
+		// envoie le tir allié
+		if (SHOOT == true)
+		{
+			tirer(hero, t);
+			SHOOT=false;
+		}
+
+		// envoie le(s) tir(s) ennemi(s)
+		if (SHOOT_ENEMY == true)
+		{
+			tirer_enemy(en, te);
+			SHOOT_ENEMY = false;
+		}
+
 	}
 }
 
 // ------------------------------------------------------------- //
-
+//Fonctionne bien sauf premiere fois
 
 void DisplayGame()
 {	
@@ -162,11 +191,11 @@ void DisplayGame()
 
     glFlush();
 
-	if(optionSwitch == true)
+	if(startgame == false)
 	{
 		glutDisplayFunc(GameOptionsDisplay);
-
 	}
+
 
 }
 // ------------------------------------------------------------ // 
@@ -214,9 +243,19 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t, liste
 
 	// fonctions clavier
 	glutKeyboardFunc(Keyboard);		//fonction de glut gérant le clavier
-	glutSpecialFunc(arrowFunction);
-	move();
+	if(gameplay_keys == false)
+	{
+		glutSpecialFunc(arrowFunction);
+	}
+	else
+	{
+		glutKeyboardFunc(Keyboard);
+	}
 
+	if(gameplay_keys == false)
+	{
+		move();
+	}
 
 	glutPostRedisplay();
 }

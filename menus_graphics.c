@@ -7,7 +7,7 @@
 #include "hero.h"
 #include "game.h"
 
-#include <GL/glut.h>
+//#include <GL/glut.h>
 
 #include <math.h>
 #include <stdio.h>
@@ -29,13 +29,15 @@
 #define BLACK 0, 0, 0
 #define GREY 0.5, 0.5, 0.5
 #define DARK_GREY 0.1, 0.1, 0.1
+#define RED 1, 0, 0
+#define BLUE 0, 0, 1
+#define YELLOW 1, 1, 0
 
 
 /*** VARIABLES ***/
 
 int c = 0; // void mouse
 int counterAlpha = 0; // compteur pour affichage du pseudo
-int optionSwitchKey; // pour que les options ramènent en jeu ou non
 // en fonction d'où on se trouvait avant de rentrer dans les options
 int difficulty = 1; // niveau de difficulté
 
@@ -50,12 +52,15 @@ char* usernameScore;
 
 
 bool cheatMode;
-bool gameplay_keys;
+bool gameplay_keys = false;
 bool screen;
 bool frame = true;
 bool startgame;
+int startgame_option_bug;
 bool try;
-bool optionSwitch = false;
+
+
+
 
 
 
@@ -74,7 +79,7 @@ void keyboardFunc(unsigned char Key, int x, int y) {
     switch (Key) {
    
     case 'c':
-
+        startgame_option_bug = 0;
         startgame = !startgame;
 		glutDisplayFunc(DisplayGame);
 		glutPostRedisplay();
@@ -100,10 +105,7 @@ void keyboardFunc(unsigned char Key, int x, int y) {
     	break;
     
     case 'r':
-
             startgame = false;
-            hero->health = 42;
-            hero->killed = 0;            
             glutDisplayFunc(WelcomeDisplay);
             glutPostRedisplay();
             break;
@@ -431,19 +433,23 @@ void keyboardFuncOpt(unsigned char Key, int x, int y) {
         // on vérifie si on était en jeu ou hors jeu
         // relance ou non le jeu
         // réaffiche le menu de démarrage ou non
-        if(optionSwitch == false)
+        if(startgame == true)
         {
             glutDisplayFunc(WelcomeDisplay);
             glutKeyboardFunc(keyboardFunc);
         }
-        else
+        else if (startgame == false && startgame_option_bug == 0)
         {
             glutDisplayFunc(DisplayGame);
-
             glutKeyboardFunc(keyboardFunc);
         }
 
-        optionSwitchKey = 1;
+        else if (startgame == false && startgame_option_bug == 1)
+        {
+            glutDisplayFunc(WelcomeDisplay);
+            glutKeyboardFunc(keyboardFunc);
+        }
+
 
 		glutPostRedisplay();
 		break;
@@ -466,77 +472,37 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
    
     case 'g':
 
-        optionSwitch = !optionSwitch;
-        
-        if(optionSwitchKey == 1)
-        {
-            optionSwitch = !optionSwitch;
-            optionSwitchKey = 0;
-        }
-
-
 		glutDisplayFunc(DisplayGameplay);
         glutKeyboardFunc(keyboardFuncOpt);
 		glutPostRedisplay();
 		break;
 
 	case 'o':
-        
-        optionSwitch = !optionSwitch;
-
-        if(optionSwitchKey == 1)
-        {
-            optionSwitch = !optionSwitch;
-            optionSwitchKey = 0;
-        }
+    
 
 		glutDisplayFunc(DisplayOptions);
 		glutPostRedisplay();
 		break;
 
-	case 'd':
+	case 'l':
        
-		optionSwitch = !optionSwitch;
         
-        if(optionSwitchKey == 1)
-        {
-            optionSwitch = !optionSwitch;
-            optionSwitchKey = 0;
-        }
 
 		glutDisplayFunc(DisplayCredits);
         glutKeyboardFunc(keyboardFuncOpt);
 		glutPostRedisplay();
 		break;
 
-    case 'r':
-
-        if(optionSwitch == true)
-        {
-            glutDisplayFunc(WelcomeDisplay);
-            glutKeyboardFunc(keyboardFunc);
-        }
-        else
-        {
-            glutDisplayFunc(GameOptionsDisplay);
-            glutDisplayFunc(DisplayGame);
-            glutKeyboardFunc(keyboardFunc);
-        }
-
-		glutPostRedisplay();
-    	break;
-    
     case 27:
 
 			startgame = !startgame; 
-            optionSwitch = !optionSwitch;
 			glutDisplayFunc(DisplayGame);
 			glutPostRedisplay();
 			break;
 
     case 'x':
             // ouvrir un fichier, enregistrer tout ce qu'il faut, et aller rechercher dans ce fichier par après !!
-			glutDisplayFunc(WelcomeDisplay);
+			glutDisplayFunc(DisplayEnding);
 			glutPostRedisplay();
 			break;        
     	
@@ -548,10 +514,13 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
     
     case 'm':
             // ouvrir un fichier, enregistrer tout ce qu'il faut, et aller rechercher dans ce fichier par après !!
-            //glutDisplayFunc(DisplayGame);
-            //glutPostRedisplay();
+            glutDisplayFunc(WelcomeDisplay);
+            glutKeyboardFunc(keyboardFunc);
+            glutPostRedisplay();
             break;
     };
+
+  
    
 }
 
@@ -682,8 +651,8 @@ void WelcomeDisplay()
     // couleur
     glColor3f(WHITE);
 
-    glRasterPos3f(x-130, 850, 1);
-    char msg1[]="SUSTAINABLE MOBILITY : SUBSISTANCE";
+    glRasterPos3f(x-160, 850, 1);
+    char msg1[]="S U S T A I N A B L E   M O B I L I T Y  :  S U B S I S T A N C E";
     for(int i = 0; i <strlen(msg1);i++)
     	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
 
@@ -1048,9 +1017,14 @@ void DisplayOptions()
 
 void DisplayGameplay()
 {	
+
+    
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //drawWall(mX, mY);
+
     glColor3f(EMERALD);
 
     int x = (SCREEN_WIDTH/2)-80;
@@ -1059,7 +1033,7 @@ void DisplayGameplay()
 
     glColor3f(WHITE);
 
-    glRasterPos3f(x-30, 850, 1);
+    glRasterPos3f(x+10, 850, 1);
     char msg1[]="G   A   M   E   P   L   A   Y";
     for(int i = 0; i <strlen(msg1);i++)
     	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
@@ -1067,76 +1041,157 @@ void DisplayGameplay()
 
     glColor3f(WHITE);
 
-    glRasterPos3f(50, 750, 0);
+    glRasterPos3f(80, 750, 0);
     char msg3[]="Il suffit de deplacer le personnage avec les touches choisies. ";
     for(int i = 0; i <strlen(msg3);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
 
-    glRasterPos3f(50, 730, 0);
+    glRasterPos3f(80, 730, 0);
     char msg4[]="Ensuite, vous pouvez tirer avec la barre d'espace. ";
     for(int i = 0; i <strlen(msg4);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
 
-    glRasterPos3f(50, 690, 0);
-    char msg5[]="Le personnage possede : ";
-    for(int i = 0; i <strlen(msg5);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg5[i]);
-
-    glRasterPos3f(50, 670, 0);
-    char msg6[]="- Un nombre de points de vie (3 au debut),";
-    for(int i = 0; i <strlen(msg6);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
-
-    glRasterPos3f(50, 650, 0);
-    char msg7[]="- Un nombre de points d'attaques (1 au debut),";
-    for(int i = 0; i <strlen(msg7);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
-
-    glRasterPos3f(50, 610, 0);
+    glRasterPos3f(80, 710, 0);
     char msg8[]="Le but du jeu est d'eliminer le maximum d'ennemis avant que votre vie ne tombe a 0.";
     for(int i = 0; i <strlen(msg8);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg8[i]);
 
-    glRasterPos3f(50, 570, 0);
-    char msg9[]=" - Chaque ennemi possede 3 points de vie (au debut).";
+
+    glRasterPos3f(80, 670, 0);
+    char msg5[]="Le personnage possede : ";
+    for(int i = 0; i <strlen(msg5);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg5[i]);
+
+    glRasterPos3f(80, 660, 0);
+    char msg21[]="---------------------";
+    for(int i = 0; i <strlen(msg21);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg21[i]);
+
+    glRasterPos3f(80, 640, 0);
+    char msg6[]="- Un nombre de points de vie (3 au debut),";
+    for(int i = 0; i <strlen(msg6);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
+
+    glRasterPos3f(80, 620, 0);
+    char msg7[]="- Un nombre de points d'attaques (1 au debut),";
+    for(int i = 0; i <strlen(msg7);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
+
+    glRasterPos3f(80, 600, 0);
+    char msg20[]="- Un type d'arme (un fusil ou un canon à bulles).";
+    for(int i = 0; i <strlen(msg20);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg20[i]);
+    
+    glRasterPos3f(80, 560, 0);
+    char msg9[]="Les ennemis :";
     for(int i = 0; i <strlen(msg9);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg9[i]);    
 
-    glRasterPos3f(50, 550, 0);
+    glRasterPos3f(80, 550, 0);
+    char msg22[]="-------------";
+    for(int i = 0; i <strlen(msg22);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg22[i]); 
+
+    glRasterPos3f(80, 530, 0);
+    char msg23[]="- Possède un nombre points de vie (3 au debut).";
+    for(int i = 0; i <strlen(msg23);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg23[i]); 
+
+    glRasterPos3f(72, 510, 0);
     char msg10[]=" - Un ennemi elimine rapporte 50 points";
     for(int i = 0; i <strlen(msg10);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg10[i]);
 
-    glRasterPos3f(50, 530, 0);
+    glRasterPos3f(72, 490, 0);
     char msg11[]=" - Une collision avec un ennemi enleve 1 point de vie, et retire 100 points.";
     for(int i = 0; i <strlen(msg11);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg11[i]);
     
-    glRasterPos3f(50, 510, 0);
+    glRasterPos3f(72, 470, 0);
     char msg12[]=" - Un ennemi arrivant en bas de la map enleve 1 point de vie, et retire 100 points.";
     for(int i = 0; i <strlen(msg12);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg12[i]);
 
+    glRasterPos3f(72, 450, 0);
+    char msg30[]=" - Un ennemi peut être ralenti avec le canon à bulles.";
+    for(int i = 0; i <strlen(msg30);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg30[i]);
 
-    glRasterPos3f(50, 490, 0);
-    char msg13[]=" - Un bonus attrapé rajoute 1 point d'attaque au héro";
+    glTranslatef(0,-20,0);
+
+    glRasterPos3f(72, 430, 0);
+    char msg24[]="Les bonus :";
+    for(int i = 0; i <strlen(msg24);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg24[i]);
+
+    glRasterPos3f(72, 420, 0);
+    char msg25[]="---------";
+    for(int i = 0; i <strlen(msg25);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg25[i]);    
+
+
+    glRasterPos3f(72, 400, 0);
+    char msg13[]=" - Un bonus attrape via une bulle ou une collision rajoute 1 point d'attaque et de vie au hero";
     for(int i = 0; i <strlen(msg13);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg13[i]);
 
-    glRasterPos3f(50, 470, 0);
+    glRasterPos3f(72, 380, 0);
     char msg14[]=" - Un bonus detruit n'apporte aucun effet";
     for(int i = 0; i <strlen(msg14);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg14[i]);
 
-    glColor3f(EMERALD);
-    frameDraw(EMERALD, 50, 390, 210, 0);
-    glColor3f(WHITE);
-    
-    glRasterPos3f(50, 390, 1);
-    char msg15[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
+    glRasterPos3f(72, 340, 0);
+    char msg26[]="Les obstacles : ";
+    for(int i = 0; i <strlen(msg26);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg26[i]);
+
+    glRasterPos3f(72, 330, 0);
+    char msg27[]="-------------";
+    for(int i = 0; i <strlen(msg27);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg27[i]);
+
+    glRasterPos3f(72, 310, 0);
+    char msg15[]=" - Une collision avec un obstacle fait perdre 1 de vie et 100 de score";
     for(int i = 0; i <strlen(msg15);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg15[i]);
 
+    glRasterPos3f(72, 290, 0);
+    char msg16[]=" - Un obstacle peut etre arrete avec le canon a bulle, puis detruit avec le fusil";
+    for(int i = 0; i <strlen(msg16);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg16[i]);
+
+    // dessin d'un cadre pour le bouton "retour en arrière"
+    glColor3f(EMERALD);
+    frameDraw(EMERALD, 80, 220, 210, 0);
+    glColor3f(WHITE);
+    
+    glRasterPos3f(80, 220, 1);
+    char msg17[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
+    for(int i = 0; i <strlen(msg17);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg17[i]);
+
+
+    // dessin des "objets de jeu"  
+    glTranslatef(30,630,1);
+    drawSquare(BLUE, 1);
+
+    glTranslatef(2,-127,0);
+    drawSquare(RED, 1);
+
+    glTranslatef(10,-108,0);
+    drawCircle(BLUE, 0, 0, 6);
+    drawCircle(BLUE, 0, 0, 7);
+    drawCircle(BLUE, 0, 0, 10);
+
+    glTranslatef(-22,-100,0);
+    drawSquare(YELLOW, 1);
+    glTranslatef(14,0,0);
+    drawSquare(YELLOW, 1);
+    glTranslatef(14,0,0);
+    drawSquare(YELLOW, 1);
+
+    // systeme D pour remettre le curseur à la bonne place pour redessin des autres fenetres
+    glTranslatef(-48, -275, -1);
     glutSwapBuffers();
 }
 

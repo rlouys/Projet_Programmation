@@ -1,6 +1,6 @@
 /*** LIBS ***/
 
-#include <GL/glut.h>
+//#include <GL/glut.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -57,8 +57,8 @@ tir_Struct createTirsHero(Hero hero)
 {
 	
 	// le tir est positionné sur la position du héro
-	float x = (hero->pos.x)*2;
-	float y = ((hero->pos.y)*2) + 2; 
+	int x = (hero->pos.x)*2;
+	int y = ((hero->pos.y)*2) + 2; 
 
 	
 	tir_Struct newTir = malloc(sizeof(tirs));
@@ -71,6 +71,17 @@ tir_Struct createTirsHero(Hero hero)
 	newTir->next = NULL;
 	newTir->previous = NULL;
 	newTir->active = true;
+
+	if(hero->weapon_type == false)
+	{
+		newTir->type = 0;
+	}
+	
+	else
+	{
+		newTir->type = 1;
+	}
+
 	return newTir;
 }
 

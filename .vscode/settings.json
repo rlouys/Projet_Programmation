@@ -9,6 +9,7 @@
         "characters.h": "c",
         "timers_and_effects.h": "c",
         "hero.h": "c",
-        "menus_graphics.h": "c"
+        "menus_graphics.h": "c",
+        "glut.h": "c"
     }
 }

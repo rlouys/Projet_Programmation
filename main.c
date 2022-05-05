@@ -1,6 +1,12 @@
 /*** LIBS ***/
 
+#ifdef __APPLE_CC__
+#include <OpenGL/OpenGL.h>
+#include <GLUT/glut.h>
+#else
 #include <GL/glut.h>
+#endif
+
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +42,7 @@ int main(int argc, char *argv[])
 
     // VARIABLES // 
 
-    mX = 80;
+    mX = 70;
     mY = 49;
     srand(time(NULL));
 
@@ -75,7 +81,7 @@ int main(int argc, char *argv[])
 
     glutTimerFunc(100, updateCollisions, 1);
 
-    glutTimerFunc(200, updateEnemies, 2);
+    glutTimerFunc(1, updateEnemies, 2);
     glutTimerFunc(50, updateNewEnemies, 4);
     glutTimerFunc(10, updateDeleteEnemies, 5);
 
