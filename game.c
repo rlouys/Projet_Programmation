@@ -14,29 +14,35 @@
 #include "enemies.h"
 #include "game.h"
 
+#define BLACK 0, 0, 0
+
 /***  VARIABLES ***/ 
+
+int startgame_option_bug = 1;
 
 float *value;
 float *deplacement_fenetre;
+
+char *username;
+int newGame;
+
 bool startgame;
-int startgame_option_bug = 1;
 bool gameplay_keys;
-
-
-char username[20];
-
 bool UP = false;
 bool LEFT = false;
 bool RIGHT = false;
 bool DOWN = false;
 bool SHOOT = false;
 bool SHOOT_ENEMY = false;
+bool LEFTK = false;
+bool RIGHTK = false;
+bool DOWNK = false;
+bool UPK = false;
+bool cheatMode;
+
 
 
 /*** FUNCTIONS ***/
-
-
-// ------------------------------------------------------------ // 
 
 // definition de la fonction Keyboard permettant de quitter/tirer
 
@@ -53,12 +59,12 @@ void Keyboard(unsigned char key, int x, int y)
 
 		// SPACE KEY
 		case 32:
-			SHOOT = true;
-			break;	
-		
+		SHOOT = true;
+		break;	
+
 		// BACKSPACE KEY
 		case 0x08:
-		
+			// si le tir existe, alors il est tiré
 			if(te->first == NULL || te->last == NULL)
 			{
 				SHOOT_ENEMY = true;
@@ -69,33 +75,28 @@ void Keyboard(unsigned char key, int x, int y)
 			}
 			break;
 
-		// changement d'arme
+		// mouvement du héro
 		case 'w':
-				hero->weapon_type = !hero->weapon_type;	
-
-		if(gameplay_keys == true)
-		{
-
-			case 'z':
-			hero->pos.y += 1;
-				break;
-
-			case 'q':
-			hero->pos.x -= 1;
-				break;	
-			
-			case 's':
-			hero->pos.y -= 1;
-				break;
-
-			case 'd':
-			hero->pos.x += 1;
-				break;
-		}	
-
-
+		switchWeapon(hero);	
+		break;
 		
-			
+		//touches flechées
+		case 'z':
+		UPK = true;
+		break;
+
+		case 'q':
+		LEFTK = true;
+		break;	
+		
+		case 's':
+		DOWNK = true;
+		break;
+
+		case 'd':
+		RIGHTK = true;
+		break;
+
 		}	
 }
 
@@ -132,20 +133,21 @@ void arrowFunction(int key, int x, int y)
 
 void move(){
 
-	if(startgame == true)
-	{
-		enemy en = e->first;
+	enemy en = e->first;
 
+	if(startgame == true && gameplay_keys == false)
+	{
+		// déplacements du héro via les touches flechées
 		if (LEFT == true)
 		{
-			moveLeft(hero);		//va se déplacer vers la gauche si on appuie sur q+
+			moveLeft(hero);		
 			LEFT = false;
 
 		}
 
 		if (RIGHT == true)
 		{
-			moveRight(hero);		//va se déplacer vers la droite si on apppuie sur d
+			moveRight(hero);		
 			RIGHT = false;
 		}
 
@@ -161,7 +163,40 @@ void move(){
 			DOWN = false;
 		}
 
-		// envoie le tir allié
+		
+
+	}
+	// pour les déplacements via les touches ZQSD
+	if(startgame == true && gameplay_keys == true)
+	{
+
+	if (LEFTK == true)
+		{
+			moveLeft(hero);		
+			LEFTK = false;
+
+		}
+
+		if (RIGHTK == true)
+		{
+			moveRight(hero);		
+			RIGHTK = false;
+		}
+
+		if (UPK == true)
+		{
+			moveUp(hero);
+			UPK = false;
+		}
+		
+		if (DOWNK == true)
+		{
+			moveDown(hero);
+			DOWNK = false;
+		}
+
+	}
+	// envoie le tir allié
 		if (SHOOT == true)
 		{
 			tirer(hero, t);
@@ -174,9 +209,40 @@ void move(){
 			tirer_enemy(en, te);
 			SHOOT_ENEMY = false;
 		}
-
-	}
 }
+// ------------------------------------------------------------- //
+
+void checkNewGame()
+{
+
+	FILE *f = fopen("contexte.txt", "r");
+	char *NewGameBool = getStringFromFile(f, '}');
+	
+	
+	if(strcmp("0 ", NewGameBool) == 0)
+	{
+		newGame = 1;
+	}
+	if(strcmp("1 ", NewGameBool) == 0)
+	{
+		newGame = 0;
+	}
+
+	if(newGame == 1)
+	{
+		username = getStringFromFile(f, ')');
+	}
+	else if(newGame == 0)
+	{
+		username = " ";
+	}
+
+
+	
+
+
+}
+
 
 // ------------------------------------------------------------- //
 //Fonctionne bien sauf premiere fois
@@ -197,6 +263,9 @@ void DisplayGame()
 	}
 
 
+
+	glutPostRedisplay();
+	glutSwapBuffers();
 }
 // ------------------------------------------------------------ // 
 
@@ -236,7 +305,7 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t, liste
 	}
 
 	// dessine les objets bonus
-	if(b->first != NULL || b->last != NULL)
+	if((b->first != NULL || b->last != NULL) && cheatMode == false)
 	{
 		drawAllBonus(b);
 	}
@@ -247,16 +316,9 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t, liste
 	{
 		glutSpecialFunc(arrowFunction);
 	}
-	else
-	{
-		glutKeyboardFunc(Keyboard);
-	}
-
-	if(gameplay_keys == false)
-	{
-		move();
-	}
-
+	// déplace le héros
+	move();
+	
 	glutPostRedisplay();
 }
 
@@ -265,23 +327,82 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t, liste
 
 // ------------------------------------------------------- //
 
-// charge la map
+// Sauvegarde le score de la partie en cours
 
 void saveScore(Hero hero)		
 {
     FILE *f = NULL;
 	f = fopen("scores.txt","a");
 
-	int score = hero->current_xp;
 	
 	fprintf(f, "%s       ", "HARUHIKO");
-	fprintf(f,"%i \n", score);
+	fprintf(f,"%i \n", hero->current_xp);
+	fclose(f);
+
+}	
+
+// ------------------------------------------------------- //
+
+void saveContext()
+{
+	FILE *f = fopen("contexte.txt", "w");
+
+	// hero
+
+	fprintf(f, "%i xp\n", hero->current_xp);
+	fprintf(f, "%i vie\n", hero->health);
+	fprintf(f, "%i atk\n", hero->attack);
+	fprintf(f, "%i killed\n", hero->killed);
+	fprintf(f, "%i obst\n", hero->obstacles_taken);
+	fprintf(f, "%s wptype\n", hero->weapon_type ? "true" : "false");
+	fprintf(f, "%s bonus\n", hero->bonus_active ? "true" : "false");
+	fprintf(f, "%f posx\n", hero->pos.x);
+	fprintf(f, "%f posy\n", hero->pos.y);
+
+	// ennemi
+
+	// bonus
+
+	// obstacles
+	/*
+	fprintf(f, "%i", hero->current_xp);
+	fprintf(f, "%i", hero->current_xp);
+	fprintf(f, "%i", hero->current_xp);
+	fprintf(f, "%i", hero->current_xp);
+	fprintf(f, "%i", hero->current_xp);
+	fprintf(f, "%i", hero->current_xp);
+	fprintf(f, "%i", hero->current_xp);
+	fprintf(f, "%i", hero->current_xp);
+	fprintf(f, "%i", hero->current_xp);
+	fprintf(f, "%i", hero->current_xp);*/
+
+
+
+
+
+
+
+
 	fclose(f);
 
 
-}		
+
+
+}
+
+
+
+/*
+
+	à sauvegarder : 
+
+	-> toutes stats : ennemi, tirs, héro, obstacles, bonus
+	 
 
 
 
 
 
+
+
+*/
