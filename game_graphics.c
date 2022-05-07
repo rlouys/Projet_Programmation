@@ -34,7 +34,7 @@
 #define YELLOW 1, 1, 0
 #define BLUE 0.0, 0.0, 1.0
 #define CYAN 0, 1, 1
-
+#define YELLOWGREEN 0.604, 0.804, 0.196
 
 /***  VARIABLES  ***/
 
@@ -42,9 +42,14 @@ int mX = 80; // nombre de cases en largeur de la map
 int mY = 49; // nombre de cases en longueur de la map
 int level = 1; // niveau de la partie en cours
 
+float r, g, bl; // permet de changer la couleur des ennemis en fonction de la difficulté et du niveau en cours
 float *value; // valeur de défilement de la map
+float difficulty;
 
-char username[20]; // username du héro
+bool cheatMode;
+
+char *username; // username du héro
+char username_array[20];
 
 
 /*** FUNCTIONS ***/ 
@@ -216,10 +221,18 @@ void drawMap(int *mX, int *mY, Hero hero)
 	//dessine le type d'arme tenu en main
 	drawWeapon();
 
+	if(cheatMode == true)
+	{
+		writeSomething(RED, 12, 80, "CHEAT MODE");
+		writeSomething(RED, 27, 50, "ENABLED");
+	}
+	else	
+	{
+	// dessin switch weapon
 	writeSomething(BLACK, 135, 65, "'w'");
 	writeSomething(BLACK, 20, 80, "SWITCH");
 	writeSomething(BLACK, 17, 50, "WEAPON");
-
+	}
 
 }
 
@@ -445,7 +458,7 @@ void drawHealth(Hero hero)
 
 	glTranslatef(825,890,0);
 
-	for(i = 1; i <= hero->health; i++)
+	for(i = 1; i <= hero->health-difficulty; i++)
 	{	
 		
 		drawHeart(1,0,0);
@@ -579,7 +592,8 @@ void drawUsername()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-    writeSomethingArray(BLACK, 30, 930, username);
+
+    writeSomethingArray(BLACK, 30, 930, username_array);
 
 	writeSomething(BLACK, 45, 970, "PSEUDO");
 	glColor3f(BLACK);
@@ -638,7 +652,6 @@ void drawWeapon()
 {
 	int i;
 
-
 	// dessin du cadre et de l'inscription du type d'arme
 	writeSomething(BLACK,40, 670, "WEAPON");
 	glColor3f(BLACK);
@@ -648,26 +661,21 @@ void drawWeapon()
 	for (i = 0 ; i < 30 ; i++)
 	{
 		glRasterPos3f(157,690-i, 1); // DRAW RIGHT LINE FRAME
-            char msg2[]="|";
-            for(int i = 0; i <strlen(msg2);i++)
+		char msg2[]="|";
+		for(int i = 0; i <strlen(msg2);i++)
                 glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-            
 	}
 
-
-
+	// affichage du type d'arme en main
 	// Condition d'affichage, si gun => affiche gun, si bubble => affiche bubble S
 	if(hero->weapon_type == false)
 	{
-
 		glMatrixMode(GL_MODELVIEW);
     	glLoadIdentity();
 
 		if(hero->bonus_active == false)
 		{
-
 			writeSomething(BLACK, 60, 627, "G U N");
-
 
 			// left squares
 			glTranslatef(140, 635, 0);
@@ -689,9 +697,8 @@ void drawWeapon()
 			glTranslatef(-10, 0, 0);
 			drawSquare(BLUE, 0.45);
 
-
-
 		}
+
 		else if(hero->bonus_active == true)
 		{
 			writeSomething(BLACK, 60, 627, "G U N");
@@ -715,19 +722,14 @@ void drawWeapon()
 			drawSquare(RED, 0.45);
 			glTranslatef(-10, 0, 0);
 			drawSquare(RED, 0.45);
-
-
 		}
 
 
 	}
 	else if(hero->weapon_type == true)
 	{
-
-
 		glMatrixMode(GL_MODELVIEW);
     	glLoadIdentity();
-
 
 		writeSomething(BLACK, 47, 627, "BUBBLE");
 
@@ -740,20 +742,7 @@ void drawWeapon()
 		drawCircle(BLUE, 50, 630, 6);
 		drawCircle(BLUE, 50, 630, 7);
 		drawCircle(BLUE, 50, 630, 10);
-
-
-
-
-
 	}
-
-
-
-
-
-
-
-
 }
 
 
@@ -808,14 +797,13 @@ void drawEnemy(enemy e)
 	j = e->pos.y;
 
 	// couleur ennemi
-	glColor3f(RED);
+	glColor3f(r,g,bl);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	//déplacement de l'ennemi sur la case de départ
 	glTranslatef(i*Square_size,j*Square_size,0.0f);
-
 
 	// dessin
 	glBegin(GL_QUADS);
@@ -909,6 +897,7 @@ void drawAllObstacles(ObstacleList o)
 
 	if (o->first != NULL || o->last != NULL) // test existence de la liste
 	{
+		// si emprisonné, deviens couleur glace
 		if(first->jailed == false) 
 		{
 			drawObstacles(first,YELLOW);
@@ -917,10 +906,6 @@ void drawAllObstacles(ObstacleList o)
 		{
 			drawObstacles(first, CYAN);
 		}
-
-
-
-
 		
 		if (o->first->next != NULL)
 		{
@@ -944,7 +929,6 @@ void drawAllObstacles(ObstacleList o)
 				{
 					drawObstacles(next, CYAN);
 				}
-
 			}
 		}
 	}
@@ -956,26 +940,27 @@ void drawAllObstacles(ObstacleList o)
 
 void drawBonus(bonus_objet bonus)
 {
+	if(cheatMode == false)
+	{
 	int i, j;
+		// i et j sont les coordonnées de départ de l'objet bonus
+		i = bonus->pos.x;
+		j = bonus->pos.y;
 
-	// i et j sont les coordonnées de départ de l'objet bonus
-	i = bonus->pos.x;
-	j = bonus->pos.y;
+		// couleur bonus
+		glColor3f(BLUE);
 
-	// couleur bonus
-	glColor3f(BLUE);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+		// déplacement du bonus à l'endroit de départ
+		glTranslatef((i*Square_size)+10,(j*Square_size),0.0f);
 
-	// déplacement du bonus à l'endroit de départ
-	glTranslatef((i*Square_size)+10,(j*Square_size),0.0f);
-
-	//dessin du bonus
-	drawCircle(BLUE, i, j, 6);
-	drawCircle(BLUE, i, j, 7);
-	drawCircle(BLUE, i, j, 10);
-	
+		//dessin du bonus
+		drawCircle(BLUE, i, j, 6);
+		drawCircle(BLUE, i, j, 7);
+		drawCircle(BLUE, i, j, 10);
+	}
 }
 
 
@@ -1021,7 +1006,7 @@ void drawTirsHero(tir_Struct t)
 	
 	// si le héro est sous l'effet d'un bonus, la couleur du tir devient bleu
 	// par défaut, elle est jaune
-	if(hero->bonus_active == false) glColor3f(BLUE);
+	if(hero->bonus_active == false) glColor3f(YELLOWGREEN);
 	else if(hero->bonus_active == true) glColor3f(RED);
 
 
@@ -1037,6 +1022,8 @@ void drawTirsHero(tir_Struct t)
 	{
 		glBegin(GL_QUADS);
 
+	if(cheatMode == false)
+	{
 		if(Hero_size > 20)
 		{
 			glVertex2d((Hero_size/5)*2, 0);
@@ -1044,19 +1031,28 @@ void drawTirsHero(tir_Struct t)
 			glVertex2d((Hero_size/5)*3, (Hero_size/2));
 			glVertex2d((Hero_size/5)*2, (Hero_size/2));
 		}
-		else
+		else if(Hero_size <= 20)
 		{
 			glVertex2d((Hero_size/5)*1, 0);
 			glVertex2d((Hero_size/5)*3, 0);
 			glVertex2d((Hero_size/5)*3, (Hero_size/2));
 			glVertex2d((Hero_size/5)*1, (Hero_size/2));
-		}
+		}	
+	}
+	else
+	{
+		glVertex3f(-Square_size*2,0,0);
+		glVertex3f(Square_size*3,0,0);
+		glVertex3f(Square_size*3,Square_size,0);
+		glVertex3f(-Square_size*2,Square_size,0);
+	}
+		
 		glEnd();
 
 		
 	// si le héro tient son canon à bulles en main alors weapon_type == true
 	}
-	else if(t->type == true)
+	else if(t->type == true && cheatMode == false)
 	{
 		glTranslatef(10,0,0);
 		drawCircle(CYAN, i, j, 6);
@@ -1072,8 +1068,6 @@ void drawAllTirsHero(listetir_Struct t)
 {
 	tir_Struct first = malloc(sizeof(tirs));
 	tir_Struct next = malloc(sizeof(tirs));
-
-	
 
 	first = t->first;
 	if (t->first != NULL && t->first->next != NULL)
@@ -1248,7 +1242,6 @@ void writeSomethingArray(float red, float green, float blue, int x, int y, char 
 	{
     	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, txt[i]);
 	}
-
 }
 
 

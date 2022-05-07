@@ -29,6 +29,7 @@ void move();
                                 /********
                                  * GAME *
                                  ********/
+void checkNewGame();
 
 // affiche le jeu à l'écran
 void DisplayGame();
@@ -41,10 +42,12 @@ void game(int *mX, int *mY, Hero hero, EnemyList e, listetir_Struct t, listetir_
                                  * SAVES *
                                  *********/
 
-//sauvegarde le score de la dernière partie et l'enregistre dans un fichier txt
+// Sauvegarde le score de la partie en cours et l'enregistre dans un fichier txt (scores.txt)
 void saveScore(Hero hero);
 
+// Sauvegarde le contexte de la partie au moment de quitter
 
+void saveContext();
 
 
 

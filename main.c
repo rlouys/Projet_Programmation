@@ -33,16 +33,13 @@
 
 /*** VARIABLES ***/
 
-//bool test = false;
-//bool startgame = false;
-
 
 int main(int argc, char *argv[])
 {
 
     // VARIABLES // 
 
-    mX = 70;
+    mX = 90;
     mY = 49;
     srand(time(NULL));
 
@@ -81,24 +78,28 @@ int main(int argc, char *argv[])
 
     glutTimerFunc(100, updateCollisions, 1);
 
+    // ennemis
     glutTimerFunc(1, updateEnemies, 2);
     glutTimerFunc(50, updateNewEnemies, 4);
     glutTimerFunc(10, updateDeleteEnemies, 5);
 
+    // obstacles
     glutTimerFunc(50, updateObstacle, 7);
 	glutTimerFunc(10, updateNewObstacles, 8);
 	glutTimerFunc(10, updateDeleteObstacles, 9);
 
+    // bonus
 	glutTimerFunc(10, updateBonus, 10);
     glutTimerFunc(10, updateNewBonus, 11);
     glutTimerFunc(10, updateDeleteBonus, 12);
 
+    // héro
     glutTimerFunc(1, updateTirsHero, 3);
     glutTimerFunc(1, updateTirsEnemy, 13);
     glutTimerFunc(10, updateDeleteTirs, 6);
 
-
     glEnable(GL_DEPTH_TEST);
+
 	glutMainLoop();
         
 	return 0;

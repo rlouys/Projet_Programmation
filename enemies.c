@@ -85,11 +85,13 @@ enemy createEnemy(int *maxY)
 	//initialisation des stats de l'ennemi
 	new->vie = 3;
 	new->pos.x = x;
-	new->pos.y = 50.0;
+	new->pos.y = 80.0;
 	new->next = NULL;
 	new->previous = NULL;
 	new->active = true;
 	new->slowness = 0;
+	new->color = 3;
+	new->changed = false;
 
 	return new;
 }
@@ -114,7 +116,7 @@ obstacles createObstacle(int *maxY)
 
 	// initialisation des stats de l'obstacle
 	new->pos.x = x;
-	new->pos.y = 55;
+	new->pos.y = 80;
 	new->next = NULL;
 	new->previous = NULL;
 	new->jailed = false;
@@ -406,7 +408,5 @@ void suppressionObstaclesEndGame(ObstacleList o)
 			deleted = newObstacle;
 			newObstacle = newObstacle->next;
 			free(deleted);
-
 		}
-
 }

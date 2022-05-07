@@ -54,7 +54,8 @@ void mouse(int bouton,int etat,int x,int y);
 // Dessine un cadre autour d'un texte
 void frameDraw(int red, int green, int blue, int x, int y, int length, int title); 
 
-
+// dessin du tableau highscore du menu de démarrage
+void drawHighScore();
 
 
                         /**********
@@ -95,6 +96,8 @@ void DisplayCredits();
 
 // initialise les options dynamiques à l'écran avant la première touche pressée
 void options_keys(int option_number);
+
+void replace_NewGame(char boolean);
 
                         /*******************
                          * MENU CLIC DROIT *

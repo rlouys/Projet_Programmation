@@ -20,9 +20,14 @@ struct enemies
 
 {
 	int vie;
-	struct positions pos;
+	int type;
+	int color;
+
 	bool active;
 	bool slowness;
+	bool changed;
+
+	struct positions pos;
 	struct enemies *previous;
 	struct enemies *next;
 };
@@ -34,6 +39,7 @@ struct ListEnemy
 {
 	
 	int quantite;
+
 	struct enemies *first;
 	struct enemies *last;
 	
@@ -47,9 +53,10 @@ typedef struct ListEnemy *EnemyList;
 //initialisation de la structure des obstacles
 struct obstacle
 {
-	struct positions pos;
 	bool jailed;
 	bool active;
+	
+	struct positions pos;
 	struct obstacle *previous;
 	struct obstacle *next;
 };
@@ -61,6 +68,7 @@ typedef struct obstacle *obstacles;
 struct ListObstacles
 {
 	int quantite;
+	
 	struct obstacle *first;
 	struct obstacle *last;
 };

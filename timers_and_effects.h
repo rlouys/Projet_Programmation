@@ -46,10 +46,20 @@ void checkCollisionTirsBonus (bonus_objet b, tir_Struct w);
 // vérifie s'il y a une collision entre l'objet bonus et l'allié, et confère le(s) bonus
 void checkCollisionAlliesBonus (bonus_objet bns);
 
-
+// fait pause temporairement
 void wait();
 
+void setGold();
 
+void setPurple();
+
+void setPurpleOrGold();
+
+void setEnemyLevel(enemy car);
+
+
+// augmente la difficulté en fonction du niveau de difficulté et du level en cours
+void increaseLevel();
 
 /*** TIMERS ***/
 

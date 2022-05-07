@@ -4,6 +4,7 @@
 /*** LIBS ***/
 
 #include <stdbool.h>
+#include <stdio.h>
 
 /*** FILES ***/
 
@@ -43,6 +44,7 @@ bool loadMap(int *mX, int *mY);
 void drawMap(int *mX, int *mY, Hero hero); 
 
 void initRendering();
+
 void handleResize(int width, int heigth);
 
                     /******************

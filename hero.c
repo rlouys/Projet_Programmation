@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 /*** FILES ***/
 
@@ -12,10 +13,192 @@
 
 /*** VARIABLES ***/
 
+int n_lock = 0;
+int n;
+int nd;
+int newGame_lock;
+
 bool startgame;
 bool endmap;
+bool cheatMode;
+
+float difficulty;
+
+char *username;
+int newGame;
 
 /*** FUNCTIONS ***/
+
+
+
+// Function to copy the string
+char* copyToString(char array[])
+{
+    char* string;
+    string = (char*)malloc(20);
+ 
+    strcpy(string, array);
+    return (char*)string;
+}
+
+
+
+
+
+char* getStringFromFile(FILE * f, char symbol)
+{
+	char lettre;
+	int i = 0;
+	char user[20];
+
+	while(lettre != symbol)
+	{
+		lettre = fgetc(f);
+	}
+	
+	while(lettre != ' ')
+	{
+		
+		lettre = fgetc(f);
+		user[i] = lettre;
+		printf("user[i] : %c\n", user[i]);
+		printf("%i\n", i);
+		//printf("taille = %i\n", taille);
+		i++;
+
+	}
+
+	user[i] = '\0';
+
+	i = 0;
+
+	username = copyToString(user);
+
+	return username;
+	//return "haruhiko";
+}
+
+// ------------------------------------------------------------------ //
+
+char skipLine(char c, FILE * f, int skips, char symbol)
+{
+	//int i = 0;
+
+	/*while(i != skips)
+	{*/
+		while(getc(f) != symbol)
+			{
+				getc(f);
+			}
+			//++;
+
+	//}
+		c = fgetc(f);
+
+
+	return c;
+}
+
+// ------------------------------------------------------------------ //
+
+int getIntegerFromFile(char c, FILE * f, char *class)
+{
+
+	if(strcmp(class, "xp") == 0){
+		// pas de déplacement
+
+	}else if(strcmp(class, "vie") == 0)
+	{
+		
+		c = skipLine(c, f, 1, '#');
+		//c = fgetc(f);
+
+
+	}else if(strcmp(class, "atk") == 0){
+
+		c = skipLine(c, f, 1, '(');
+		//c = fgetc(f);
+
+	}else if(strcmp(class, "killed") == 0){
+
+		c = skipLine(c, f, 1, '@');
+	//	c = fgetc(f);
+
+	}else if(strcmp(class, "obst") == 0){
+		
+		c = skipLine(c, f, 1, '#');
+		//c = fgetc(f);
+
+	}
+	char cd;
+	int tmp;
+
+	int key = 0;
+
+	while(c != ' ')
+	{
+		tmp = charToInteger(c);
+		cd = fgetc(f);
+
+		if(cd != ' ')
+		{
+			if(key == 0)
+			{
+				nd = charToInteger(cd);
+				n = concatenate(tmp,nd);
+				key = 1;
+			}
+			else if(key == 1)
+			{
+				nd = charToInteger(cd);
+				n = concatenate(n, tmp);
+				n = concatenate(n, nd);
+			}
+		}
+		else if(cd == ' ')
+		{
+			if(n_lock == 1)
+			{
+				n = concatenate(n, tmp);
+				
+			}
+			else if(n_lock == 0)
+			{
+				n_lock = 1;
+				n = tmp;
+			}
+		}
+
+		c = fgetc(f); 
+	}
+
+
+	return n;
+}
+
+
+// ------------------------------------------------------------------ //
+
+unsigned concatenate(unsigned x, unsigned y) {
+    unsigned puissance = 10;
+
+    while(y >= puissance)
+        puissance *= 10;
+	
+
+
+    return (x * puissance) + y ;        
+}
+
+// ------------------------------------------------------------------ //
+
+int charToInteger(char c)
+{
+	int numero = 0;
+	numero = c - '0';
+
+	return numero;
+}
 
 // ------------------------------------------------------------------ //
 
@@ -23,12 +206,15 @@ bool endmap;
 
 Hero createHero(int *maxX, int *maxY)
 {
-	Hero hero;
+	//char* username = {'\0'};
+	int i;
+
+	Hero hero = malloc(sizeof(struct Hero));
 
 	// position à 0, et on commence à chercher dans le fichier map
 	int x = 0, y = 0; 
 
-	for (int i = 0; i < *maxX; ++i)
+	for ( i = 0; i < *maxX; ++i)
 	{
 		for (int j = 0; j < *maxY; ++j)
 		{
@@ -41,17 +227,61 @@ Hero createHero(int *maxX, int *maxY)
 		}
 	}
 
-	// Stats initialisation
-	hero = malloc(sizeof(struct Hero));
-	hero->health = 40;
-	hero->pos.x = x;
-	hero->pos.y = y;
-	hero->current_xp = 100;
-	hero->attack = 1;
-	hero->killed = 0;
-	hero->weapon_type = false;
-	hero->obstacles_taken = 0;
-	hero->bonus_active = false;
+	//if(newGame_lock == 1)
+	//{
+		checkNewGame();
+
+		//newGame = 1;
+	//}
+
+	if(newGame == 0)
+	{
+		FILE *f = fopen("contexte.txt", "r");
+		
+		// Stats initialisation
+
+		// SCORE // 
+		char c = fgetc(f); // 1
+		n = getIntegerFromFile(c, f, "xp");
+		hero->current_xp = n;
+		n_lock = 0;
+
+		// VIE //
+		n = getIntegerFromFile(c, f, "vie");
+		hero->health = n;
+		// pour les chiffres < 10
+		n_lock = 0;
+
+		n = getIntegerFromFile(c, f, "atk");
+		hero->attack = n;
+		n_lock = 0;
+
+		n = getIntegerFromFile(c, f, "killed");
+		hero->killed = n;
+
+		
+
+		hero->pos.x = x;
+		hero->pos.y = y;
+		hero->weapon_type = false;
+		hero->obstacles_taken = 0;
+		hero->bonus_active = false;
+
+
+
+		fclose(f);
+	}else if(newGame == 1)
+	{
+		hero->health = 3;
+		hero->attack = 1;
+		hero->killed = 0;
+		hero->current_xp = 0;
+		hero->pos.x = x;
+		hero->pos.y = y;
+		hero->weapon_type = false;
+		hero->obstacles_taken = 0;
+		hero->bonus_active = false;
+	}
 
 	return hero;
 }
@@ -65,12 +295,31 @@ void moveUp(Hero hero)
 {
 	int y = 0;
 
-	y = hero->pos.y+1;
     
 	// pos Y max du héro == 10
-	if (hero->pos.y < 11)
+	if(cheatMode == false)
 	{
-		hero->pos.y = y;
+		y = hero->pos.y+1;
+
+		// SI LES MURS DROITS NE BLOQUENT PAS LE HERO
+		if (hero->pos.y <= 11)
+		{
+			hero->pos.y = y;
+		}
+	}
+	else
+	{
+		y = hero->pos.y+3;
+
+		// SI LES MURS DROITS NE BLOQUENT PAS LE HERO
+		if (y < 12)
+		{
+			hero->pos.y = y;
+		}
+		else if (y >= 12)
+		{
+			hero->pos.y = 11;
+		}
 	}
 }
 
@@ -80,12 +329,33 @@ void moveUp(Hero hero)
 
 void moveDown(Hero hero)		//la fonction va vérifier si on peut se déplacer vers la droite et le faire le cas échéant
 {
-	int y = hero->pos.y-1;
+	int y = 0;
 
-	// fixe la nouvelle position si pas déjà tout en bas
-	if(hero->pos.y != 1)
+    
+	// pos Y max du héro == 10
+	if(cheatMode == false)
 	{
-		hero->pos.y = y;
+		y = hero->pos.y-1;
+
+		// SI LES MURS DROITS NE BLOQUENT PAS LE HERO
+		if (hero->pos.y >= 2)
+		{
+			hero->pos.y = y;
+		}
+	}
+	else
+	{
+		y = hero->pos.y-3;
+
+		// SI LES MURS DROITS NE BLOQUENT PAS LE HERO
+		if (y >= 2)
+		{
+			hero->pos.y = y;
+		}
+		else if (y < 2)
+		{
+			hero->pos.y = 1;
+		}
 	}
 }
 
@@ -97,15 +367,37 @@ void moveRight(Hero hero)
 {
 	int  x = 0, y = 0;
 		
-	x = hero->pos.x+1;
-	y = hero->pos.y;
-
-	// SI LES MURS DROITS NE BLOQUENT PAS LE HERO
-	if (*(*(map + y) + x)!='@')
+	if(cheatMode == false)
 	{
-		hero->pos.x = x;
-	}     
-	
+		
+		x = hero->pos.x+1;
+		y = hero->pos.y;
+
+		// SI LES MURS DROITS NE BLOQUENT PAS LE HERO
+		if (*(*(map + y) + x) !='@')
+		{
+			hero->pos.x = x;
+		}
+	}
+	else
+	{
+		x = hero->pos.x+3;
+		y = hero->pos.y;
+
+		// SI LES MURS DROITS NE BLOQUENT PAS LE HERO
+		if ( *(*(map + y) + x) !='@' && *(*(map + y) + (x-1)) != '@' && *(*(map + y) + (x-2)) != '@' )
+		{
+			hero->pos.x = x;
+		}
+		else if (*(*(map + y) + x) == '@')
+		{
+			hero->pos.x = x-1;
+		}
+		else if( *(*(map + y) + (x-1)) == '@')
+		{
+			hero->pos.x = x-2;
+		}
+	}
 }
 
 // ------------------------------------------------------------------ //
@@ -116,14 +408,42 @@ void moveLeft(Hero hero)
 {
 	int  x = 0, y = 0;
 
-	x = hero->pos.x-1;
-	y = hero->pos.y;
-
-	// SI LES MURS GAUCHES NE BLOQUENT PAS LE HERO
-	if (*(*(map + y) + x) !='#')
+	if(cheatMode == false)
 	{
-		hero->pos.x = x;
+		
+		x = hero->pos.x-1;
+		y = hero->pos.y;
+
+		// SI LES MURS GAUCHES NE BLOQUENT PAS LE HERO
+		if (*(*(map + y) + x) !='#')
+		{
+			hero->pos.x = x;
+		}
 	}
+	else
+	{
+		x = hero->pos.x-3;
+		y = hero->pos.y;
+
+		// SI LES MURS GAUCHES NE BLOQUENT PAS LE HERO
+		if ( *(*(map + y) + x) !='#' && *(*(map + y) + (x+1)) !='#' && *(*(map + y) + (x+2)) != '#' )
+		{
+			hero->pos.x = x;
+		}
+		else if (*(*(map + y) + x) =='#')
+		{
+			hero->pos.x = x+1;
+		}
+		else if( *(*(map + y) + (x+1)) == '#')
+		{
+			hero->pos.x = x+2;
+		}
+	}
+
+
+
+
+
 }
 
 // ------------------------------------------------------------------ //
@@ -132,7 +452,12 @@ void moveLeft(Hero hero)
 
 void switchWeapon(Hero hero)
 {
-	hero->weapon_type = !(hero->weapon_type);
+	// change l'arme tenue par le héro
+	if(cheatMode == false)
+	{
+		hero->weapon_type = !(hero->weapon_type);
+	}
+	
 }
 
 // ------------------------------------------------------------------ //
@@ -172,8 +497,15 @@ bonus_objet createBonus(int *maxY)
 		exit(EXIT_FAILURE);
 	} 
 
-	new->pos.x = x;
-	new->pos.y = 50;
+	if(cheatMode == false)
+	{
+		new->pos.x = x;
+	}
+	else if(cheatMode == true)
+	{
+		new->pos.x = 80;
+	}
+	new->pos.y = 90;
 	new->next = NULL;
 	new->previous = NULL;
 	new->active = true;
@@ -319,15 +651,17 @@ void suppressionBonusEndGame(BonusList b)
 
 		newBonus = b->first;
 
-		bonus_objet deleted = malloc(sizeof(objet_bonus));
 
 		// désactivation e tous les bonus et mise du bonus dans une
 		// structure "poubelle" pour free();
 		while(newBonus != NULL)
 		{
 			newBonus->active = false;
+			bonus_objet deleted = malloc(sizeof(objet_bonus));
+
 			deleted = newBonus;
 			newBonus = newBonus->next;
+			
 			free(deleted);
 
 		}
