@@ -35,7 +35,9 @@
 #define BLUE 0.0, 0.0, 1.0
 #define CYAN 0, 1, 1
 #define YELLOWGREEN 0.604, 0.804, 0.196
-
+#define ORANGE 1, 0.647, 0
+#define BRICK 0.698039216, 0.133333333, 0.133333333
+#define GREEN 0, 1, 0
 /***  VARIABLES  ***/
 
 int mX = 80; // nombre de cases en largeur de la map
@@ -47,6 +49,7 @@ float *value; // valeur de défilement de la map
 float difficulty;
 
 bool cheatMode;
+bool GOLD;
 
 char *username; // username du héro
 char username_array[20];
@@ -122,7 +125,7 @@ void drawMap(int *mX, int *mY, Hero hero)
 	glClear(GL_COLOR_BUFFER_BIT);
 	glutPostRedisplay();
 
-	glTranslatef(0,-(Square_size),0);
+	glTranslatef(0,-(*value),0); // scrolling
 	// dessine les divers éléments du dessin de la map
 	for (int j = 0; j < (*mX); ++j)
 	{
@@ -593,7 +596,7 @@ void drawUsername()
 	glLoadIdentity();
 
 
-    writeSomethingArray(BLACK, 30, 930, username_array);
+    writeSomethingArray(BLACK, 30, 930, username);
 
 	writeSomething(BLACK, 45, 970, "PSEUDO");
 	glColor3f(BLACK);
@@ -679,23 +682,23 @@ void drawWeapon()
 
 			// left squares
 			glTranslatef(140, 635, 0);
-			drawSquare(BLUE, 0.45);
+			drawSquare(GREEN, 0.45);
 			glTranslatef(10, 0, 1);
-			drawSquare(BLUE, 0.45);
+			drawSquare(GREEN, 0.45);
 			glTranslatef(0, -10, 0);
-			drawSquare(BLUE, 0.45);
+			drawSquare(GREEN, 0.45);
 			glTranslatef(-10, 0, 0);
-			drawSquare(BLUE, 0.45);
+			drawSquare(GREEN, 0.45);
 
 			// right squares
 			glTranslatef(-115, 10, 0);
-			drawSquare(BLUE, 0.45);
+			drawSquare(GREEN, 0.45);
 			glTranslatef(10, 0, 0);
-			drawSquare(BLUE, 0.45);
+			drawSquare(GREEN, 0.45);
 			glTranslatef(0, -10, 0);
-			drawSquare(BLUE, 0.45);
+			drawSquare(GREEN, 0.45);
 			glTranslatef(-10, 0, 0);
-			drawSquare(BLUE, 0.45);
+			drawSquare(GREEN, 0.45);
 
 		}
 
@@ -759,7 +762,7 @@ void drawWeapon()
 
 void drawPlayer(Hero hero)
 {
-	int i, j;
+	float i, j;
 
 	// i et j valent les positions x et y du héro
 	i = hero->pos.x;
@@ -771,16 +774,52 @@ void drawPlayer(Hero hero)
 	// déplacement du héro à l'endroit de départ
 	glTranslatef(i*Square_size,j*Square_size,0.0f);
 
-	glColor3f(EMERALD);
+	glColor3f(GREY);
 
 	// dessin 
 	glBegin(GL_QUADS);
 
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(Hero_size, 0.0f, 0.0f);
-		glVertex3f(Hero_size,Hero_size, 0.0f);
-		glVertex3f(0,Hero_size, 0.0f);
-		
+	// velo structure
+
+	glVertex3f(6, 0, 0);
+	glVertex3f(((Square_size*2)/5)+2, 0, 0);
+	glVertex3f(((Square_size*2)/5)+2, Square_size*2, 0);
+	glVertex3f(6, Square_size*2, 0);
+
+	// guidon
+
+	glColor3f(BROWN);
+	glVertex3f(-2, 25, 0);
+	glVertex3f(((Square_size*2)/5)+10, 25, 0);
+	glVertex3f(((Square_size*2)/5)+10, 28, 0);
+	glVertex3f(-2, 28, 0);
+
+	// baton droit
+	glColor3f(BROWN);
+	glVertex3f(((Square_size*2)/5)+10, 25, 0);
+	glVertex3f(((Square_size*2)/5)+10, 32, 0);
+	glVertex3f(((Square_size*2)/5)+7, 32, 0);
+	glVertex3f(((Square_size*2)/5)+7, 25, 0);
+
+	// baton gauche
+	glColor3f(BROWN);
+	glVertex3f(-2, 25, 0);
+	glVertex3f(-2, 32, 0);
+	glVertex3f(1, 32, 0);
+	glVertex3f(1, 25, 0);
+
+	// selle
+
+	glColor3f(BROWN);
+	glVertex3f(4, 10, 0);
+	glVertex3f(((Square_size*2)/5)+4, 10, 0);
+	glVertex3f(((Square_size*2)/5)+4, 18, 0);
+	glVertex3f(4, 18, 0);
+
+
+
+
+
 	glEnd();
 }
 
@@ -790,7 +829,7 @@ void drawPlayer(Hero hero)
 
 void drawEnemy(enemy e)	
 {
-	int i, j;
+	float i, j;
 
 	//i et j sont les coordonnées de départ de l'ennemi
 	i = e->pos.x;
@@ -808,10 +847,77 @@ void drawEnemy(enemy e)
 	// dessin
 	glBegin(GL_QUADS);
 
-	glVertex3f(0.0f,0.0f,0.0f);
+	/*glVertex3f(0.0f,0.0f,0.0f);
 	glVertex3f(Square_size,0.0f,0.0f);
 	glVertex3f(Square_size,Square_size,0.0f);
-	glVertex3f(0.0f,Square_size,0.0f);
+	glVertex3f(0.0f,Square_size,0.0f);*/
+
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(Square_size, 0.0f, 0.0f);
+	glVertex3f(Square_size, Square_size, 0.0f);
+	glVertex3f(0.0f, Square_size, 0.0f);
+
+	// capot
+	glColor3f(BLACK);
+	glVertex3f(0.0f, 8, 0.0f);
+	glVertex3f(Square_size, 8, 0.0f);
+	glVertex3f(Square_size, 7, 0.0f);
+	glVertex3f(0, 7, 0.0f);
+
+
+
+
+	//phares standards
+
+
+	if(GOLD == false)
+	{
+		glColor3f(ORANGE);
+	}
+	else{
+		glColor3f(CYAN);
+	}
+
+
+	//gauche
+	glVertex3f(0, 0, 0.0f);
+	glVertex3f(4, 0, 0.0f);
+	glVertex3f(4, 4, 0.0f);
+	glVertex3f(0, 4, 0.0f);
+
+	//droite
+	glVertex3f(20, 0, 0.0f);
+	glVertex3f(20, 4, 0.0f);
+	glVertex3f(16, 4, 0.0f);
+	glVertex3f(16, 0, 0.0f);
+
+
+	// pare-brise
+
+	glColor3f(CYAN);
+
+	glVertex3f(1, 8, 0.0f);
+	glVertex3f(1, 19, 0.0f);
+	glVertex3f(19, 19, 0.0f);
+	glVertex3f(19, 8, 0.0f);
+
+	//rétroviseurs
+
+	glColor3f(GREY);
+	//gauche
+	glVertex3f(0, 6, 0);
+	glVertex3f(-4, 6, 0);
+	glVertex3f(-4, 10, 0);
+	glVertex3f(0, 10, 0);
+
+
+	//droite
+	glVertex3f(20, 6, 0);
+	glVertex3f(24, 6, 0);
+	glVertex3f(24, 10, 0);
+	glVertex3f(20, 10, 0);
+
+
 
 	glEnd();
 }
@@ -854,7 +960,7 @@ void drawAllEnnemis(EnemyList e)
 
 void drawObstacles(obstacles o, float red, float green, float blue)
 {
-	int i, j;
+	float i, j;
 
 	//i et j sont les coordonnées de départ de l'obstacle
 	i = o->pos.x;
@@ -876,6 +982,61 @@ void drawObstacles(obstacles o, float red, float green, float blue)
 	glVertex3f(Square_size*2,0.0f,0.0f);
 	glVertex3f(Square_size*2,Square_size,0.0f);
 	glVertex3f(-(Square_size),Square_size,0.0f);
+
+	//lines
+
+	// down line
+	glColor3f(BLACK);
+	glVertex3f(-(Square_size),7,0.0f);
+	glVertex3f(Square_size*2,7,0.0f);
+	glVertex3f(Square_size*2,6,0.0f);
+	glVertex3f(-(Square_size),6,0.0f);
+
+
+	// up line
+	glVertex3f(-(Square_size),15,0.0f);
+	glVertex3f(Square_size*2,15,0.0f);
+	glVertex3f(Square_size*2,14,0.0f);
+	glVertex3f(-(Square_size),14,0.0f);
+
+	// vertical lines
+	//up
+	glVertex3f(-(Square_size)+21,15,0.0f);
+	glVertex3f(-(Square_size)+21,20,0.0f);
+	glVertex3f(-(Square_size)+19,20,0.0f);
+	glVertex3f(-(Square_size)+19,15,0.0f);
+
+	glVertex3f(-(Square_size)+41,15,0.0f);
+	glVertex3f(-(Square_size)+41,20,0.0f);
+	glVertex3f(-(Square_size)+39,20,0.0f);
+	glVertex3f(-(Square_size)+39,15,0.0f);
+
+	//down
+	glVertex3f(-(Square_size)+21,7,0.0f);
+	glVertex3f(-(Square_size)+21,0,0.0f);
+	glVertex3f(-(Square_size)+19,0,0.0f);
+	glVertex3f(-(Square_size)+19,7,0.0f);
+
+	glVertex3f(-(Square_size)+41,7,0.0f);
+	glVertex3f(-(Square_size)+41,0,0.0f);
+	glVertex3f(-(Square_size)+39,0,0.0f);
+	glVertex3f(-(Square_size)+39,7,0.0f);
+
+	//middle
+	glVertex3f(-(Square_size)+13,7,0.0f);
+	glVertex3f(-(Square_size)+13,15,0.0f);
+	glVertex3f(-(Square_size)+11,15,0.0f);
+	glVertex3f(-(Square_size)+11,7,0.0f);
+
+	glVertex3f(-(Square_size)+33,7,0.0f);
+	glVertex3f(-(Square_size)+33,15,0.0f);
+	glVertex3f(-(Square_size)+31,15,0.0f);
+	glVertex3f(-(Square_size)+31,7,0.0f);
+
+	glVertex3f(-(Square_size)+53,7,0.0f);
+	glVertex3f(-(Square_size)+53,15,0.0f);
+	glVertex3f(-(Square_size)+51,15,0.0f);
+	glVertex3f(-(Square_size)+51,7,0.0f);
 
 	glEnd();
 }
@@ -900,7 +1061,7 @@ void drawAllObstacles(ObstacleList o)
 		// si emprisonné, deviens couleur glace
 		if(first->jailed == false) 
 		{
-			drawObstacles(first,YELLOW);
+			drawObstacles(first, BRICK);
 		}
 		else
 		{
@@ -911,7 +1072,7 @@ void drawAllObstacles(ObstacleList o)
 		{
 			if(next->jailed == false)
 			{
-				drawObstacles(next, YELLOW);
+				drawObstacles(next, BRICK);
 			}
 			else
 			{
@@ -923,7 +1084,7 @@ void drawAllObstacles(ObstacleList o)
 
 				if(next->jailed == false)
 				{
-					drawObstacles(next, YELLOW);
+					drawObstacles(next, BRICK);
 				}
 				else
 				{
@@ -940,15 +1101,22 @@ void drawAllObstacles(ObstacleList o)
 
 void drawBonus(bonus_objet bonus)
 {
-	if(cheatMode == false)
+	if(cheatMode == false && hero->ulti_active == 0)
 	{
-	int i, j;
+	float i, j;
+
 		// i et j sont les coordonnées de départ de l'objet bonus
 		i = bonus->pos.x;
 		j = bonus->pos.y;
 
-		// couleur bonus
-		glColor3f(BLUE);
+
+	
+
+	// attaque ultime
+	
+	bonus = b->first;
+
+
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -957,9 +1125,15 @@ void drawBonus(bonus_objet bonus)
 		glTranslatef((i*Square_size)+10,(j*Square_size),0.0f);
 
 		//dessin du bonus
-		drawCircle(BLUE, i, j, 6);
-		drawCircle(BLUE, i, j, 7);
-		drawCircle(BLUE, i, j, 10);
+
+	
+		
+	
+		drawCircle(RED, i, j, 6);
+		drawCircle(RED, i, j, 7);
+		drawCircle(RED, i, j, 10);
+		
+	
 	}
 }
 
@@ -1006,7 +1180,7 @@ void drawTirsHero(tir_Struct t)
 	
 	// si le héro est sous l'effet d'un bonus, la couleur du tir devient bleu
 	// par défaut, elle est jaune
-	if(hero->bonus_active == false) glColor3f(YELLOWGREEN);
+	if(hero->bonus_active == false) glColor3f(GREEN);
 	else if(hero->bonus_active == true) glColor3f(RED);
 
 
@@ -1022,7 +1196,7 @@ void drawTirsHero(tir_Struct t)
 	{
 		glBegin(GL_QUADS);
 
-	if(cheatMode == false)
+	if(cheatMode == false && hero->ulti_active == 0)
 	{
 		if(Hero_size > 20)
 		{
@@ -1039,12 +1213,22 @@ void drawTirsHero(tir_Struct t)
 			glVertex2d((Hero_size/5)*1, (Hero_size/2));
 		}	
 	}
-	else
+	else if(cheatMode == true || hero->ulti_active == 1)
 	{
 		glVertex3f(-Square_size*2,0,0);
 		glVertex3f(Square_size*3,0,0);
 		glVertex3f(Square_size*3,Square_size,0);
 		glVertex3f(-Square_size*2,Square_size,0);
+	}
+
+	// supprime l'ultime après 10 tués
+
+	if(hero->ulti_active == 1)
+	{
+		if((e->qtyToUlti+1)%6 == 0)
+		{
+			hero->ulti_active = 0;
+		}
 	}
 		
 		glEnd();
@@ -1054,9 +1238,9 @@ void drawTirsHero(tir_Struct t)
 	}
 	else if(t->type == true && cheatMode == false)
 	{
-		glTranslatef(10,0,0);
-		drawCircle(CYAN, i, j, 6);
-		drawCircle(CYAN, i, j, 10);
+		glTranslatef(7,0,0);
+		drawCircle(BLUE, i, j, 3);
+		drawCircle(BLUE, i, j, 5);
 	}
 }
 

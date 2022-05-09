@@ -39,6 +39,7 @@ struct ListEnemy
 {
 	
 	int quantite;
+	int qtyToUlti;
 
 	struct enemies *first;
 	struct enemies *last;

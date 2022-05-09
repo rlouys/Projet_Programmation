@@ -51,8 +51,8 @@ char* gameplay_keys_str;
 char* cheatmode_str;
 char *username = " ";
 char* usernameScore;
-int username_lock = 0;
 char username_array[20];
+int username_lock = 0;
 int newGame;
 int newGame_lock = 0;
 
@@ -87,27 +87,26 @@ void keyboardFunc(unsigned char Key, int x, int y) {
    
     case 'c':
 
-    	checkNewGame();
-	   // newGame = 0;
+    	newGame = checkNewGame(newGame);
 
-         //si partie sauvegardée on peut lancer la continuation
         if(newGame == 0)
         {
+            saveContext();
+            //saveScore(hero);
+
             startgame_option_bug = 0;
             startgame = !startgame;
             glutDisplayFunc(DisplayGame);
             glutPostRedisplay();
             break;
-
         }
-        
-        if(newGame == 1)
+        else if(newGame == 1)
         {
-
             newGame_lock = 1;
             break;
         }
-        
+
+
 
 
 	case 'n': 
@@ -396,7 +395,7 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 13:
-
+		    username = copyToString(username_array);
             glutDisplayFunc(DisplayGame);
             glutPostRedisplay();
             break;
@@ -531,7 +530,9 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
 			break;
 
     case 'x':
-            // ouvrir un fichier, enregistrer tout ce qu'il faut, et aller rechercher dans ce fichier par après !!
+            newGame = 0;
+            saveContext();
+            saveScore(hero);
 			glutDisplayFunc(DisplayEnding);
 			glutPostRedisplay();
 			break;        
@@ -543,7 +544,9 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
 			break;  
     
     case 'm':
-        saveContext();
+            newGame = 0;
+            saveContext();
+            saveScore(hero);
             // ouvrir un fichier, enregistrer tout ce qu'il faut, et aller rechercher dans ce fichier par après !!
             glutDisplayFunc(WelcomeDisplay);
             glutKeyboardFunc(keyboardFunc);
@@ -909,9 +912,6 @@ void UsernameDisplay()
     newGame = 1;
     newGame_lock = 1;
 
-    
-
-    replace_NewGame('1');
 
 
 
@@ -1301,6 +1301,13 @@ void DisplayGameplay()
     for(int i = 0; i <strlen(msg13);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg13[i]);
 
+    glTranslatef(-2,-25,0);
+
+    glRasterPos3f(72, 400, 0);
+    char msg55[]=" - Une collision avec un bonus donne une attaque ultime pour les 5 prochains kills.";
+    for(int i = 0; i <strlen(msg55);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg55[i]);
+
     glRasterPos3f(72, 380, 0);
     char msg14[]=" - Un bonus detruit n'apporte aucun effet";
     for(int i = 0; i <strlen(msg14);i++)
@@ -1367,7 +1374,7 @@ void DisplayGameplay()
     drawSquare(YELLOW, 1);
 
     // systeme D pour remettre le curseur à la bonne place pour redessin des autres fenetres
-    glTranslatef(-48, -275, -1);
+    glTranslatef(-46, -250, -1);
     glutSwapBuffers();
 }
 
@@ -1532,35 +1539,6 @@ void options_keys(int option_number)
 }
 
 // -------------------------------------------------------------------- //
-
-void replace_NewGame(char boolean)
-{
-    FILE *fl = fopen("contexte.txt", "r+");
-  
-	char lettre;
-    char array[20];
-    while(lettre != '}')
-	{
-        
-		lettre = fgetc(fl);
-        array[0] = lettre;
-        printf("array : %c\n", array[0]);
-        printf("ok \n");
-	}
-
-    if(username_lock == 0)
-    {
-        fprintf(fl, "%c", boolean);
-    }
-    
-    username_lock = 1;
-
-    fclose(fl);
-
-
-
-
-}
 
 
                         /*******************

@@ -24,12 +24,16 @@ struct Hero
 		int health; // vie
 		int attack; // pts d'attaque
 		int current_xp; // score
-		int killed; // nombre d'ennemis tués
+		int killed;
+		int red_killed; // nombre d'ennemis or tués
+		int purple_killed; // nombre d'ennemis or tués
+		int gold_killed; // nombre d'ennemis or tués
+		int ulti_active;
 		int obstacles_taken; // nombre d'obstacles 'pris'
 
 
-		bool weapon_type; // false: normal weapon | true:  bubble weapon
-		bool bonus_active; // active si bonus actif
+		int weapon_type; // false: normal weapon | true:  bubble weapon
+		int bonus_active; // active si bonus actif
 		struct positionP pos;
 
 	};
@@ -45,7 +49,6 @@ Hero hero;
 struct objet_bonus
 	{
 		int side;
-		int type;
 
 		bool active;
 		
@@ -61,7 +64,6 @@ typedef struct objet_bonus objet_bonus;
 struct ListeBonus
 	{
 		int quantite;
-
 		struct objet_bonus *first;
 		struct objet_bonus *last;
 
@@ -82,14 +84,6 @@ bonus_objet bonus;
 BonusList b;
 
 /*** FUNCTIONS ***/
-
-char* copyToString(char user[]);
-char* getStringFromFile(FILE * f, char symbol);
-char skipLine(char c, FILE * f, int skips, char symbol);
-int getIntegerFromFile(char c, FILE * f, char *class);
-unsigned concatenate(unsigned x, unsigned y);
-int charToInteger(char c);
-
 						/********
 						 * HERO *
 						 ********/

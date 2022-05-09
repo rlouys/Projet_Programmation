@@ -39,6 +39,7 @@ EnemyList initialListEnemies()
 	e->first = NULL;
 	e->last = NULL;
 	e->quantite = 0;
+	e->qtyToUlti = 0;
 
 	return e;
 }
@@ -72,7 +73,7 @@ ObstacleList initialListObstacles()
 enemy createEnemy(int *maxY)
 {
 	// allocation de l'ennemi
-	enemy new = malloc(sizeof(enemies));
+	enemy new = malloc(sizeof(struct enemies));
 
 	//l'ennemi apparaitra sur les cases entre la 11eme et 37eme case du plateau
 	float x = (rand() % ((37+1)-11) + 11);

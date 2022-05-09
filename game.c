@@ -24,7 +24,10 @@ float *value;
 float *deplacement_fenetre;
 
 char *username;
+char username_array[20];
+
 int newGame;
+int newGame_lock;
 
 bool startgame;
 bool gameplay_keys;
@@ -210,34 +213,46 @@ void move(){
 			SHOOT_ENEMY = false;
 		}
 }
+
+// ------------------------------------------------------------------ //
+// Function to copy the string
+char* copyToString(char array[])
+{
+    char* string;
+    string = (char*)malloc(20);
+ 
+    strcpy(string, array);
+    return (char*)string;
+}
+
 // ------------------------------------------------------------- //
 
-void checkNewGame()
+int checkNewGame(int newGame)
 {
 
-	FILE *f = fopen("contexte.txt", "r");
-	char *NewGameBool = getStringFromFile(f, '}');
+	FILE *f = fopen("hero_save.txt", "r+");
 	
-	
-	if(strcmp("0 ", NewGameBool) == 0)
-	{
-		newGame = 1;
-	}
-	if(strcmp("1 ", NewGameBool) == 0)
+	int jeu;
+	char trash[20];
+
+	fscanf(f,"%s %i", trash, &jeu);
+
+	if(jeu == 0)
 	{
 		newGame = 0;
 	}
-
-	if(newGame == 1)
+	else if(jeu == 1)
 	{
-		username = getStringFromFile(f, ')');
+		newGame = 1;
 	}
-	else if(newGame == 0)
-	{
-		username = " ";
-	}
+	printf("newGame");
+
+	fclose(f);
 
 
+	
+
+	return newGame;
 	
 
 
@@ -249,7 +264,8 @@ void checkNewGame()
 
 void DisplayGame()
 {	
-    
+
+
 	glClearColor(0.1f,0.1f,0.1f,0.1f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -335,8 +351,11 @@ void saveScore(Hero hero)
 	f = fopen("scores.txt","a");
 
 	
-	fprintf(f, "%s       ", "HARUHIKO");
-	fprintf(f,"%i \n", hero->current_xp);
+	fprintf(f, "%s ", username_array);
+	fprintf(f,"%i ", hero->current_xp);
+
+
+
 	fclose(f);
 
 }	
@@ -345,41 +364,33 @@ void saveScore(Hero hero)
 
 void saveContext()
 {
-	FILE *f = fopen("contexte.txt", "w");
+	FILE *f = fopen("hero_save.txt", "w");
 
 	// hero
+	fprintf(f, "%s ", username);
+	fprintf(f, "%i ", newGame);
+	fprintf(f, "%d ", hero->current_xp);
+	fprintf(f, "%i ", hero->health);
+	fprintf(f, "%i ", hero->attack);
+	fprintf(f, "%i ", hero->killed);
+	fprintf(f, "%i ", hero->obstacles_taken);
+	fprintf(f, "%i ", hero->weapon_type);
+	fprintf(f, "%i ", hero->bonus_active);
+	fprintf(f, "%f  ", hero->pos.x);
+	fprintf(f, "%f ", hero->pos.y);
 
-	fprintf(f, "%i xp\n", hero->current_xp);
-	fprintf(f, "%i vie\n", hero->health);
-	fprintf(f, "%i atk\n", hero->attack);
-	fprintf(f, "%i killed\n", hero->killed);
-	fprintf(f, "%i obst\n", hero->obstacles_taken);
-	fprintf(f, "%s wptype\n", hero->weapon_type ? "true" : "false");
-	fprintf(f, "%s bonus\n", hero->bonus_active ? "true" : "false");
-	fprintf(f, "%f posx\n", hero->pos.x);
-	fprintf(f, "%f posy\n", hero->pos.y);
+	
+	/*// obstacles
+	int jailed;
+	if(fence->jailed == true)
+		jailed = 1;
+	else
+		jailed = 0;
+	
 
-	// ennemi
-
-	// bonus
-
-	// obstacles
-	/*
-	fprintf(f, "%i", hero->current_xp);
-	fprintf(f, "%i", hero->current_xp);
-	fprintf(f, "%i", hero->current_xp);
-	fprintf(f, "%i", hero->current_xp);
-	fprintf(f, "%i", hero->current_xp);
-	fprintf(f, "%i", hero->current_xp);
-	fprintf(f, "%i", hero->current_xp);
-	fprintf(f, "%i", hero->current_xp);
-	fprintf(f, "%i", hero->current_xp);
-	fprintf(f, "%i", hero->current_xp);*/
-
-
-
-
-
+	fprintf(f, "%f ", fence->pos.x);
+	fprintf(f, "%f ", fence->pos.y);
+	fprintf(f, "%i ", jailed);*/
 
 
 
@@ -391,18 +402,3 @@ void saveContext()
 }
 
 
-
-/*
-
-	à sauvegarder : 
-
-	-> toutes stats : ennemi, tirs, héro, obstacles, bonus
-	 
-
-
-
-
-
-
-
-*/

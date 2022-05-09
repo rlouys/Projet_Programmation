@@ -29,7 +29,11 @@ void move();
                                 /********
                                  * GAME *
                                  ********/
-void checkNewGame();
+
+char *copyToString(char array[]);
+char* getUsername();
+
+int checkNewGame(int newGame);
 
 // affiche le jeu à l'écran
 void DisplayGame();

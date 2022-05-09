@@ -97,8 +97,6 @@ void DisplayCredits();
 // initialise les options dynamiques à l'écran avant la première touche pressée
 void options_keys(int option_number);
 
-void replace_NewGame(char boolean);
-
                         /*******************
                          * MENU CLIC DROIT *
                          *******************/
