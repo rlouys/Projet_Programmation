@@ -26,13 +26,22 @@ void arrowFunction(int key, int x, int y);
 void move();
 
 
+                            /*************
+                             * FUNCTIONS *
+                             *************/
+
+// Function to copy an array to a string
+char *copyToString(char array[]);
+
                                 /********
                                  * GAME *
                                  ********/
 
-char *copyToString(char array[]);
-char* getUsername();
 
+
+// fonction qui va vérifier si il y a une partie enregistrée ou non
+// si pas de partie enregistrée, impossible de "continuer" et affichage du message en rouge
+// si partie enregistrée, newgame possible ET continuer
 int checkNewGame(int newGame);
 
 // affiche le jeu à l'écran

@@ -847,8 +847,6 @@ void setEnemyLevel(enemy car)
 
 	}
 
-	if(car->changed == false)
-	{
 		if (car->color == 0)
 		{
 			car->vie = 3;
@@ -868,7 +866,7 @@ void setEnemyLevel(enemy car)
 			car->vie = 30;
 			car->changed = true;
 		}
-	}
+	
 }
 
 
@@ -1133,7 +1131,7 @@ void updateEnemies(int valeur)
 			// si non ralenti 
 				if(car->slowness == 0)
 				{
-					car->pos.y -= 0.05 + (difficulty/100) + car_speed;
+					car->pos.y -= 0.50 + (difficulty/100) + car_speed;
 				}
 				// si ralenti avec bubble
 				else if(car->slowness == 1)
@@ -1196,7 +1194,7 @@ void updateEnemies(int valeur)
 				// si non ralenti 
 					if(car->slowness == 0)
 					{
-						car->pos.y -= 0.05 + (difficulty/100) + car_speed;
+						car->pos.y -= 0.50 + (difficulty/100) + car_speed;
 					}
 					// si ralenti avec bubble
 					else if(car->slowness == 1)

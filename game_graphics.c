@@ -1383,7 +1383,7 @@ void writeSomething(float red, float green, float blue, int x, int y, char *txt)
 
 // écrit un texte aux couleurs et positions voulues en helvetica taille 18
 
-void writeSomethingHelvetica(float red, float green, float blue, int x, int y, char *txt){
+void writeSomethingHelvetica(float red, float green, float blue, int x, int y, char txt[]){
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -1400,6 +1400,28 @@ void writeSomethingHelvetica(float red, float green, float blue, int x, int y, c
     for(int i = 0; i <strlen(msg1);i++)
 	{
     	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, msg1[i]);
+	}
+}
+
+// --------------------------------------------------------------------------------------------_//
+
+// écrit un texte aux couleurs et positions voulues en helvetica taille 18
+
+void writeSomethingArrayHelvetica(float red, float green, float blue, int x, int y, char *txt){
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	// couleurs du texte
+	glColor3f(red, green, blue);
+
+	// déplacement du 'curseur' à l'endroit souhaité
+	glRasterPos3f(x, y, 0);
+
+	// dessin en bitmap
+    for(int i = 0; txt[i] != '\0'; i++)
+	{
+    	glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, txt[i]);
 	}
 }
 

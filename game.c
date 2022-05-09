@@ -227,6 +227,9 @@ char* copyToString(char array[])
 
 // ------------------------------------------------------------- //
 
+// fonction qui va vérifier si il y a une partie enregistrée ou non
+// si pas de partie enregistrée, impossible de "continuer" et affichage du message en rouge
+// si partie enregistrée, newgame possible ET continuer
 int checkNewGame(int newGame)
 {
 
@@ -245,17 +248,11 @@ int checkNewGame(int newGame)
 	{
 		newGame = 1;
 	}
-	printf("newGame");
 
 	fclose(f);
 
-
-	
-
 	return newGame;
 	
-
-
 }
 
 
@@ -265,7 +262,6 @@ int checkNewGame(int newGame)
 void DisplayGame()
 {	
 
-
 	glClearColor(0.1f,0.1f,0.1f,0.1f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -273,12 +269,11 @@ void DisplayGame()
 
     glFlush();
 
+	// affiche le menu des options si on appuie sur ESC
 	if(startgame == false)
 	{
 		glutDisplayFunc(GameOptionsDisplay);
 	}
-
-
 
 	glutPostRedisplay();
 	glutSwapBuffers();
@@ -338,29 +333,95 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t, liste
 	glutPostRedisplay();
 }
 
-
-
-
 // ------------------------------------------------------- //
 
 // Sauvegarde le score de la partie en cours
 
 void saveScore(Hero hero)		
 {
-    FILE *f = NULL;
-	f = fopen("scores.txt","a");
-
+    FILE *f = fopen("scores.txt","r");
 	
-	fprintf(f, "%s ", username_array);
-	fprintf(f,"%i ", hero->current_xp);
+	FILE *files = fopen("scores.txt","r+");
 
+    int score_1 = 0, score_2 = 0, score_3 = 0, score_4 = 0;
+    char username_1[20] = {'0'}, username_2[20] = {'0'}, username_3[20] = {'0'}, username_4[20] = {'0'};
+    
+	int killed_1 = 0, killed_2 = 0, killed_3 = 0, killed_4 = 0;
 
+	fscanf(f, "%s %d %d %s %d %d %s %d %d %s %d %d",  username_1, &score_1, &killed_1, username_2, &score_2, &killed_2, username_3, &score_3, &killed_3, username_4, &killed_4, &score_4);
 
+	printf("%s ::: \n", username_1);
+
+	//strcpy(user_test,username);
+		printf("%s ::: \n", username_1);
+		printf("%s ::: \n", username_1);
+		printf("%s username2 \n", username_2);
+				printf("%s username3 \n", username_3);
+		printf("%s username4 \n", username_4);
+
+		printf("%s username_array :\n", username_array);
+
+	if(strcmp(username_1, "------------") != 0)
+	{
+		if(strcmp(username_2, "------------") != 0)
+		{
+			if(strcmp(username_3, "------------") != 0)
+			{
+				if(strcmp(username_4, "------------") != 0)
+				{
+					/*score_4 = hero->current_xp;
+					if(hero->killed > 0) killed_4 = hero->killed;
+					else killed_4 = 0;*/
+					fprintf(files, "%s %d %d %s %d %d %s %d %d %s %d %d        ", username_1, score_1, killed_1, username_2, score_2, killed_2, username_3, score_3, killed_3, username_array, score_4, killed_4);
+					printf("%i hero killed", hero->killed);
+					//compareTops();
+					// ICI COMPARER LES CHIFFRES ET LE METTRE A LA BONNE PLACE
+				}
+				else
+				{
+					score_4 = hero->current_xp;
+					if(hero->killed > 0) killed_4 = hero->killed;
+					else killed_4 = 0;
+					fprintf(files, "%s %d %d %s %d %d %s %d %d %s %d %d          ", username_1, score_1, killed_1, username_2, score_2, killed_2, username_3, score_3, killed_3, username_array, killed_4, score_4);
+					printf("%i hero killed", hero->killed);
+				}
+			}
+			else
+			{
+				score_3 = hero->current_xp;
+				if(hero->killed > 0) killed_3 = hero->killed;
+				else killed_3 = 0;
+				fprintf(files, "%s %d %d %s %d %d %s %d %d %s %d %d          ", username_1, score_1, killed_1, username_2, score_2, killed_2, username_array, score_3, killed_3, username_4, killed_4, score_4);
+
+			}
+		}
+		else
+		{
+			score_2 = hero->current_xp;
+			if(hero->killed > 0) killed_2 = hero->killed;
+			else killed_2 = 0;
+			fprintf(files, "%s %d %d %s %d %d %s %d %d %s %d %d         ", username_1, score_1, killed_1, username_array, score_2, killed_2, username_3, score_3, killed_3, username_4, killed_4, score_4);
+
+		}
+
+	}
+
+	else
+	{
+		printf("%i hero killed", hero->killed);
+		score_1 = hero->current_xp;
+		if(hero->killed > 0) killed_1 = 15;
+		else killed_1 = 0;
+		fprintf(files, "%s %d %d %s %d %d %s %d %d %s %d %d", username_array, score_1, killed_1, username_2, score_2, killed_2, "------------", score_3, killed_3, "------------", killed_4, score_4);
+	}
+
+	fclose(files);
 	fclose(f);
-
 }	
 
 // ------------------------------------------------------- //
+
+// sauvegarde la partie en cours, pour reprise plus tard.
 
 void saveContext()
 {

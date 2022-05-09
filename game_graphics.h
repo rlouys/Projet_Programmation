@@ -146,6 +146,9 @@ void writeSomething(float red, float green, float blue, int x, int y, char *txt)
 // écrit un texte aux couleurs et positions voulues en helvetica taille 18
 void writeSomethingHelvetica(float red, float green, float blue, int x, int y, char *txt);
 
+// écrit un texte aux couleurs et positions voulues en helvetica taille 18
+void writeSomethingArrayHelvetica(float red, float green, float blue, int x, int y, char txt[]);
+
 // écrit un texte aux couleurs et positions voulues (avec un tableau)
 void writeSomethingArray(float red, float green, float blue, int x, int y, char txt[]);
 

@@ -79,6 +79,7 @@ bool cheatMode_pressed;
                  **********************/
 
 
+
 // initialise les fonctions au clavier lorsque dans un menu
 
 void keyboardFunc(unsigned char Key, int x, int y) {
@@ -712,7 +713,14 @@ void drawHighScore()
 
     writeSomething(WHITE, 350,750, "-         H    I    G    H    S    C    O    R    E    S         -");
     
+    //int top_1,top_2,top_3,top_4;
+    int score_1, score_2, score_3, score_4;
+    char username_1[20], username_2[20], username_3[20], username_4[20];
+    int killed_1, killed_2, killed_3, killed_4;
 
+    FILE *f = fopen("scores.txt", "r");
+    
+    fscanf(f, "%s %d %d %s %d %d %s %d %d %s %d %d",  username_1, &score_1, &killed_1, username_2, &score_2, &killed_2, username_3, &score_3, &killed_3, username_4, &killed_4, &score_4);
     writeSomethingHelvetica(WHITE, 330,630, "1");
     writeSomethingHelvetica(WHITE, 330,580, "2");
     writeSomethingHelvetica(WHITE, 330,550, "3");
@@ -722,12 +730,77 @@ void drawHighScore()
     writeSomethingHelvetica(WHITE, 575,680, "SCORE");
     writeSomethingHelvetica(WHITE, 700,680, "ENNEMI_KILLED");
     
-    writeSomethingHelvetica(WHITE, 400,630, "HARUHIKO");
-    writeSomethingHelvetica(WHITE, 575,630, "10500");
-    writeSomethingHelvetica(WHITE, 750,630, "210");
+	char score_un[10];
+	sprintf(score_un, "%d", score_1);
 
+	char killed_un[10];
+	sprintf(killed_un, "%d", killed_1);
+
+    if(score_1 == 0) writeSomethingHelvetica(WHITE, 575,630, "0");
+    else writeSomethingHelvetica(WHITE, 575,630, score_un);
+
+    if(killed_1 == 0) writeSomethingHelvetica(WHITE, 750,630, "-----");
+    else writeSomethingHelvetica(WHITE, 750,630, score_un);
+
+    writeSomethingHelvetica(WHITE, 385,630, username_1);
+
+//            ~                       ~
+
+	char score_deux[10];
+	sprintf(score_deux, "%d", score_2);
+
+	char killed_deux[10];
+	sprintf(killed_deux, "%d", killed_2);
+
+    if(score_2 == 0) writeSomethingHelvetica(WHITE, 575,580, "---");
+    else writeSomethingHelvetica(WHITE, 575,580, score_deux);
+
+    if(killed_2 == 0) writeSomethingHelvetica(WHITE, 750,580, "---");
+    else writeSomethingHelvetica(WHITE, 750,580, killed_deux);
+
+    writeSomethingHelvetica(WHITE, 385,580, username_2);
+
+//            ~                       ~
+
+	char score_trois[10];
+	sprintf(score_trois, "%d", score_3);
+
+	char killed_trois[10];
+	sprintf(killed_trois, "%d", killed_3);
+
+    if(score_3 == 0) writeSomethingHelvetica(WHITE, 575,550, "---");
+    else writeSomethingHelvetica(WHITE, 575,550, score_trois);
+
+    if(killed_3 == 0) writeSomethingHelvetica(WHITE, 750,550, "---");
+    else writeSomethingHelvetica(WHITE, 750,550, killed_trois);
+
+    writeSomethingHelvetica(WHITE, 385,550, username_3);
+
+//            ~                       ~
+	
+    char score_quatre[10];
+	sprintf(score_quatre, "%d", score_4);
+
+	char killed_quatre[10];
+	sprintf(killed_quatre, "%d", killed_4);
+
+    if(score_4 == 0) writeSomethingHelvetica(WHITE, 575,520, "---");
+    else writeSomethingHelvetica(WHITE, 575,520, score_quatre);
+
+    if(killed_4 == 0) writeSomethingHelvetica(WHITE, 750,520, "---");
+    else writeSomethingHelvetica(WHITE, 750,520, killed_quatre);
+
+    writeSomethingHelvetica(WHITE, 385,520, username_4);
+    
+    fclose(f);
     // dessin du cadre couleur sable du top 1
 
+    //compareTops(); // fonction tri qui replace tout au bon endroit
+    
+
+
+
+    // dessin du cadre autour du top 1
     glColor3f(SAND);
     for (int i = 0; i < 30; i++){ 
         glRasterPos3f(838, 615+i, 1); // DRAW LEFT LINE FRAME
@@ -753,19 +826,6 @@ void drawHighScore()
         for(int i = 0; i <strlen(msg4);i++)
             glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
     }
-
-    writeSomethingHelvetica(WHITE, 400,580, "HARUHIKO");
-    writeSomethingHelvetica(WHITE, 575,580, "7500");
-    writeSomethingHelvetica(WHITE, 750,580, "180");
-
-    writeSomethingHelvetica(WHITE, 400,550, "HARUHIKO");
-    writeSomethingHelvetica(WHITE, 575,550, "6975");
-    writeSomethingHelvetica(WHITE, 750,550, "140");
-
-    writeSomethingHelvetica(WHITE, 400,520, "- - - - - - -");
-    writeSomethingHelvetica(WHITE, 575,520, "- - -");
-    writeSomethingHelvetica(WHITE, 750,520, "- -");
-
 }
                         /**********
                          * ÉCRANS *
@@ -998,17 +1058,18 @@ void EndGameDisplay()
 
     // transformation des variables numériques en format texte pour affichage
     // j'aurai pu réutiliser "a" à chaque fois, mais ce serait moins propre.
+    
     int a = hero->current_xp;
 	char str[10];
 	sprintf(str, "%d", a);
 
-    int b = hero->killed;
+    a = hero->killed;
     char strn[10];
-    sprintf(strn, "%d", b);
+    sprintf(strn, "%d", a);
 
-    int c = hero->obstacles_taken;
+    a = hero->obstacles_taken;
     char strng[10];
-    sprintf(strng, "%d", c);
+    sprintf(strng, "%d", a);
 
 	writeSomething(EMERALD, 200, 930, "++++++++++++++++++++++++");    
     writeSomething(EMERALD, 200, 915, "+                                                    +");

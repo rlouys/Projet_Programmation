@@ -10,6 +10,10 @@
         "timers_and_effects.h": "c",
         "hero.h": "c",
         "menus_graphics.h": "c",
-        "glut.h": "c"
+        "glut.h": "c",
+        "cmath": "c",
+        "limits": "c",
+        "typeinfo": "c",
+        "string.h": "c"
     }
 }

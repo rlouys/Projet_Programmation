@@ -17,6 +17,7 @@ int n_lock = 0;
 int n;
 int nd;
 int newGame_lock;
+int newGame;
 
 bool startgame;
 bool endmap;
@@ -27,7 +28,6 @@ float difficulty;
 char *username;
 char username_array[20];
 
-int newGame;
 
 /*** FUNCTIONS ***/
 
@@ -48,7 +48,7 @@ Hero createHero(int *maxX, int *maxY)
 	Hero hero = malloc(sizeof(struct Hero));
 
 	// position à 0, et on commence à chercher dans le fichier map
-	int x = 0, y = 0; 
+	float x = 0, y = 0; 
 
 	for ( i = 0; i < *maxX; ++i)
 	{
@@ -138,7 +138,7 @@ void moveUp(Hero hero)
 	// pos Y max du héro == 10
 	if(cheatMode == false)
 	{
-		y = hero->pos.y+1;
+		y = hero->pos.y+0.5;
 
 		// SI LES MURS DROITS NE BLOQUENT PAS LE HERO
 		if (hero->pos.y <= 11)
@@ -470,7 +470,10 @@ void suppressionBonus(BonusList b, bool test)
 				if(startgame==true && hero->health != 0 && endmap == false)
 				{
 					hero->current_xp += 50;
-				}	
+				}else if(endmap == true)
+				{
+					endmap = false;
+				}		
 			}
 
 			else

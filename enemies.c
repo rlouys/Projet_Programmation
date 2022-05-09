@@ -14,8 +14,8 @@
 
 /*** VARIABLES ***/
 
-bool startgame; 
-bool endmap;
+bool startgame; // état du jeu en cours (pause ou en cours)
+bool endmap; // état de l'ennemi (fin de map ou pas)
 
 /*** FUNCTIONS ***/
 
@@ -262,9 +262,11 @@ void suppressionEnemies(EnemyList e, bool test)
 				if(startgame==true && hero->health != 0 && endmap == false)
 				{
 					hero->current_xp += 50;
+				}else if(endmap == true)
+				{
+					endmap = false;
 				}	
 				
-				//endmap = false;		
 
 			}
 			else
@@ -334,8 +336,10 @@ void suppressionObstacles(ObstacleList o, bool test)
 				if(startgame==true && hero->health != 0 && endmap == false)
 				{
 					hero->current_xp += 50;
-				}	
-				//endmap = false;		
+				}else if(endmap == true)
+				{
+					endmap = false;
+				}		
 
 			}
 			else
