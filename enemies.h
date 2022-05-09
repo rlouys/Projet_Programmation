@@ -20,11 +20,10 @@ struct enemies
 
 {
 	int vie;
-	int type;
-	int color;
+	int color;// red, purple ou gold
 
-	bool active;
-	bool slowness;
+	bool active; // booléen qui sert à savoir si l'ennemi est toujours en vie ou non
+	bool slowness; // bool de ralentissement si touché par une bulle
 	bool changed;
 
 	struct positions pos;
