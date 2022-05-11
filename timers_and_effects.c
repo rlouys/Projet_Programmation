@@ -1713,7 +1713,7 @@ void updateTirsEnemy(int valeur)
 		if (te->first != NULL)
 		{
 
-			/
+			
 			printf("shoot->pos.y : %lf\n", shoot->pos.y);
 			if(SHOOT_ENEMY == true)
 			{
