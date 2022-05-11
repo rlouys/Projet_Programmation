@@ -492,7 +492,7 @@ void checkCollisionAlliesBonus (bonus_objet bns)
 
 // ---------------------------------------------------------------------------------- //
 
-void wait()
+void wait1()
 {
     int timerwait;
 
@@ -1687,22 +1687,10 @@ void updateTirsHero(int valeur)
 				shoot->pos.y += 5;
 			}
 
-
-
-
-
-
-		
-
-
-
-
-
-
-				if (shoot->pos.y >= RANGE_MAX)
-				{
-					shoot->active = false;
-				}
+			if (shoot->pos.y >= RANGE_MAX)
+			{
+				shoot->active = false;
+			}
 			}
 		}
 	}
@@ -1717,7 +1705,7 @@ void updateTirsHero(int valeur)
 void updateTirsEnemy(int valeur)
 {
 	
-
+	// gere les tirs ennemi (en construction)
 	if(startgame==true){ 
 
 		shoot = te->first;
@@ -1725,11 +1713,7 @@ void updateTirsEnemy(int valeur)
 		if (te->first != NULL)
 		{
 
-			/*int a = rand()% 10;
-			if(a == 5)
-			{
-				SHOOT_ENEMY = true;
-			}*/
+			/
 			printf("shoot->pos.y : %lf\n", shoot->pos.y);
 			if(SHOOT_ENEMY == true)
 			{

@@ -47,14 +47,14 @@ void checkCollisionTirsBonus (bonus_objet b, tir_Struct w);
 void checkCollisionAlliesBonus (bonus_objet bns);
 
 // fait pause temporairement
-void wait();
+void wait1();
 
+// change la couleur de l'ennemi
 void setGold();
-
 void setPurple();
-
 void setPurpleOrGold();
 
+// donne un niveau à l'ennemi, pour gérer les évolutions
 enemy setEnemyLevel(enemy car);
 
 

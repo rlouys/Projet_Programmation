@@ -67,6 +67,8 @@ Hero createHero(int *maxX, int *maxY)
 	
 	//newGame = checkNewGame(newGame);
 
+	// si c'est pas un nouveau jeu, on va rechercher les informations
+	// dans le fichier pour attribuer les stats du héro
 	if(newGame == 0)
 	{
 		FILE *f = fopen("hero_save.txt", "r");
@@ -81,18 +83,23 @@ Hero createHero(int *maxX, int *maxY)
 	int levels;
     int difficultys;
 
-	
-		fscanf(f, "%s %d %d %d %d %d %d %d %d %f %f %d %d", name, &jeu, &xp, &vie, &attack, &killed, &obstacles, &weapon, &bonus, &posx, &posy, &levels, &difficultys);
+	// lit le fichier pour aller récupérer les stats du héro
+	fscanf(f, "%s %d %d %d %d %d %d %d %d %f %f %d %d", name, &jeu, &xp, &vie, &attack, &killed, &obstacles, &weapon, &bonus, &posx, &posy, &levels, &difficultys);
     	
-
+		//newGame = checkNewGame(newGame);
+		// gestion du nom du joueur au démarrage (si partie sauvegardée ou non)
 			if(newGame == 0)
 			{
 				fscanf(f, "%s", name);
 				username = copyToString(name);
+				level = 1;
+
 			}
 			if(newGame == 1)
 			{
 				username = copyToString(username_array);
+				level = levels;
+
 			}
 
 			hero->current_xp = xp;
@@ -109,10 +116,10 @@ Hero createHero(int *maxX, int *maxY)
 			hero->ulti_active = 0;
 
 			difficulty = difficultys;
-			level = levels;
 
 		fclose(f);
 	}
+	// si c'est un nouveau jeu, initialise les stats 
 	else if(newGame == 1)
 	{
 		hero->health = 5;

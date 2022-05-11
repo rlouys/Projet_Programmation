@@ -19,34 +19,6 @@ int mY;
 
 /*** FUNCTIONS ***/
 
-                /**********************
-                 * KEYBOARD FUNCTIONS *
-                 **********************/
-
-// initialise les fonctions au clavier lorsque dans un menu
-void keyboardFunc(unsigned char Key, int x, int y); 
-
-// sert à afficher une lettre que l'on écrit
-void Alphabet(unsigned char Key, int x, int y);
-
-// initialise les fonctions au clavier lorsque dans un menu
-void keyboardFuncOpt(unsigned char Key, int x, int y); 
-
-// clavier lié au menu pause en jeu
-void keyboardFuncPausedInGame(unsigned char Key, int x, int y);
-
-
-                        /***************
-                         * MENU SOURIS *
-                         ***************/
-
- // action à la souris 
- // Clic gauche : indique la position d'où on se trouve 
- // Clic droit : ferme la fenêtre (exit(0)). 
-void mouse(int bouton,int etat,int x,int y);
-
-
-
                     /******************
                      * SHAPE DRAWINGS *
                      ******************/

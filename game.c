@@ -14,6 +14,7 @@
 #include "enemies.h"
 #include "game.h"
 #include "timers_and_effects.h"
+#include "keyboard.h"
 
 #define BLACK 0, 0, 0
 
@@ -21,13 +22,13 @@
 
 int startgame_option_bug = 1;
 
-float *value;
+float *value; //scrolling
 float *deplacement_fenetre;
 
 char *username;
 char username_array[20];
 
-int newGame;
+int newGame; // test si le jeu est nouveau ou pas (s'il y a une sauvegarde)
 int newGame_lock;
 int NewGame_statslock;
 int level;
@@ -51,88 +52,7 @@ bool NewGame;
 
 /*** FUNCTIONS ***/
 
-// definition de la fonction Keyboard permettant de quitter/tirer
 
-void Keyboard(unsigned char key, int x, int y)  
-{
-	switch(key)
-	{
-		// ESC KEY
-		case 27:
-			startgame = !startgame;
-			glutDisplayFunc(GameOptionsDisplay);
-			glutPostRedisplay();
-			break;
-
-		// SPACE KEY
-		case 32:
-		SHOOT = true;
-		break;	
-
-		// BACKSPACE KEY
-		case 0x08:
-			// si le tir existe, alors il est tiré
-			if(te->first == NULL || te->last == NULL)
-			{
-				SHOOT_ENEMY = true;
-			}	
-			if(te->first != NULL || te->last == NULL)
-			{
-				SHOOT_ENEMY = true;
-			}
-			break;
-
-		// mouvement du héro
-		case 'w':
-		switchWeapon(hero);	
-		break;
-		
-		//touches flechées
-		case 'z':
-		UPK = true;
-		break;
-
-		case 'q':
-		LEFTK = true;
-		break;	
-		
-		case 's':
-		DOWNK = true;
-		break;
-
-		case 'd':
-		RIGHTK = true;
-		break;
-
-		}	
-}
-
-// ------------------------------------------------------------ // 
-
-// definition de la fonction arrowFunction permettant de se déplacer via les flèches directionnelles
-
-void arrowFunction(int key, int x, int y)
-{
-    switch (key) 
-	{
-		// déplacement du héro avec les touches 
-		case GLUT_KEY_UP:
-			UP = true;
-			break;
-
-		case GLUT_KEY_DOWN:
-			DOWN = true;
-			break;
-
-		case GLUT_KEY_LEFT:
-			LEFT = true;
-			break;
-
-		case GLUT_KEY_RIGHT:
-			RIGHT = true;
-			break;
-    }
-}
 
 // ------------------------------------- // 
 
@@ -344,6 +264,7 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t, liste
 
 // ------------------------------------------------------- //
 
+//inverse deux entiers dans un tableau d'entiers
 void swapIntegers(int* un, int* deux)
 {
     int temp = *un;
@@ -352,7 +273,7 @@ void swapIntegers(int* un, int* deux)
 }
 
 // ------------------------------------------------------- //
-
+//inverse deux strings dans un tableau de strings
 void swapUsername(top Top, int k)
 {
 
@@ -367,6 +288,7 @@ void swapUsername(top Top, int k)
 
 // ------------------------------------------------------- //
 
+// fait un bubblesort des tableaux du highscore
 void bubbleSortScores(top Top, int taille)
 {
 	
@@ -401,6 +323,7 @@ void saveScore(Hero hero)
 
 	fscanf(f, "  %s   %d %d  %s           %d %d   %s   %d %d      %s                 %d %d   %s    %d %d",   Top->username[0], &Top->score[0], &Top->killed[0], Top->username[1], &Top->score[1], &Top->killed[1], Top->username[2], &Top->score[2], &Top->killed[2], Top->username[3], &Top->score[3], &Top->killed[3], Top->username[4], &Top->score[4], &Top->killed[4]);
 	
+	// si c'est un nouveau jeu, tu print le nom à gauche du fichier
 	if(newGame == 1)
 	{
 		strcpy(Top->username[0], username_array);
@@ -408,6 +331,7 @@ void saveScore(Hero hero)
 		Top->score[0] = hero->current_xp;
 		
 	}
+	// si c'est pas un nouveau jeu, tu print le nom à droite du ficheir
 	else if(newGame == 0)
 	{
 		strcpy(username_array, Top->username[4]);
@@ -416,14 +340,16 @@ void saveScore(Hero hero)
 		Top->score[4] = hero->current_xp;
 
 	}
-
+	// trie les tableaux
 	bubbleSortScores(Top, 5);
 
-
-
+	// replace dans le fichier txt les tableaux triés
 	fprintf(files, " %s %d %d %s %d %d %s %d %d %s %d %d %s %d %d", Top->username[0], Top->score[0], Top->killed[0], Top->username[1], Top->score[1], Top->killed[1], Top->username[2], Top->score[2], Top->killed[2], Top->username[3], Top->score[3], Top->killed[3], Top->username[4], Top->score[4], Top->killed[4] );
 
-
+	// fermeture des fichiers
+	// j'ai du ouvrir attacher 2 pointeurs au même fichier
+	// car si je met en w+ (read write erase, ça ne fonctionne pas)
+	// par contre si je "r" ET "w", ça fonctionne.
 	fclose(files);
 	fclose(f);
 }	

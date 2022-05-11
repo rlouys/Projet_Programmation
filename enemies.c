@@ -16,13 +16,13 @@
 
 bool startgame; // état du jeu en cours (pause ou en cours)
 bool endmap; // état de l'ennemi (fin de map ou pas)
-bool PURPLE = false;
-bool GOLD = false;
-bool RED = false;
+bool PURPLE = false; // couleur de la voiture
+bool GOLD = false;// couleur de la voiture
+bool RED = false;// couleur de la voiture
 
-int level;
+int level; // niveau en cours
 
-float difficulty;
+int difficulty;
 /*** FUNCTIONS ***/
 
 						/*******************
@@ -42,6 +42,7 @@ EnemyList initialListEnemies()
 		exit(EXIT_FAILURE);
 	}
 
+	// definition de la liste
 	e->first = NULL;
 	e->last = NULL;
 	e->quantite = 0;
@@ -63,6 +64,7 @@ ObstacleList initialListObstacles()
 		exit(EXIT_FAILURE);
 	}
 
+	// definition de la liste
 	o->first = NULL;
 	o->last = NULL;
 	o->quantite = 0;
@@ -75,7 +77,9 @@ ObstacleList initialListObstacles()
 enemy setEnemyLevel(enemy car)
 {
 
-	
+	// en fonction d'un booléen activé par le setLevel() 
+	// attribue le niveau à un ennemi
+	// renvoie cet ennemi
 	if(RED == true)
 	{
 		car->color = 0;
@@ -111,10 +115,6 @@ enemy createEnemy(int *maxY)
 {
 	setLevel();
 
-	/*if(hero->current_xp >= 400 && hero->current_xp <= 500)
-	{
-		level++;
-	}*/
 	// allocation de l'ennemi
 	enemy new = malloc(sizeof(struct enemies));
 
@@ -261,8 +261,6 @@ void suppressionEnemies(EnemyList e, bool test)
 		}
 		newEnemy = e->first;
 
-		
-
 		while (newEnemy != NULL)
 		{
 			// si ennemi->active == false, on initialise un enemy "poubelle"
@@ -272,7 +270,7 @@ void suppressionEnemies(EnemyList e, bool test)
 			if (newEnemy->active == test)
 			{
 
-
+					// en fonction de la couleur de l'ennemi, et de la difficulté en cours, attribue + ou - d'expérience
 					if(newEnemy->color == 2)
 					{
 						hero->current_xp += 500+((difficulty-1)*10);
@@ -320,33 +318,6 @@ void suppressionEnemies(EnemyList e, bool test)
 				free(deleted);
 
 				e->quantite--;
-
-				// si le jeu est actif et que le héro à de la vie, 
-				// alors augmente le score du héro car ennemi supprimé
-				if(startgame==true && hero->health != 0 && endmap == false)
-				{
-					/*if(newEnemy->color == 2)
-					{
-						hero->current_xp += 500;//+((difficulty-1)*10);
-
-					}
-					else if(newEnemy->color == 1)
-					{
-						hero->current_xp += 150;
-
-					}
-					else if(newEnemy->color == 0)
-					{
-						hero->current_xp += 50;
-
-					}*/
-
-				}else if(endmap == true)
-				{
-					endmap = false;
-				}	
-				
-
 			}
 			else
 			{
@@ -416,7 +387,7 @@ void suppressionObstacles(ObstacleList o, bool test)
 				if(startgame==true && hero->health != 0 && endmap == false)
 				{
 					hero->current_xp += 50;
-				}else if(endmap == true)
+				}else if(endmap == true) // endmap sert à savoir si l'obstacle est "mort" via un tir, ou parce qu'il a atteins le fond de la map
 				{
 					endmap = false;
 				}		

@@ -24,6 +24,7 @@
 #include "enemies.h"
 #include "tirs.h"
 #include "game.h"
+#include "keyboard.h"
 
 /*** CONSTANTES ***/ 
 

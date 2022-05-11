@@ -10,17 +10,7 @@
 
 
 
-/*** FUNCTIONS ***/
 
-                        /***********************
-                         * KEY AND ARROW FUNCS *
-                         ***********************/
-
-// definition de la fonction Keyboard permettant de quitter/tirer
-void Keyboard(unsigned char key, int x, int y);
-
-// definition de la fonction arrowFunction permettant de se déplacer via les flèches directionnelles
-void arrowFunction(int key, int x, int y);
 
 // déplace le héro en fonction de la touche flechée pressée
 void move();
@@ -54,18 +44,17 @@ void game(int *mX, int *mY, Hero hero, EnemyList e, listetir_Struct t, listetir_
                                 /*********
                                  * SAVES *
                                  *********/
+                                
 // inverse deux entiers dans un tableau
 void swapIntegers(int* un, int* deux);
 
 // inverse deux strings dans un tableau
 void swapUsername(top Top, int k);
 
-
 // Sauvegarde le score de la partie en cours et l'enregistre dans un fichier txt (scores.txt)
 void saveScore(Hero hero);
 
 // Sauvegarde le contexte de la partie au moment de quitter
-
 void saveContext();
 
 

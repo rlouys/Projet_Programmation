@@ -16,6 +16,7 @@
 #include "enemies.h"
 #include "game.h"
 #include "timers_and_effects.h"
+#include "keyboard.h"
 
 /***  CONSTANTES  ***/
 
@@ -46,7 +47,7 @@ int level = 1; // niveau de la partie en cours
 
 float r, g, bl; // permet de changer la couleur des ennemis en fonction de la difficulté et du niveau en cours
 float *value; // valeur de défilement de la map
-float difficulty;
+int difficulty;
 
 bool cheatMode;
 bool GOLD;
@@ -479,6 +480,7 @@ void drawHealth(Hero hero)
 
 	glColor3f(BLACK);
 
+	// dessin des bordures de cadre // rafistolage
 	frameDraw(BLACK, 825, 975, 130, 0);
 
 	for (i = 0 ; i < 30 ; i++)
@@ -731,6 +733,7 @@ void drawWeapon()
 	}
 	else if(hero->weapon_type == true)
 	{
+		// dessin de la bulle représentant l'arme
 		glMatrixMode(GL_MODELVIEW);
     	glLoadIdentity();
 
@@ -756,6 +759,7 @@ void drawWeapon()
                      * CHARACTERS DRAWINGS *
                      ***********************/
 
+// dessine un vélo
 void drawBike()
 {
 	glColor3f(GREY);
@@ -805,6 +809,7 @@ void drawBike()
 
 // --------------------------------------------- //
 
+//dessine une voiture
 void drawCar(enemy e)
 {
 // dessin
@@ -881,6 +886,7 @@ void drawCar(enemy e)
 
 // --------------------------------------------- //
 
+// dessine un mur de briques
 void drawBrickWall()
 {
 	glBegin(GL_QUADS);
@@ -1121,14 +1127,7 @@ void drawBonus(bonus_objet bonus)
 		i = bonus->pos.x;
 		j = bonus->pos.y;
 
-
-	
-
-	// attaque ultime
-	
-	bonus = b->first;
-
-
+		bonus = b->first;
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -1137,15 +1136,9 @@ void drawBonus(bonus_objet bonus)
 		glTranslatef((i*Square_size)+10,(j*Square_size),0.0f);
 
 		//dessin du bonus
-
-	
-		
-	
 		drawCircle(RED, i, j, 6);
 		drawCircle(RED, i, j, 7);
 		drawCircle(RED, i, j, 10);
-		
-	
 	}
 }
 
@@ -1208,6 +1201,7 @@ void drawTirsHero(tir_Struct t)
 	{
 		glBegin(GL_QUADS);
 
+	// si cheatmode est désactivé, tirs normaux
 	if(cheatMode == false && hero->ulti_active == 0)
 	{
 		if(Hero_size > 20)
@@ -1225,6 +1219,7 @@ void drawTirsHero(tir_Struct t)
 			glVertex2d((Hero_size/5)*1, (Hero_size/2));
 		}	
 	}
+	// si cheatmode est activé, tirs "ultimes""
 	else if(cheatMode == true || hero->ulti_active == 1)
 	{
 		glVertex3f(-Square_size*2,0,0);
@@ -1232,13 +1227,9 @@ void drawTirsHero(tir_Struct t)
 		glVertex3f(Square_size*3,Square_size,0);
 		glVertex3f(-Square_size*2,Square_size,0);
 	}
-
-	// supprime l'ultime après 10 tués
-
 		
 		glEnd();
 
-		
 	// si le héro tient son canon à bulles en main alors weapon_type == true
 	}
 	else if(t->type == true && cheatMode == false)
@@ -1391,7 +1382,7 @@ void writeSomething(float red, float green, float blue, int x, int y, char *txt)
 void writeSomething9by15(float red, float green, float blue, int x, int y, char* str, int taille, int ij){
 
 	glColor3f(red, green, blue);
-
+	// ij == 0 => On dessine quelque chose en horizontal (y+i)
 	if(ij == 0)
 	{
 		for (int i = 0; i < taille; i++){ 
@@ -1404,6 +1395,7 @@ void writeSomething9by15(float red, float green, float blue, int x, int y, char*
 				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
 		}
 	}
+	// ij == 0 => On dessine quelque chose en vertical (x+j)
 	else if (ij == 1)
 	{
 		for (int j = 0; j < taille; j++){ 
@@ -1416,6 +1408,8 @@ void writeSomething9by15(float red, float green, float blue, int x, int y, char*
 				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[j]);
 		}
 	}
+	// ij == 0 => On dessine une phrase simple en 9 by 15
+
 	else if(ij == 2)
 	{
 		glRasterPos3f(x, y, 1);
