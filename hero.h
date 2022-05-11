@@ -29,6 +29,7 @@ struct Hero
 		int purple_killed; // nombre d'ennemis or tués
 		int gold_killed; // nombre d'ennemis or tués
 		int ulti_active;
+		int ulti_killed;
 		int obstacles_taken; // nombre d'obstacles 'pris'
 
 
@@ -42,6 +43,17 @@ typedef struct Hero* Hero;
 
 Hero hero;
 
+// structure qui permet de prendre les scores, les triers et les afficher dans l'ordre
+struct Score
+{
+	int killed[5];
+	int score[5];
+	char username[5][20];
+};
+
+typedef struct Score *top;
+
+top Top;
 // ----------------------------------------- //
 
 // définition des objets bonus 
@@ -66,6 +78,7 @@ struct ListeBonus
 		int quantite;
 		struct objet_bonus *first;
 		struct objet_bonus *last;
+		int qtyToUlti;
 
 	};
 
@@ -121,8 +134,6 @@ void insertionBonus(BonusList b, bonus_objet BONUS);
 //Supprime un bonus et l'enleve de la liste
 void suppressionBonus(BonusList b, bool test);
 
-//Supprime tous les objets bonus en fin de niveau
-void suppressionBonusEndGame(BonusList b);
 
 
 

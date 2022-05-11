@@ -18,12 +18,14 @@ int n;
 int nd;
 int newGame_lock;
 int newGame;
+int NewGame_statslock;
+int level;
 
 bool startgame;
 bool endmap;
 bool cheatMode;
 
-float difficulty;
+int difficulty;
 
 char *username;
 char username_array[20];
@@ -62,49 +64,56 @@ Hero createHero(int *maxX, int *maxY)
 			}
 		}
 	}
-	newGame = checkNewGame(newGame);
+	
+	//newGame = checkNewGame(newGame);
 
 	if(newGame == 0)
 	{
 		FILE *f = fopen("hero_save.txt", "r");
 		
 		// Stats initialisation	
-
 		if(f == NULL)
 		{
 			printf("Impossible de charger le fichier\n");
 			exit(1);
     	}
+ 	
+	int levels;
+    int difficultys;
 
-		fscanf(f, "%s %d %d %d %d %d %d %d %d %f %f", name, &jeu, &xp, &vie, &attack, &killed, &obstacles, &weapon, &bonus, &posx, &posy);
+	
+		fscanf(f, "%s %d %d %d %d %d %d %d %d %f %f %d %d", name, &jeu, &xp, &vie, &attack, &killed, &obstacles, &weapon, &bonus, &posx, &posy, &levels, &difficultys);
+    	
 
-		if(newGame == 0)
-		{
-			fscanf(f, "%s", name);
-			username = copyToString(name);
-		}
-		if(newGame == 1)
-		{
-			username = copyToString(username_array);
-		}
+			if(newGame == 0)
+			{
+				fscanf(f, "%s", name);
+				username = copyToString(name);
+			}
+			if(newGame == 1)
+			{
+				username = copyToString(username_array);
+			}
 
-		//getUsername();
-		hero->current_xp = xp;
-		hero->health = vie;
-		hero->attack = attack;
-		hero->killed = killed;
+			hero->current_xp = xp;
+			hero->health = vie;
+			hero->attack = attack;
+			hero->killed = killed;
 
-		hero->pos.x = posx;
-		hero->pos.y = posy;
-		hero->weapon_type = weapon;
-		hero->obstacles_taken = obstacles;
-		hero->bonus_active = bonus;
+			hero->pos.x = posx;
+			hero->pos.y = posy;
+			hero->weapon_type = weapon;
+			hero->obstacles_taken = obstacles;
+			hero->bonus_active = bonus;
+			hero->ulti_killed = 0;
+			hero->ulti_active = 0;
 
-		hero->ulti_active = 0;
-
+			difficulty = difficultys;
+			level = levels;
 
 		fclose(f);
-	}else if(newGame == 1)
+	}
+	else if(newGame == 1)
 	{
 		hero->health = 5;
 		hero->attack = 3;
@@ -118,6 +127,7 @@ Hero createHero(int *maxX, int *maxY)
 		hero->weapon_type = 0;
 		hero->obstacles_taken = 0;
 		hero->bonus_active = 0;
+		hero->ulti_killed = 0;
 		hero->ulti_active = 0;
 
 	}
@@ -138,7 +148,7 @@ void moveUp(Hero hero)
 	// pos Y max du héro == 10
 	if(cheatMode == false)
 	{
-		y = hero->pos.y+0.5;
+		y = hero->pos.y+1;
 
 		// SI LES MURS DROITS NE BLOQUENT PAS LE HERO
 		if (hero->pos.y <= 11)
@@ -211,6 +221,7 @@ void moveRight(Hero hero)
 		
 		x = hero->pos.x+1;
 		y = hero->pos.y;
+		
 
 		// SI LES MURS DROITS NE BLOQUENT PAS LE HERO
 		if (*(*(map + y) + x) !='@')
@@ -322,6 +333,7 @@ BonusList initialListeBonus()
 	b->first = NULL;
 	b->last = NULL;
 	b->quantite = 0;
+	b->qtyToUlti = 0;
 
 	return b;
 }
@@ -332,6 +344,8 @@ BonusList initialListeBonus()
 
 bonus_objet createBonus(int *maxY)
 {
+	setLevel();
+
 	bonus_objet new = malloc(sizeof(objet_bonus));
 
 	// donne la position x de départ du bonus
@@ -350,7 +364,7 @@ bonus_objet createBonus(int *maxY)
 	{
 		new->pos.x = 80;
 	}
-	new->pos.y = 90;
+	new->pos.y = 55;
 	new->next = NULL;
 	new->previous = NULL;
 	new->active = true;
@@ -484,35 +498,3 @@ void suppressionBonus(BonusList b, bool test)
 	}
 }
 
-// --------------------------------------------------------------------- // 
-
-//Supprime tous les objets bonus en fin de niveau
-
-void suppressionBonusEndGame(BonusList b)
-{
-	
-		bonus_objet newBonus = malloc(sizeof(objet_bonus));
-
-		if(newBonus == NULL)
-		{
-			exit(EXIT_FAILURE);	
-		}
-
-		newBonus = b->first;
-
-
-		// désactivation e tous les bonus et mise du bonus dans une
-		// structure "poubelle" pour free();
-		while(newBonus != NULL)
-		{
-			newBonus->active = false;
-			bonus_objet deleted = malloc(sizeof(objet_bonus));
-
-			deleted = newBonus;
-			newBonus = newBonus->next;
-			
-			free(deleted);
-
-		}
-
-}

@@ -12,7 +12,7 @@
 
 /*** CONSTANTES ***/
 
-#define RANGE_MAX 150
+#define RANGE_MAX 90
 #define ATTACK_SPEED 1 // 1 is superfast, 1000 is slow
 #define MAX_SCORE 100000
 #define BLACK 1, 1, 1
@@ -25,10 +25,10 @@ int level;
 int counter = 0;
 int OBSTACLE_SPEED = 60;
 int ENNEMI_SPEED = 60;
-int OBSTACLES_PER_HUNDRED_SECOND = 10;
-int ENNEMI_PER_HUNDRED_SECOND = 10;
+int OBSTACLES_PER_HUNDRED_SECOND = 20;
+int ENNEMI_PER_HUNDRED_SECOND = 20;
 int BONUS_SPEED = 60;
-int BONUS_PER_TEN_SECOND = 3;
+int BONUS_PER_HUNDRED_SECOND = 20;
 int randomness = 0;
 int saved_health;
 int saved_attack;
@@ -48,11 +48,12 @@ bool endmap;
 bool SHOOT_ENEMY; // from game.c
 bool CHECKCOLLISION = false;
 bool cheatMode;
-bool PURPLE = false;
-bool GOLD = false;
-bool RED = false;
-bool cheatMode_pressed = false;
 
+bool cheatMode_pressed = false;
+bool RED;
+bool PURPLE;
+bool GOLD;
+bool BONUS;
 
 
 /*** FUNCTIONS ***/
@@ -109,16 +110,15 @@ void checkCollisionTirsEnnemis (enemy en, tir_Struct w)
 			{
 				en->active = false;
 				hero->killed += 1;
-				e->qtyToUlti += 1;
-				if(GOLD == true)
+				if(en->color == 2)
 				{
 					hero->gold_killed += 1;
 				}
-				else if(PURPLE == true)
+				else if(en->color == 1)
 				{
 					hero->purple_killed += 1;
 				}
-				else{
+				else if(en->color == 0){
 					hero->red_killed += 1;
 				}
 			}
@@ -162,13 +162,22 @@ void checkCollisionAlliesEnemy (enemy en)
 	}
 	if (CHECKCOLLISION)
 	{	
-		// si collision entre allié et ennemi
-		// le héro perd de la vie, l'ennemi aussi
-		// le héro perd son bonus
-		hero->health -= 1;
-		en->pos.y -= 0.5;
-		en->vie -=1;
-		hero->bonus_active = false;
+		if(key == 0)
+		{
+			// si collision entre allié et ennemi
+			// le héro perd de la vie, l'ennemi aussi
+			// le héro perd son bonus
+			hero->health -= 1;
+			en->pos.y -= 0.5;
+			en->vie -=1;
+			hero->bonus_active = 0;
+
+			// le héro perd 1 bonus d'attaque
+			if(hero->attack > 5)
+			{
+				hero->attack -= 1;
+			}
+
 		
 		// si le héro n'a plus de vie, la partie est finie, on affiche le display de fin
 		if(hero->health == 0){
@@ -181,6 +190,7 @@ void checkCollisionAlliesEnemy (enemy en)
 		}
 		// réinitialisation du booléen de collision
 		CHECKCOLLISION = false;
+	}
 	}
 	
 } 
@@ -316,11 +326,11 @@ void checkCollisionAlliesObstacles (obstacles fence)
 					fence->pos.y -= 0.1;
 					// pour collision unique fois
 					key = 1;
-					hero->bonus_active = false;
+					hero->bonus_active = 0;
 
 
 					// le héro perd 1 bonus d'attaque
-					if(hero->attack > 1)
+					if(hero->attack > 5)
 					{
 						hero->attack -= 1;
 					}
@@ -343,51 +353,77 @@ void checkCollisionAlliesObstacles (obstacles fence)
 // ------------------------------------- //
 
 // vérifie s'il y a une collision entre l'ennemi et le tir allié, le cas échéant, lui enlève de la vie ou le supprime, et augmente le score
-void checkCollisionTirsBonus (bonus_objet b, tir_Struct w)
+void checkCollisionTirsBonus (bonus_objet bns, tir_Struct w)
 {	
 	bool Collide = false;
 	int key = 1;
 
 	// condition de collision entre les tirs et les objets bonus
-	if (    (((w->pos.x/2) >= b->pos.x-1) && ((w->pos.x/2) < b->pos.x+1))                 && b->pos.y <= ((w->pos.y-2)/2)+1.5 && key != 0)
+	if (    (((w->pos.x/2) >= bns->pos.x-1) && ((w->pos.x/2) < bns->pos.x+1))                 && bns->pos.y <= ((w->pos.y-2)/2)+1.5 && key != 0)
 		{
 			Collide = true;
 			key = 0;
 			
 		}
 
-	if (Collide)
+	if (Collide && key == 0)
 
 	{
 		CHECKCOLLISION = true;
 	}
 	if (CHECKCOLLISION)
 	{	
-		if(w->type == true) // canon à bulles
+		if(key == 0)
 		{
-			hero->bonus_active = true;
-			// si collision
-			// le hero gagne des point d'attaque 
-			// le hero récupère de la santé
-			hero->bonus_active = true;
-			hero->attack += 1;
-			if(hero->health <= 45)
+			if(w->type == true) // canon à bulles
 			{
-				hero->health += 1;
-			}
-			else
-			{
-				hero->health = 50;
-			}
-			drawHealth(hero);
-		}
-		
-		// le bonus est désactivé pour suppression
-		b->active = false;
+				hero->bonus_active = 1;
+				// si collision
+				// le hero gagne des point d'attaque 
+				// le hero récupère de la santé
+				if(BONUS == true)
+				{
+					hero->attack += 1;
+					if(hero->health <= 14)
+					{
+						hero->health += 1;
+					}
+					else
+					{
+						hero->health = 15;
+					}
 
-		// le tir est désactivé pour suppression
-		w->active = false;
-		CHECKCOLLISION = false;
+					// gestion de l'ulti, si 9 tirs d'ulti sur un ennemi, alors repasse en attaque normale
+					b->qtyToUlti += 1;
+
+					if((b->qtyToUlti+1)%10 == 0)
+					{
+						hero->ulti_active = 1;
+						b->qtyToUlti = 0;
+					}
+					if(hero->ulti_active == 1)
+					{
+						if((b->qtyToUlti+1)%10 == 0)
+						{
+							hero->ulti_active = 0;
+						}
+					}
+
+					BONUS = false;
+				}
+				drawHealth(hero);
+			}
+			
+			// le bonus est désactivé pour suppression
+			bns->active = false;
+
+			// le tir est désactivé pour suppression
+			w->active = false;
+
+			// tous les 10 bonus, le héro a une ulti pour 10 kills
+			
+			CHECKCOLLISION = false;
+		}
 	}
 	
 } 
@@ -417,7 +453,6 @@ void checkCollisionAlliesBonus (bonus_objet bns)
 		// si collision
 		// le hero gagne des point d'attaque 
 		// le hero récupère de la santé
-		hero->ulti_active = 1;
 		hero->attack += 1;
 		if(hero->health <= 14)
 		{
@@ -428,10 +463,26 @@ void checkCollisionAlliesBonus (bonus_objet bns)
 			hero->health = 15;
 		}
 		drawHealth(hero);
+
+		hero->ulti_killed += 1;
+				// tous les 10 bonus, le héro a une ulti pour 10 kills
+		if((b->qtyToUlti+1)%10 == 0)
+		{
+			hero->ulti_active = 1;
+			hero->ulti_killed = 0;
+		}
+
+		if((hero->ulti_killed+1)%10 == 0)
+		{
+			hero->ulti_active = 0;
+			hero->ulti_killed = 0;
+		}
+
+
 		
 
 		// l'objet est désactivé pour suppression
-		bns->active = false;
+		bns->active = 0;
 		
 		// réinitialisation du booléen de collision
 		CHECKCOLLISION = false;
@@ -507,48 +558,46 @@ void setPurpleOrGold()
 
 // ---------------------------------------------------------------------------------- //
 
-void increaseLevel()
+void setLevel()
 {
 		/*** DIFFICULTY 1 ***/
 
 
 		if(difficulty == 0 && level == 1)
 		{
-			//car_speed = 0.05;
-			ENNEMI_PER_HUNDRED_SECOND = 50;
-			OBSTACLES_PER_HUNDRED_SECOND = 30;
-			BONUS_PER_TEN_SECOND = 3;
+			ENNEMI_PER_HUNDRED_SECOND = 10;
+			OBSTACLES_PER_HUNDRED_SECOND = 10;
+			BONUS_PER_HUNDRED_SECOND = 20;
 			randomness = 1;
 			setRed();
 
 			if(hero->current_xp >= 400)
 			{
-				level++;
+				level = 2;
 			}
 		}
 		else if(difficulty == 0 && level == 2)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 12;
-			OBSTACLES_PER_HUNDRED_SECOND = 12;
-			BONUS_PER_TEN_SECOND = 3;
-			randomness = 35;
+			ENNEMI_PER_HUNDRED_SECOND = 15;
+			OBSTACLES_PER_HUNDRED_SECOND = 15;
+			BONUS_PER_HUNDRED_SECOND = 20;
+			randomness = 10;
 			car_speed = 0.025;
-
-
-			setRed();
 
 			if(hero->current_xp >= 900)
 			{
 				level++;
+				setPurple();
+
 			}
 
 		}
 		else if(difficulty == 0 && level == 3)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 21;
-			OBSTACLES_PER_HUNDRED_SECOND = 21;
-			BONUS_PER_TEN_SECOND = 3;
-			randomness = 40;
+			ENNEMI_PER_HUNDRED_SECOND = 17;
+			OBSTACLES_PER_HUNDRED_SECOND = 17;
+			BONUS_PER_HUNDRED_SECOND = 20;
+			randomness = 20;
 			car_speed = 0.0325;
 
 
@@ -562,10 +611,10 @@ void increaseLevel()
 		}
 		else if(difficulty == 0 && level == 4)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 11;
-			OBSTACLES_PER_HUNDRED_SECOND = 11;
-			BONUS_PER_TEN_SECOND = 2;
-			randomness = 45;
+			ENNEMI_PER_HUNDRED_SECOND = 19;
+			OBSTACLES_PER_HUNDRED_SECOND = 19;
+			BONUS_PER_HUNDRED_SECOND = 15;
+			randomness = 35;
 			car_speed = 0.042;
 			setPurpleOrGold();
 			
@@ -578,9 +627,9 @@ void increaseLevel()
 		}
 		else if(difficulty == 0 && level == 5)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 11;
-			OBSTACLES_PER_HUNDRED_SECOND = 11;
-			BONUS_PER_TEN_SECOND = 2;
+			ENNEMI_PER_HUNDRED_SECOND = 22;
+			OBSTACLES_PER_HUNDRED_SECOND = 22;
+			BONUS_PER_HUNDRED_SECOND = 15;
 			randomness = 50;
 			car_speed = 0.05;
 			setGold();
@@ -595,10 +644,11 @@ void increaseLevel()
 
 		if(difficulty == 1 && level == 1)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 10;
-			OBSTACLES_PER_HUNDRED_SECOND = 10;
-			BONUS_PER_TEN_SECOND = 3;
+			ENNEMI_PER_HUNDRED_SECOND = 15;
+			OBSTACLES_PER_HUNDRED_SECOND = 15;
+			BONUS_PER_HUNDRED_SECOND = 18;
 			randomness = 40;
+			car_speed = 0.03;
 
 			setRed();
 
@@ -609,10 +659,11 @@ void increaseLevel()
 		}
 		else if(difficulty == 1 && level == 2)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 13;
-			OBSTACLES_PER_HUNDRED_SECOND = 13;
-			BONUS_PER_TEN_SECOND = 3;
+			ENNEMI_PER_HUNDRED_SECOND = 17;
+			OBSTACLES_PER_HUNDRED_SECOND = 17;
+			BONUS_PER_HUNDRED_SECOND = 18;
 			randomness = 45;
+			car_speed = 0.035;
 
 			setPurple();
 
@@ -626,8 +677,9 @@ void increaseLevel()
 		{
 			ENNEMI_PER_HUNDRED_SECOND = 22;
 			OBSTACLES_PER_HUNDRED_SECOND = 22;
-			BONUS_PER_TEN_SECOND = 3;
+			BONUS_PER_HUNDRED_SECOND = 15;
 			randomness = 50;
+			car_speed = 0.05;
 
 			setPurpleOrGold();
 
@@ -638,11 +690,11 @@ void increaseLevel()
 		}
 		else if(difficulty == 1 && level == 4)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 200;
-			OBSTACLES_PER_HUNDRED_SECOND = 20;
-			BONUS_PER_TEN_SECOND = 2;
+			ENNEMI_PER_HUNDRED_SECOND = 25;
+			OBSTACLES_PER_HUNDRED_SECOND = 25;
+			BONUS_PER_HUNDRED_SECOND = 15;
 			randomness = 55;
-
+			car_speed = 0.06;
 
 			setPurpleOrGold();
 
@@ -654,9 +706,9 @@ void increaseLevel()
 		}
 		else if(difficulty == 1 && level == 5)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 200;
-			OBSTACLES_PER_HUNDRED_SECOND = 20;
-			BONUS_PER_TEN_SECOND = 2;
+			ENNEMI_PER_HUNDRED_SECOND = 30;
+			OBSTACLES_PER_HUNDRED_SECOND = 30;
+			BONUS_PER_HUNDRED_SECOND = 15;
 			randomness = 60;
 			car_speed = 0.08;
 
@@ -672,10 +724,11 @@ void increaseLevel()
 
 		if(difficulty == 2 && level == 1)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 13;
-			OBSTACLES_PER_HUNDRED_SECOND = 13;
-			BONUS_PER_TEN_SECOND = 3;
+			ENNEMI_PER_HUNDRED_SECOND = 20;
+			OBSTACLES_PER_HUNDRED_SECOND = 20;
+			BONUS_PER_HUNDRED_SECOND = 15;
 			randomness = 40;
+			car_speed = 0.05;
 
 			setRed();
 
@@ -686,11 +739,12 @@ void increaseLevel()
 		}
 		else if(difficulty == 2 && level == 2)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 15;
-			OBSTACLES_PER_HUNDRED_SECOND = 15;
-			BONUS_PER_TEN_SECOND = 3;
+			ENNEMI_PER_HUNDRED_SECOND = 23;
+			OBSTACLES_PER_HUNDRED_SECOND = 23;
+			BONUS_PER_HUNDRED_SECOND = 15;
 			randomness = 45;
-			
+			car_speed = 0.06;
+
 			setPurple();
 
 			if(hero->current_xp >= 900)
@@ -701,11 +755,12 @@ void increaseLevel()
 		}
 		else if(difficulty == 2 && level == 3)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 23;
-			OBSTACLES_PER_HUNDRED_SECOND = 23;
-			BONUS_PER_TEN_SECOND = 3;
+			ENNEMI_PER_HUNDRED_SECOND = 27;
+			OBSTACLES_PER_HUNDRED_SECOND = 27;
+			BONUS_PER_HUNDRED_SECOND = 13;
 			randomness = 50;
-			
+			car_speed = 0.08;
+
 			setPurpleOrGold();
 
 
@@ -716,11 +771,12 @@ void increaseLevel()
 		}
 		else if(difficulty == 2 && level == 4)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 200;
-			OBSTACLES_PER_HUNDRED_SECOND = 20;
-			BONUS_PER_TEN_SECOND = 2;
+			ENNEMI_PER_HUNDRED_SECOND = 30;
+			OBSTACLES_PER_HUNDRED_SECOND = 30;
+			BONUS_PER_HUNDRED_SECOND = 13;
 			randomness = 60;
-			
+			car_speed = 0.10;
+
 			setGold();
 
 			if(hero->current_xp >= 2500)
@@ -731,9 +787,9 @@ void increaseLevel()
 		}
 		else if(difficulty == 2 && level == 5)
 		{
-			ENNEMI_PER_HUNDRED_SECOND = 200;
-			OBSTACLES_PER_HUNDRED_SECOND = 20;
-			BONUS_PER_TEN_SECOND = 1;
+			ENNEMI_PER_HUNDRED_SECOND = 35;
+			OBSTACLES_PER_HUNDRED_SECOND = 35;
+			BONUS_PER_HUNDRED_SECOND = 12;
 			randomness = 70;
 			car_speed = 0.12;
 
@@ -750,8 +806,9 @@ void increaseLevel()
 		{
 			ENNEMI_PER_HUNDRED_SECOND = 20;
 			OBSTACLES_PER_HUNDRED_SECOND = 20;
-			BONUS_PER_TEN_SECOND = 3;
+			BONUS_PER_HUNDRED_SECOND = 10;
 			randomness = 80;
+			car_speed = 0.08;
 
 			setPurple();
 
@@ -764,8 +821,9 @@ void increaseLevel()
 		{
 			ENNEMI_PER_HUNDRED_SECOND = 25;
 			OBSTACLES_PER_HUNDRED_SECOND = 25;
-			BONUS_PER_TEN_SECOND = 3;
+			BONUS_PER_HUNDRED_SECOND = 10;
 			randomness = 84;
+			car_speed = 0.10;
 
 			setPurpleOrGold();
 			
@@ -779,8 +837,9 @@ void increaseLevel()
 		{
 			ENNEMI_PER_HUNDRED_SECOND = 35;
 			OBSTACLES_PER_HUNDRED_SECOND = 35;
-			BONUS_PER_TEN_SECOND = 2;
+			BONUS_PER_HUNDRED_SECOND = 10;
 			randomness = 88;
+			car_speed = 0.13;
 
 			
 			setGold();
@@ -794,8 +853,9 @@ void increaseLevel()
 		{
 			ENNEMI_PER_HUNDRED_SECOND = 37;
 			OBSTACLES_PER_HUNDRED_SECOND = 37;
-			BONUS_PER_TEN_SECOND = 1;
+			BONUS_PER_HUNDRED_SECOND = 10;
 			randomness = 92;
+			car_speed = 0.20;
 
 			setGold();
 
@@ -809,9 +869,9 @@ void increaseLevel()
 		{
 			ENNEMI_PER_HUNDRED_SECOND = 40;
 			OBSTACLES_PER_HUNDRED_SECOND = 40;
-			BONUS_PER_TEN_SECOND = 1;
+			BONUS_PER_HUNDRED_SECOND = 10;
 			randomness = 80;
-			car_speed = 0.2;
+			car_speed = 0.25;
 
 
 			setGold();
@@ -824,50 +884,6 @@ void increaseLevel()
 
 // ------------------------------------------------------------------------------------------------------------- //
 
-void setEnemyLevel(enemy car)
-{
-
-
-	if(RED == true)
-	{
-		car->color = 0;
-		RED = false;
-
-	}
-	else if(PURPLE == true)
-	{
-		car->color = 1;
-		PURPLE = false;
-
-	}
-	else if(GOLD == true)
-	{
-		car->color = 2;
-		GOLD = false;
-
-	}
-
-		if (car->color == 0)
-		{
-			car->vie = 3;
-			car->changed = true;
-		}
-		
-		else if(car->color == 1)
-		{
-			
-			car->vie = 15;	
-			car->changed = true;
-
-		}
-
-		else if(car->color == 2)
-		{
-			car->vie = 30;
-			car->changed = true;
-		}
-	
-}
 
 
 
@@ -1046,21 +1062,26 @@ void updateCollisions(int valeur)
 
 		// vérifie les listes d'objets bonus, et à certaines conditions, vérifie s'il y a une collision
 		// entre les tirs alliés et les objets bonus
+	int key = 1;
 
+	if(key == 1)
+	{
 		if (b->first != NULL && t->first != NULL)
 		{
 			checkCollisionTirsBonus(bonus, Sht);
-
+			key = 0;
 			if (t->first->next != NULL)
 				{
 					Sht = Sht->next;	
 					checkCollisionTirsBonus(bonus, Sht);
+					key = 0;
 
 					
 					while (Sht->next != NULL)
 					{
 						Sht = Sht->next;
 						checkCollisionTirsBonus(bonus, Sht);
+						key = 0;
 
 					}
 				}
@@ -1069,16 +1090,19 @@ void updateCollisions(int valeur)
 				bonus = bonus->next;
 				Sht = t->first;
 				checkCollisionTirsBonus(bonus, Sht);
+				key = 0;
 
 				if (t->first->next != NULL)
 				{
 					Sht = Sht->next;
 					checkCollisionTirsBonus(bonus, Sht);
+					key = 0;
 
 					while (Sht->next != NULL)
 					{
 						Sht = Sht->next;
 						checkCollisionTirsBonus(bonus, Sht);
+						key = 0;
 
 					}
 				}
@@ -1087,22 +1111,28 @@ void updateCollisions(int valeur)
 					bonus = bonus->next;
 					Sht = t->first;
 					checkCollisionTirsBonus(bonus, Sht);
+					key = 0;
 
 					if (t->first->next != NULL)
 					{
 						Sht = Sht->next;
 						checkCollisionTirsBonus(bonus, Sht);
+						key = 0;
 
 						while (Sht->next != NULL)
 						{
 							Sht = Sht->next;
 							checkCollisionTirsBonus(bonus, Sht);
+							key = 0;
 
 						}
 					}
 				}
 			}
 		}
+	}
+	BONUS = true;
+
 	}
 	glutPostRedisplay();
 	glutTimerFunc(10, updateCollisions, 1);
@@ -1126,12 +1156,12 @@ void updateEnemies(int valeur)
 
 		if (car != NULL)
 		{
-			setEnemyLevel(car);
+			car = setEnemyLevel(car);
 
 			// si non ralenti 
 				if(car->slowness == 0)
 				{
-					car->pos.y -= 0.50 + (difficulty/100) + car_speed;
+					car->pos.y -= 0.05 + (difficulty/100) + car_speed;
 				}
 				// si ralenti avec bubble
 				else if(car->slowness == 1)
@@ -1164,12 +1194,18 @@ void updateEnemies(int valeur)
 				hero->current_xp -= 100;
 				e->quantite--;
 				hero->health -= 1;
-
 				car->active = false;
-
 				endmap = true;
+
 				// le hero perd le bonus en cours	
-				hero->bonus_active = false;
+				hero->bonus_active = 0;
+
+				// le héro perd 1 bonus d'attaque
+				if(hero->attack > 5)
+				{
+					hero->attack -= 1;
+				}
+
 				
 
 				drawHealth(hero); // affiche la santé du héros en permanence
@@ -1188,13 +1224,13 @@ void updateEnemies(int valeur)
 			while (car->next != NULL)
 			{
 				car = car->next;
-				setEnemyLevel(car);
+				car = setEnemyLevel(car);
 
 
 				// si non ralenti 
 					if(car->slowness == 0)
 					{
-						car->pos.y -= 0.50 + (difficulty/100) + car_speed;
+						car->pos.y -= 0.5 + (difficulty/100) + car_speed;
 					}
 					// si ralenti avec bubble
 					else if(car->slowness == 1)
@@ -1226,15 +1262,20 @@ void updateEnemies(int valeur)
 				{
 					hero->current_xp -= 100;
 					hero->health -= 1;
-
 					car->active = false;
-
 					e->quantite--;
-
 					endmap = true;
+
 
 					// le hero perd le bonus en cours	
 					hero->bonus_active = false;
+
+					// le héro perd 1 bonus d'attaque
+					if(hero->attack > 5)
+					{
+						hero->attack -= 1;
+					}
+
 
 					drawHealth(hero); // affiche la santé du héros en permanence
 
@@ -1252,22 +1293,9 @@ void updateEnemies(int valeur)
 		// si fin de partie car score max atteint, on arrête
 		// tout, on supprime tous les objets sur la map
 		// et on sauvegarde la partie avant de la quitter
-		}else if (hero->current_xp == MAX_SCORE){
-
-			startgame = false;
-			
-			suppressionEnemiesEndGame(e);
-			suppressionObstaclesEndGame(o);
-			suppressionTirsEndGame(t);
-			level++; // augmente le niveau
-			saveScore(hero);
-			hero->current_xp = 0;
-			glutDisplayFunc(DisplayGame);
-
 		}
 
 
-	increaseLevel(car);
 
 	
 
@@ -1426,22 +1454,6 @@ void updateObstacle(int valeur)
 				}
 			}
 		}
-		// max score atteint, on arrête tout
-		// on supprime les objets sur la map
-		// on affiche le display de fin
-		} else if (hero->current_xp == MAX_SCORE){
-
-			startgame = false;
-			
-			suppressionEnemiesEndGame(e);
-			suppressionObstaclesEndGame(o);
-			suppressionTirsEndGame(t);
-			level++;
-			saveScore(hero);
-
-			hero->current_xp = 0;
-			glutDisplayFunc(DisplayGame);
-
 		}
 		glutPostRedisplay();
 		glutTimerFunc(1000/OBSTACLE_SPEED, updateObstacle, 7);
@@ -1497,18 +1509,20 @@ void updateDeleteObstacles(int valeur)
 
 void updateBonus(int valeur)
 {
-	if(startgame==true && hero->health != 0 && hero->current_xp != MAX_SCORE)
+
+
+	if(startgame==true && hero->health != 0)
 	{ 
 
 		bonus = b->first;
 		if (b->first != NULL)
 		{
-			if(cheatMode == true)
+			if(cheatMode == true || hero->ulti_active == 1)
 			{
 			bonus->pos.x = 80;
 			}
 
-			bonus->pos.y -= 0.12;
+			bonus->pos.y -= 0.2;
 
 			
 			if (bonus->pos.x > 38){
@@ -1521,11 +1535,11 @@ void updateBonus(int valeur)
 
 			if(bonus->side == 1)
 			{
-				bonus->pos.x -= 0.15;
+				bonus->pos.x -= 0.2;
 			}
 			
 			else if(bonus->side == 0){
-				bonus->pos.x += 0.15;
+				bonus->pos.x += 0.2;
 			}
 
 			checkCollisionAlliesBonus(bonus);
@@ -1547,7 +1561,7 @@ void updateBonus(int valeur)
 					bonus->pos.x = 80;
 				}
 
-				bonus->pos.y -= 0.12;
+				bonus->pos.y -= 0.2;
 
 
 				if (bonus->pos.x > 38){
@@ -1560,11 +1574,11 @@ void updateBonus(int valeur)
 
 				if(bonus->side == 1)
 				{
-					bonus->pos.x -= 0.15;
+					bonus->pos.x -= 0.2;
 				}
 
 				else if(bonus->side == 0){
-					bonus->pos.x += 0.15;
+					bonus->pos.x += 0.2;
 				}
 
 				checkCollisionAlliesBonus(bonus);
@@ -1582,20 +1596,6 @@ void updateBonus(int valeur)
 				}
 			}
 		}
-
-		}else if (hero->current_xp == MAX_SCORE){
-
-			startgame = false;
-			
-			suppressionEnemiesEndGame(e);
-			suppressionObstaclesEndGame(o);
-			suppressionTirsEndGame(t);
-			level++;
-			saveScore(hero);
-
-			hero->current_xp = 0;
-			glutDisplayFunc(DisplayGame);
-
 		}
 
 		
@@ -1617,7 +1617,7 @@ void updateNewBonus(int valeur)
 	}
 	
 	glutPostRedisplay();
-	glutTimerFunc(10000/BONUS_PER_TEN_SECOND, updateNewBonus, 11);
+	glutTimerFunc(100000/BONUS_PER_HUNDRED_SECOND, updateNewBonus, 11);
 	
 }
 

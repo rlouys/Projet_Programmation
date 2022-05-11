@@ -13,6 +13,7 @@
 #include "hero.h"
 #include "enemies.h"
 #include "game.h"
+#include "timers_and_effects.h"
 
 #define BLACK 0, 0, 0
 
@@ -28,6 +29,9 @@ char username_array[20];
 
 int newGame;
 int newGame_lock;
+int NewGame_statslock;
+int level;
+int difficulty;
 
 bool startgame;
 bool gameplay_keys;
@@ -42,7 +46,7 @@ bool RIGHTK = false;
 bool DOWNK = false;
 bool UPK = false;
 bool cheatMode;
-
+bool NewGame;
 
 
 /*** FUNCTIONS ***/
@@ -232,13 +236,12 @@ char* copyToString(char array[])
 // si partie enregistrée, newgame possible ET continuer
 int checkNewGame(int newGame)
 {
-
 	FILE *f = fopen("hero_save.txt", "r+");
 	
 	int jeu;
-	char trash[20];
+	char name[20];
 
-	fscanf(f,"%s %i", trash, &jeu);
+	fscanf(f,"%s %d", name, &jeu);
 
 	if(jeu == 0)
 	{
@@ -247,6 +250,12 @@ int checkNewGame(int newGame)
 	else if(jeu == 1)
 	{
 		newGame = 1;
+	}
+
+	
+	if(newGame == 0)
+	{
+		username = copyToString(name);
 	}
 
 	fclose(f);
@@ -335,6 +344,50 @@ void game(int *maxX, int *maxY, Hero hero, EnemyList e, listetir_Struct t, liste
 
 // ------------------------------------------------------- //
 
+void swapIntegers(int* un, int* deux)
+{
+    int temp = *un;
+    *un = *deux;
+    *deux = temp;
+}
+
+// ------------------------------------------------------- //
+
+void swapUsername(top Top, int k)
+{
+
+
+	char temp[20] = {'0'};
+	
+	strcpy(temp,Top->username[k]);
+	strcpy(Top->username[k], Top->username[k+1]);
+	strcpy(Top->username[k+1], temp);
+
+}
+
+// ------------------------------------------------------- //
+
+void bubbleSortScores(top Top, int taille)
+{
+	
+	int i, k;
+
+    for (i = 0; i < taille - 1; i++)
+
+         for (k = 0; k < taille - i - 1; k++)
+
+            if (Top->score[k] > Top->score[k + 1])
+			{	
+                swapIntegers(&Top->score[k], &Top->score[k + 1]);
+				swapIntegers(&Top->killed[k], &Top->killed[k + 1]);
+				swapUsername(Top, k);
+			}
+
+	
+
+}
+// ------------------------------------------------------ //
+
 // Sauvegarde le score de la partie en cours
 
 void saveScore(Hero hero)		
@@ -343,77 +396,33 @@ void saveScore(Hero hero)
 	
 	FILE *files = fopen("scores.txt","r+");
 
-    int score_1 = 0, score_2 = 0, score_3 = 0, score_4 = 0;
-    char username_1[20] = {'0'}, username_2[20] = {'0'}, username_3[20] = {'0'}, username_4[20] = {'0'};
-    
-	int killed_1 = 0, killed_2 = 0, killed_3 = 0, killed_4 = 0;
+	top Top = malloc(sizeof(struct Score));
 
-	fscanf(f, "%s %d %d %s %d %d %s %d %d %s %d %d",  username_1, &score_1, &killed_1, username_2, &score_2, &killed_2, username_3, &score_3, &killed_3, username_4, &killed_4, &score_4);
 
-	printf("%s ::: \n", username_1);
-
-	//strcpy(user_test,username);
-		printf("%s ::: \n", username_1);
-		printf("%s ::: \n", username_1);
-		printf("%s username2 \n", username_2);
-				printf("%s username3 \n", username_3);
-		printf("%s username4 \n", username_4);
-
-		printf("%s username_array :\n", username_array);
-
-	if(strcmp(username_1, "------------") != 0)
+	fscanf(f, "  %s   %d %d  %s           %d %d   %s   %d %d      %s                 %d %d   %s    %d %d",   Top->username[0], &Top->score[0], &Top->killed[0], Top->username[1], &Top->score[1], &Top->killed[1], Top->username[2], &Top->score[2], &Top->killed[2], Top->username[3], &Top->score[3], &Top->killed[3], Top->username[4], &Top->score[4], &Top->killed[4]);
+	
+	if(newGame == 1)
 	{
-		if(strcmp(username_2, "------------") != 0)
-		{
-			if(strcmp(username_3, "------------") != 0)
-			{
-				if(strcmp(username_4, "------------") != 0)
-				{
-					/*score_4 = hero->current_xp;
-					if(hero->killed > 0) killed_4 = hero->killed;
-					else killed_4 = 0;*/
-					fprintf(files, "%s %d %d %s %d %d %s %d %d %s %d %d        ", username_1, score_1, killed_1, username_2, score_2, killed_2, username_3, score_3, killed_3, username_array, score_4, killed_4);
-					printf("%i hero killed", hero->killed);
-					//compareTops();
-					// ICI COMPARER LES CHIFFRES ET LE METTRE A LA BONNE PLACE
-				}
-				else
-				{
-					score_4 = hero->current_xp;
-					if(hero->killed > 0) killed_4 = hero->killed;
-					else killed_4 = 0;
-					fprintf(files, "%s %d %d %s %d %d %s %d %d %s %d %d          ", username_1, score_1, killed_1, username_2, score_2, killed_2, username_3, score_3, killed_3, username_array, killed_4, score_4);
-					printf("%i hero killed", hero->killed);
-				}
-			}
-			else
-			{
-				score_3 = hero->current_xp;
-				if(hero->killed > 0) killed_3 = hero->killed;
-				else killed_3 = 0;
-				fprintf(files, "%s %d %d %s %d %d %s %d %d %s %d %d          ", username_1, score_1, killed_1, username_2, score_2, killed_2, username_array, score_3, killed_3, username_4, killed_4, score_4);
-
-			}
-		}
-		else
-		{
-			score_2 = hero->current_xp;
-			if(hero->killed > 0) killed_2 = hero->killed;
-			else killed_2 = 0;
-			fprintf(files, "%s %d %d %s %d %d %s %d %d %s %d %d         ", username_1, score_1, killed_1, username_array, score_2, killed_2, username_3, score_3, killed_3, username_4, killed_4, score_4);
-
-		}
+		strcpy(Top->username[0], username_array);
+		Top->killed[0] = hero->killed;
+		Top->score[0] = hero->current_xp;
+		
+	}
+	else if(newGame == 0)
+	{
+		strcpy(username_array, Top->username[4]);
+		strcpy(Top->username[4], username_array);
+		Top->killed[4] = hero->killed;
+		Top->score[4] = hero->current_xp;
 
 	}
 
-	else
-	{
-		printf("%i hero killed", hero->killed);
-		score_1 = hero->current_xp;
-		if(hero->killed > 0) killed_1 = 15;
-		else killed_1 = 0;
-		fprintf(files, "%s %d %d %s %d %d %s %d %d %s %d %d", username_array, score_1, killed_1, username_2, score_2, killed_2, "------------", score_3, killed_3, "------------", killed_4, score_4);
-	}
+	bubbleSortScores(Top, 5);
+
+
+
+	fprintf(files, " %s %d %d %s %d %d %s %d %d %s %d %d %s %d %d", Top->username[0], Top->score[0], Top->killed[0], Top->username[1], Top->score[1], Top->killed[1], Top->username[2], Top->score[2], Top->killed[2], Top->username[3], Top->score[3], Top->killed[3], Top->username[4], Top->score[4], Top->killed[4] );
+
 
 	fclose(files);
 	fclose(f);
@@ -439,21 +448,8 @@ void saveContext()
 	fprintf(f, "%i ", hero->bonus_active);
 	fprintf(f, "%f  ", hero->pos.x);
 	fprintf(f, "%f ", hero->pos.y);
-
-	
-	/*// obstacles
-	int jailed;
-	if(fence->jailed == true)
-		jailed = 1;
-	else
-		jailed = 0;
-	
-
-	fprintf(f, "%f ", fence->pos.x);
-	fprintf(f, "%f ", fence->pos.y);
-	fprintf(f, "%i ", jailed);*/
-
-
+	fprintf(f, "%d ", level);
+	fprintf(f, "%d        ", difficulty);
 
 	fclose(f);
 

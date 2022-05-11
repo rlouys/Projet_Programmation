@@ -92,6 +92,14 @@ void drawWeapon();
                     /***********************
                      * CHARACTERS DRAWINGS *
                      ***********************/
+// dessine une voiture
+void drawCar(enemy e);
+
+// dessine un vélo
+void drawBike();
+
+// dessine un mur de briques (les obstacles)
+void drawBrickWall();
 
 // place le héro sur la carte (en le plaçant au bon endroit)
 void drawPlayer(Hero hero); 
@@ -142,6 +150,9 @@ void drawAllTirsEnemy(listetir_StructEnemy t);
 
 // écrit un texte aux couleurs et positions voulues
 void writeSomething(float red, float green, float blue, int x, int y, char *txt); 
+
+// ecrit un texte en 9by15
+void writeSomething9by15(float red, float green, float blue,  int x, int y, char *caractere, int taille, int ij);
 
 // écrit un texte aux couleurs et positions voulues en helvetica taille 18
 void writeSomethingHelvetica(float red, float green, float blue, int x, int y, char *txt);

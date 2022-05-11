@@ -55,11 +55,11 @@ void setPurple();
 
 void setPurpleOrGold();
 
-void setEnemyLevel(enemy car);
+enemy setEnemyLevel(enemy car);
 
 
 // augmente la difficulté en fonction du niveau de difficulté et du level en cours
-void increaseLevel();
+void setLevel();
 
 /*** TIMERS ***/
 

@@ -16,7 +16,13 @@
 
 bool startgame; // état du jeu en cours (pause ou en cours)
 bool endmap; // état de l'ennemi (fin de map ou pas)
+bool PURPLE = false;
+bool GOLD = false;
+bool RED = false;
 
+int level;
+
+float difficulty;
 /*** FUNCTIONS ***/
 
 						/*******************
@@ -39,7 +45,6 @@ EnemyList initialListEnemies()
 	e->first = NULL;
 	e->last = NULL;
 	e->quantite = 0;
-	e->qtyToUlti = 0;
 
 	return e;
 }
@@ -65,6 +70,38 @@ ObstacleList initialListObstacles()
 	return o;
 }
 
+// --------------------------------------------------------------------- // 
+
+enemy setEnemyLevel(enemy car)
+{
+
+	
+	if(RED == true)
+	{
+		car->color = 0;
+		RED = false;
+		car->vie = 3;
+
+	}
+	else if(PURPLE == true)
+	{
+		car->color = 1;
+		PURPLE = false;
+		car->vie = 15;
+
+
+	}
+	else if(GOLD == true)
+	{
+		car->color = 2;
+		GOLD = false;
+		car->vie = 50;
+
+	}
+
+		return car;
+	
+}
 
 // --------------------------------------------------------------------- // 
 
@@ -72,6 +109,12 @@ ObstacleList initialListObstacles()
 
 enemy createEnemy(int *maxY)
 {
+	setLevel();
+
+	/*if(hero->current_xp >= 400 && hero->current_xp <= 500)
+	{
+		level++;
+	}*/
 	// allocation de l'ennemi
 	enemy new = malloc(sizeof(struct enemies));
 
@@ -83,15 +126,16 @@ enemy createEnemy(int *maxY)
 		exit(EXIT_FAILURE);
 	} 
 
+	setEnemyLevel(new);
 	//initialisation des stats de l'ennemi
-	new->vie = 3;
+	//new->vie = 3;
 	new->pos.x = x;
-	new->pos.y = 80.0;
+	new->pos.y = 55.0;
 	new->next = NULL;
 	new->previous = NULL;
 	new->active = true;
 	new->slowness = 0;
-	new->color = 3;
+	//new->color = 3;
 	new->changed = false;
 
 	return new;
@@ -104,6 +148,8 @@ enemy createEnemy(int *maxY)
 
 obstacles createObstacle(int *maxY)
 {
+	setLevel();
+
 	// allocation de l'obstacle
 	obstacles new = malloc(sizeof(obstacle));
 
@@ -117,7 +163,7 @@ obstacles createObstacle(int *maxY)
 
 	// initialisation des stats de l'obstacle
 	new->pos.x = x;
-	new->pos.y = 80;
+	new->pos.y = 55;
 	new->next = NULL;
 	new->previous = NULL;
 	new->jailed = false;
@@ -214,6 +260,9 @@ void suppressionEnemies(EnemyList e, bool test)
 			//exit(EXIT_FAILURE);
 		}
 		newEnemy = e->first;
+
+		
+
 		while (newEnemy != NULL)
 		{
 			// si ennemi->active == false, on initialise un enemy "poubelle"
@@ -222,6 +271,21 @@ void suppressionEnemies(EnemyList e, bool test)
 			// avant de free(); la classe poubelle
 			if (newEnemy->active == test)
 			{
+
+
+					if(newEnemy->color == 2)
+					{
+						hero->current_xp += 500+((difficulty-1)*10);
+					}
+					else if(newEnemy->color == 1)
+					{
+						hero->current_xp += 250+((difficulty-1)*10);
+					}
+					else if(newEnemy->color == 0)
+					{
+						hero->current_xp += 150+((difficulty)*10);
+					}
+
 				enemy deleted = malloc(sizeof(enemies));
 				deleted = newEnemy;
 				newEnemy = newEnemy->next;
@@ -261,7 +325,22 @@ void suppressionEnemies(EnemyList e, bool test)
 				// alors augmente le score du héro car ennemi supprimé
 				if(startgame==true && hero->health != 0 && endmap == false)
 				{
-					hero->current_xp += 50;
+					/*if(newEnemy->color == 2)
+					{
+						hero->current_xp += 500;//+((difficulty-1)*10);
+
+					}
+					else if(newEnemy->color == 1)
+					{
+						hero->current_xp += 150;
+
+					}
+					else if(newEnemy->color == 0)
+					{
+						hero->current_xp += 50;
+
+					}*/
+
 				}else if(endmap == true)
 				{
 					endmap = false;
@@ -273,6 +352,7 @@ void suppressionEnemies(EnemyList e, bool test)
 			{
 				newEnemy = newEnemy->next;
 			}
+
 		}
 	}
 }
@@ -350,68 +430,3 @@ void suppressionObstacles(ObstacleList o, bool test)
 	}
 }
 
-// --------------------------------------------------------------------- // 
-
-//Supprime tous les ennemis en fin de niveau
-
-void suppressionEnemiesEndGame(EnemyList e)
-{
-	
-		enemy newEnemy = malloc(sizeof(enemies));
-
-		if(newEnemy == NULL)
-		{
-			exit(EXIT_FAILURE);	
-		}
-
-		newEnemy = e->first;
-
-		// initialisation d'un élément "poubelle"
-		enemy deleted = malloc(sizeof(enemies));
-
-		//supprime tous les ennemis toujours dans la liste à la fin de la partie
-		//(tant que non NULL) en les passant en active = false 
-		//(pour être supprimé via le timer UpdateDeleteEnnemis)
-		// en cas où, place l'ennemi dans une liste qui va être free();
-		while(newEnemy != NULL)
-		{
-			newEnemy->active = false;
-			deleted = newEnemy;
-			newEnemy = newEnemy->next;
-			free(deleted);
-
-		}
-
-}
-// --------------------------------------------------------------------- //
-
-//Supprime tous les obstacles en fin de niveau
-
-void suppressionObstaclesEndGame(ObstacleList o)
-{
-	
-		obstacles newObstacle = malloc(sizeof(obstacle));
-
-		if(newObstacle == NULL)
-		{
-			exit(EXIT_FAILURE);	
-		}
-
-		newObstacle = o->first;
-
-		// initialisation d'un élément "poubelle"
-		obstacles deleted = malloc(sizeof(obstacle));
-
-		//supprime tous les obstacles toujours dans la liste à la fin de la partie
-		//(tant que non NULL) en les passant en active = false 
-		//(pour être supprimé via le timer UpdateDeleteObstacles)
-		// en cas où, place l'ennemi dans une liste qui va être free();
-
-		while(newObstacle != NULL)
-		{
-			newObstacle->active = false;
-			deleted = newObstacle;
-			newObstacle = newObstacle->next;
-			free(deleted);
-		}
-}

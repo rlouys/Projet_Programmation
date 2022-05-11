@@ -38,7 +38,6 @@ struct ListEnemy
 {
 	
 	int quantite;
-	int qtyToUlti;
 
 	struct enemies *first;
 	struct enemies *last;
@@ -128,12 +127,6 @@ void suppressionEnemies(EnemyList e, bool test);
 
 //Supprime un obstacle et l'enleve de la liste
 void suppressionObstacles(ObstacleList o, bool test); 
-
-//Supprime tous les ennemis en fin de niveau/partie
-void suppressionEnemiesEndGame(EnemyList e);
-
-//Supprime tous les ennemis en fin de niveau/partie
-void suppressionObstaclesEndGame(ObstacleList o);
 
 
 #endif

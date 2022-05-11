@@ -461,7 +461,7 @@ void drawHealth(Hero hero)
 
 	glTranslatef(825,890,0);
 
-	for(i = 1; i <= hero->health-difficulty; i++)
+	for(i = 1; i <= hero->health; i++)
 	{	
 		
 		drawHeart(1,0,0);
@@ -676,7 +676,7 @@ void drawWeapon()
 		glMatrixMode(GL_MODELVIEW);
     	glLoadIdentity();
 
-		if(hero->bonus_active == false)
+		if(hero->bonus_active == 0)
 		{
 			writeSomething(BLACK, 60, 627, "G U N");
 
@@ -702,7 +702,7 @@ void drawWeapon()
 
 		}
 
-		else if(hero->bonus_active == true)
+		else if(hero->bonus_active == 1)
 		{
 			writeSomething(BLACK, 60, 627, "G U N");
 
@@ -756,24 +756,8 @@ void drawWeapon()
                      * CHARACTERS DRAWINGS *
                      ***********************/
 
-
-
-// place le héro sur la carte (en le plaçant au bon endroit)
-
-void drawPlayer(Hero hero)
+void drawBike()
 {
-	float i, j;
-
-	// i et j valent les positions x et y du héro
-	i = hero->pos.x;
-	j = hero->pos.y;
-		
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	// déplacement du héro à l'endroit de départ
-	glTranslatef(i*Square_size,j*Square_size,0.0f);
-
 	glColor3f(GREY);
 
 	// dessin 
@@ -816,41 +800,15 @@ void drawPlayer(Hero hero)
 	glVertex3f(((Square_size*2)/5)+4, 18, 0);
 	glVertex3f(4, 18, 0);
 
-
-
-
-
 	glEnd();
 }
 
-// ------------------------------------------------------------------ //
+// --------------------------------------------- //
 
-// dessine un ennemi et le place sur la carte
-
-void drawEnemy(enemy e)	
+void drawCar(enemy e)
 {
-	float i, j;
-
-	//i et j sont les coordonnées de départ de l'ennemi
-	i = e->pos.x;
-	j = e->pos.y;
-
-	// couleur ennemi
-	glColor3f(r,g,bl);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	//déplacement de l'ennemi sur la case de départ
-	glTranslatef(i*Square_size,j*Square_size,0.0f);
-
-	// dessin
+// dessin
 	glBegin(GL_QUADS);
-
-	/*glVertex3f(0.0f,0.0f,0.0f);
-	glVertex3f(Square_size,0.0f,0.0f);
-	glVertex3f(Square_size,Square_size,0.0f);
-	glVertex3f(0.0f,Square_size,0.0f);*/
 
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	glVertex3f(Square_size, 0.0f, 0.0f);
@@ -864,20 +822,16 @@ void drawEnemy(enemy e)
 	glVertex3f(Square_size, 7, 0.0f);
 	glVertex3f(0, 7, 0.0f);
 
-
-
-
 	//phares standards
 
-
-	if(GOLD == false)
+	if(e->color != 2)
 	{
 		glColor3f(ORANGE);
 	}
-	else{
-		glColor3f(CYAN);
+	else if(e->color == 2)
+	{
+		glColor3f(0.5, 0.5, 0.5);
 	}
-
 
 	//gauche
 	glVertex3f(0, 0, 0.0f);
@@ -891,15 +845,21 @@ void drawEnemy(enemy e)
 	glVertex3f(16, 4, 0.0f);
 	glVertex3f(16, 0, 0.0f);
 
-
 	// pare-brise
 
-	glColor3f(CYAN);
-
-	glVertex3f(1, 8, 0.0f);
-	glVertex3f(1, 19, 0.0f);
-	glVertex3f(19, 19, 0.0f);
-	glVertex3f(19, 8, 0.0f);
+	if(e->color != 2)
+	{
+		glColor3f(CYAN);
+	}
+	else if(e->color == 2)
+	{
+		glColor3f(0.5, 0.5, 0.5);
+	}
+	
+	glVertex3f(1.5, 8, 0.0f);
+	glVertex3f(1.5, 17, 0.0f);
+	glVertex3f(18.5, 17, 0.0f);
+	glVertex3f(18.5, 8, 0.0f);
 
 	//rétroviseurs
 
@@ -910,72 +870,19 @@ void drawEnemy(enemy e)
 	glVertex3f(-4, 10, 0);
 	glVertex3f(0, 10, 0);
 
-
 	//droite
 	glVertex3f(20, 6, 0);
 	glVertex3f(24, 6, 0);
 	glVertex3f(24, 10, 0);
 	glVertex3f(20, 10, 0);
 
-
-
 	glEnd();
 }
 
+// --------------------------------------------- //
 
-// ------------------------------------------------------------- //
-
-// dessine des ennemis à la chaine (utilise drawEnemy à la chaine)
-
-void drawAllEnnemis(EnemyList e)
-{	
-	// allocation de deux premiers ennemis
-	enemy first = malloc(sizeof(enemies));
-	enemy next = malloc(sizeof(enemies));
-
-	first = e->first;
-	next = e->first->next;
-
-	if (e->first != NULL || e->last != NULL) // test existence de la liste
-	{
-		drawEnemy(first);
-		if (e->first->next != NULL)
-		{
-			drawEnemy(next);
-			while (next->next != NULL)
-			{
-				next = next->next;
-				drawEnemy(next);
-			}
-		}
-	}
-}
-
-
-                    /**************************
-                     * MOBILE OBJECTS DRAWINGS *
-                     **************************/
-
-//dessine les obstacles
-
-void drawObstacles(obstacles o, float red, float green, float blue)
+void drawBrickWall()
 {
-	float i, j;
-
-	//i et j sont les coordonnées de départ de l'obstacle
-	i = o->pos.x;
-	j = o->pos.y;
-
-	// couleur obstacle
-	glColor3f(red, green, blue);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	// déplacement de l'obstacle à l'endroit de départ
-	glTranslatef(i*Square_size,j*Square_size,0.0f);
-
-	//dessin de l'obstacle
 	glBegin(GL_QUADS);
 
 	glVertex3f(-(Square_size),0.0f,0.0f);
@@ -1039,6 +946,111 @@ void drawObstacles(obstacles o, float red, float green, float blue)
 	glVertex3f(-(Square_size)+51,7,0.0f);
 
 	glEnd();
+
+}
+
+
+// --------------------------------------------- //
+
+
+// place le héro sur la carte (en le plaçant au bon endroit)
+void drawPlayer(Hero hero)
+{
+	float i, j;
+
+	// i et j valent les positions x et y du héro
+	i = hero->pos.x;
+	j = hero->pos.y;
+		
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	// déplacement du héro à l'endroit de départ
+	glTranslatef(i*Square_size,j*Square_size,0.0f);
+
+
+	drawBike();
+}
+
+// ------------------------------------------------------------------ //
+
+// dessine un ennemi et le place sur la carte
+
+void drawEnemy(enemy en)	
+{
+	float i, j;
+
+	//i et j sont les coordonnées de départ de l'ennemi
+	i = en->pos.x;
+	j = en->pos.y;
+
+	// couleur ennemi
+	glColor3f(r,g,bl);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	//déplacement de l'ennemi sur la case de départ
+	glTranslatef(i*Square_size,j*Square_size,0.0f);
+
+	drawCar(en);
+}
+
+
+// ------------------------------------------------------------- //
+
+// dessine des ennemis à la chaine (utilise drawEnemy à la chaine)
+
+void drawAllEnnemis(EnemyList e)
+{	
+	// allocation de deux premiers ennemis
+	enemy first = malloc(sizeof(enemies));
+	enemy next = malloc(sizeof(enemies));
+
+	first = e->first;
+	next = e->first->next;
+
+	if (e->first != NULL || e->last != NULL) // test existence de la liste
+	{
+		drawEnemy(first);
+		if (e->first->next != NULL)
+		{
+			drawEnemy(next);
+			while (next->next != NULL)
+			{
+				next = next->next;
+				drawEnemy(next);
+			}
+		}
+	}
+}
+
+
+                    /**************************
+                     * MOBILE OBJECTS DRAWINGS *
+                     **************************/
+
+//dessine les obstacles
+
+void drawObstacles(obstacles o, float red, float green, float blue)
+{
+	float i, j;
+
+	//i et j sont les coordonnées de départ de l'obstacle
+	i = o->pos.x;
+	j = o->pos.y;
+
+	// couleur obstacle
+	glColor3f(red, green, blue);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	// déplacement de l'obstacle à l'endroit de départ
+	glTranslatef(i*Square_size,j*Square_size,0.0f);
+
+	//dessin de l'obstacle
+	drawBrickWall();
 }
 
 
@@ -1172,7 +1184,7 @@ void drawAllBonus(BonusList b)
 
 void drawTirsHero(tir_Struct t)
 {
-	int i, j;
+	float i, j;
 
 	// attribue les valeurs de coordonnées du tir à i et j
 	j = t->pos.x;
@@ -1180,8 +1192,8 @@ void drawTirsHero(tir_Struct t)
 	
 	// si le héro est sous l'effet d'un bonus, la couleur du tir devient bleu
 	// par défaut, elle est jaune
-	if(hero->bonus_active == false) glColor3f(GREEN);
-	else if(hero->bonus_active == true) glColor3f(RED);
+	if(hero->bonus_active == 0) glColor3f(GREEN);
+	else if(hero->bonus_active == 1) glColor3f(RED);
 
 
 	glMatrixMode(GL_MODELVIEW);
@@ -1223,13 +1235,6 @@ void drawTirsHero(tir_Struct t)
 
 	// supprime l'ultime après 10 tués
 
-	if(hero->ulti_active == 1)
-	{
-		if((e->qtyToUlti+1)%6 == 0)
-		{
-			hero->ulti_active = 0;
-		}
-	}
 		
 		glEnd();
 
@@ -1381,6 +1386,50 @@ void writeSomething(float red, float green, float blue, int x, int y, char *txt)
 
 // --------------------------------------------------------------------------------------------_//
 
+// écrit un texte aux couleurs et positions voulues en 9by5 taille 18
+
+void writeSomething9by15(float red, float green, float blue, int x, int y, char* str, int taille, int ij){
+
+	glColor3f(red, green, blue);
+
+	if(ij == 0)
+	{
+		for (int i = 0; i < taille; i++){ 
+
+			glRasterPos3f(x, y+i, 1); 
+
+			char *msg1 = str;
+
+			for(int i = 0; i <strlen(msg1);i++)
+				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
+		}
+	}
+	else if (ij == 1)
+	{
+		for (int j = 0; j < taille; j++){ 
+
+			glRasterPos3f(x+j, y, 1); 
+
+			char *msg1 = str;
+
+			for(int j = 0; j <strlen(msg1);j++)
+				glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[j]);
+		}
+	}
+	else if(ij == 2)
+	{
+		glRasterPos3f(x, y, 1);
+		char *msg1 = str;
+		for(int i = 0; i <strlen(msg1);i++)
+    		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
+
+	}
+
+
+}
+
+// --------------------------------------------------------------------------------------------_//
+
 // écrit un texte aux couleurs et positions voulues en helvetica taille 18
 
 void writeSomethingHelvetica(float red, float green, float blue, int x, int y, char txt[]){
@@ -1407,7 +1456,7 @@ void writeSomethingHelvetica(float red, float green, float blue, int x, int y, c
 
 // écrit un texte aux couleurs et positions voulues en helvetica taille 18
 
-void writeSomethingArrayHelvetica(float red, float green, float blue, int x, int y, char *txt){
+void writeSomethingArrayHelvetica(float red, float green, float blue, int x, int y, char txt[]){
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();

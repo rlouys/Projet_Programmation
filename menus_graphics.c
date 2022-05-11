@@ -33,7 +33,7 @@
 #define BLUE 0, 0, 1
 #define YELLOW 1, 1, 0
 #define SAND 0.94, 0.87, 0.70
-
+#define BRICK 0.698039216, 0.133333333, 0.133333333
 
 
 /*** VARIABLES ***/
@@ -42,6 +42,12 @@ int c = 0; // void mouse
 int counterAlpha = 0; // compteur pour affichage du pseudo
 // en fonction d'où on se trouvait avant de rentrer dans les options
 float difficulty = 0; // niveau de difficulté
+int username_lock = 0;
+int newGame;
+int newGame_lock = 0;
+int NewGame_statslock = 0;
+int startgame_option_bug;
+int level;
 
 // pour l'affichage des options dynamiques
 char* letter = " ";
@@ -52,16 +58,14 @@ char* cheatmode_str;
 char *username = " ";
 char* usernameScore;
 char username_array[20];
-int username_lock = 0;
-int newGame;
-int newGame_lock = 0;
+
+
 
 bool cheatMode = false;
 bool gameplay_keys = false;
 bool screen;
 bool frame = true;
 bool startgame;
-int startgame_option_bug;
 bool try;
 bool SHOOT;
 bool cheatMode_pressed;
@@ -77,8 +81,6 @@ bool cheatMode_pressed;
                 /**********************
                  * KEYBOARD FUNCTIONS *
                  **********************/
-
-
 
 // initialise les fonctions au clavier lorsque dans un menu
 
@@ -111,9 +113,9 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 
 
 	case 'n': 
-
+        NewGame_statslock = 1;
         startgame_option_bug = 0;
-        startgame = !startgame;
+        //startgame = !startgame;
 		glutDisplayFunc(UsernameDisplay);
 		glutPostRedisplay();
 		break;
@@ -166,8 +168,11 @@ void keyboardFunc(unsigned char Key, int x, int y) {
 void Alphabet(unsigned char Key, int x, int y)
 {
 
+// sert à limiter le nombre de caractères entrés max.
+if(counterAlpha <= 9)
+{
     switch (Key) {
-    
+        
         case 'a':
 
             username_array[counterAlpha] = 'A';
@@ -380,6 +385,14 @@ void Alphabet(unsigned char Key, int x, int y)
             counterAlpha++;
             break;
 
+        case '-':
+
+            username_array[counterAlpha] = '_';
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            counterAlpha++;
+            break;
+
         // BACKSPACE == SUPPRIME LA LETTRE
         case 0x08: 
 
@@ -387,7 +400,7 @@ void Alphabet(unsigned char Key, int x, int y)
             {            letter = "_";
 
                 glTranslatef(-10,0,0);
-                username[counterAlpha-1] = '\0';
+                username_array[counterAlpha-1] = '\0';
                 counterAlpha--;
             }
 
@@ -396,7 +409,28 @@ void Alphabet(unsigned char Key, int x, int y)
             break;
 
         case 13:
+
 		    username = copyToString(username_array);
+
+            //bug, impossible d'initialiser le héro si nouvelle partie alors que partie sauvegardée...
+		    hero->health = 5;
+            hero->attack = 3;
+            hero->killed = 0;
+            hero->red_killed = 0;
+            hero->purple_killed = 0;
+            hero->gold_killed = 0;
+            hero->current_xp = 0;
+            hero->pos.x = 10;
+            hero->pos.y = 2;
+            hero->weapon_type = 0;
+            hero->obstacles_taken = 0;
+            hero->bonus_active = 0;
+            hero->ulti_killed = 0;
+            hero->ulti_active = 0;
+
+           // saveContext();
+
+            startgame = !startgame;
             glutDisplayFunc(DisplayGame);
             glutPostRedisplay();
             break;
@@ -408,8 +442,64 @@ void Alphabet(unsigned char Key, int x, int y)
             glutPostRedisplay();
             break;
         };
-    
-    
+
+}
+else
+{
+
+    switch (Key) {
+
+        // BACKSPACE == SUPPRIME LA LETTRE
+        case 0x08: 
+
+            if(counterAlpha>0)
+            {            letter = "_";
+
+                glTranslatef(-10,0,0);
+                username_array[counterAlpha-1] = '\0';
+                counterAlpha--;
+            }
+
+            glutDisplayFunc(UsernameDisplay);
+            glutPostRedisplay();
+            break;
+
+        case 13:
+
+		    username = copyToString(username_array);
+
+            //bug, impossible d'initialiser le héro si nouvelle partie alors que partie sauvegardée...
+		    hero->health = 5;
+            hero->attack = 3;
+            hero->killed = 0;
+            hero->red_killed = 0;
+            hero->purple_killed = 0;
+            hero->gold_killed = 0;
+            hero->current_xp = 0;
+            hero->pos.x = 10;
+            hero->pos.y = 2;
+            hero->weapon_type = 0;
+            hero->obstacles_taken = 0;
+            hero->bonus_active = 0;
+            hero->ulti_killed = 0;
+            hero->ulti_active = 0;
+
+           // saveContext();
+
+            startgame = !startgame;
+            glutDisplayFunc(DisplayGame);
+            glutPostRedisplay();
+            break;
+
+        case 27 :
+
+            glutDisplayFunc(WelcomeDisplay);
+            glutKeyboardFunc(keyboardFunc);
+            glutPostRedisplay();
+            break;
+        };
+
+}    
 
 }
 // ----------------------------------------------------------------- //
@@ -510,10 +600,8 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
 		glutPostRedisplay();
 		break;
 
-	case 'l':
+	case 'd':
        
-        
-
 		glutDisplayFunc(DisplayCredits);
         glutKeyboardFunc(keyboardFuncOpt);
 		glutPostRedisplay();
@@ -545,9 +633,11 @@ void keyboardFuncPausedInGame(unsigned char Key, int x, int y) {
 			break;  
     
     case 'm':
-            newGame = 0;
-            saveContext();
+            //newGame = 0;
             saveScore(hero);
+            newGame = 0;
+
+            saveContext();
             // ouvrir un fichier, enregistrer tout ce qu'il faut, et aller rechercher dans ce fichier par après !!
             glutDisplayFunc(WelcomeDisplay);
             glutKeyboardFunc(keyboardFunc);
@@ -665,7 +755,7 @@ void frameDraw(int red, int green, int blue, int x, int y, int length, int title
 }
 // --------------------------------------------------------------- //
 
-void drawHighScore()
+void drawHighScore(top Top)
 {
 	glMatrixMode(GL_MODELVIEW);
    	glLoadIdentity();
@@ -713,14 +803,10 @@ void drawHighScore()
 
     writeSomething(WHITE, 350,750, "-         H    I    G    H    S    C    O    R    E    S         -");
     
-    //int top_1,top_2,top_3,top_4;
-    int score_1, score_2, score_3, score_4;
-    char username_1[20], username_2[20], username_3[20], username_4[20];
-    int killed_1, killed_2, killed_3, killed_4;
 
     FILE *f = fopen("scores.txt", "r");
     
-    fscanf(f, "%s %d %d %s %d %d %s %d %d %s %d %d",  username_1, &score_1, &killed_1, username_2, &score_2, &killed_2, username_3, &score_3, &killed_3, username_4, &killed_4, &score_4);
+    fscanf(f, "%s %d %d %s %d %d %s %d %d %s %d %d %s %d %d", Top->username[0], &Top->score[0], &Top->killed[0], Top->username[1], &Top->score[1], &Top->killed[1], Top->username[2], &Top->score[2], &Top->killed[2], Top->username[3], &Top->score[3], &Top->killed[3], Top->username[4], &Top->score[4], &Top->killed[4]);
     writeSomethingHelvetica(WHITE, 330,630, "1");
     writeSomethingHelvetica(WHITE, 330,580, "2");
     writeSomethingHelvetica(WHITE, 330,550, "3");
@@ -730,102 +816,80 @@ void drawHighScore()
     writeSomethingHelvetica(WHITE, 575,680, "SCORE");
     writeSomethingHelvetica(WHITE, 700,680, "ENNEMI_KILLED");
     
+
 	char score_un[10];
-	sprintf(score_un, "%d", score_1);
-
+	sprintf(score_un, "%d", Top->score[4]);
 	char killed_un[10];
-	sprintf(killed_un, "%d", killed_1);
+	sprintf(killed_un, "%d", Top->killed[4]);
 
-    if(score_1 == 0) writeSomethingHelvetica(WHITE, 575,630, "0");
+    if(Top->score[4] == 0) writeSomethingHelvetica(WHITE, 575,630, "-----");
     else writeSomethingHelvetica(WHITE, 575,630, score_un);
 
-    if(killed_1 == 0) writeSomethingHelvetica(WHITE, 750,630, "-----");
-    else writeSomethingHelvetica(WHITE, 750,630, score_un);
+    if(Top->killed[4] == 0) writeSomethingHelvetica(WHITE, 750,630, "-----");
+    else writeSomethingHelvetica(WHITE, 750,630, killed_un);
 
-    writeSomethingHelvetica(WHITE, 385,630, username_1);
+    writeSomethingArrayHelvetica(WHITE, 385,630, Top->username[4]);
 
 //            ~                       ~
 
 	char score_deux[10];
-	sprintf(score_deux, "%d", score_2);
+	sprintf(score_deux, "%d", Top->score[3]);
 
 	char killed_deux[10];
-	sprintf(killed_deux, "%d", killed_2);
+	sprintf(killed_deux, "%d", Top->killed[3]);
 
-    if(score_2 == 0) writeSomethingHelvetica(WHITE, 575,580, "---");
+    if(Top->score[3] == 0) writeSomethingHelvetica(WHITE, 575,580, "---");
     else writeSomethingHelvetica(WHITE, 575,580, score_deux);
 
-    if(killed_2 == 0) writeSomethingHelvetica(WHITE, 750,580, "---");
+    if(Top->killed[3] == 0) writeSomethingHelvetica(WHITE, 750,580, "---");
     else writeSomethingHelvetica(WHITE, 750,580, killed_deux);
 
-    writeSomethingHelvetica(WHITE, 385,580, username_2);
+    writeSomethingArrayHelvetica(WHITE, 385,580, Top->username[3]);
 
 //            ~                       ~
 
 	char score_trois[10];
-	sprintf(score_trois, "%d", score_3);
+	sprintf(score_trois, "%d", Top->score[2]);
 
 	char killed_trois[10];
-	sprintf(killed_trois, "%d", killed_3);
+	sprintf(killed_trois, "%d", Top->killed[2]);
 
-    if(score_3 == 0) writeSomethingHelvetica(WHITE, 575,550, "---");
+    if(Top->score[2] == 0) writeSomethingHelvetica(WHITE, 575,550, "---");
     else writeSomethingHelvetica(WHITE, 575,550, score_trois);
 
-    if(killed_3 == 0) writeSomethingHelvetica(WHITE, 750,550, "---");
+    if(Top->killed[2] == 0) writeSomethingHelvetica(WHITE, 750,550, "---");
     else writeSomethingHelvetica(WHITE, 750,550, killed_trois);
 
-    writeSomethingHelvetica(WHITE, 385,550, username_3);
+    writeSomethingArrayHelvetica(WHITE, 385,550, Top->username[2]);
 
 //            ~                       ~
 	
     char score_quatre[10];
-	sprintf(score_quatre, "%d", score_4);
+	sprintf(score_quatre, "%d", Top->score[1]);
 
 	char killed_quatre[10];
-	sprintf(killed_quatre, "%d", killed_4);
+	sprintf(killed_quatre, "%d", Top->killed[1]);
 
-    if(score_4 == 0) writeSomethingHelvetica(WHITE, 575,520, "---");
+    if(Top->score[1] == 0) writeSomethingHelvetica(WHITE, 575,520, "---");
     else writeSomethingHelvetica(WHITE, 575,520, score_quatre);
 
-    if(killed_4 == 0) writeSomethingHelvetica(WHITE, 750,520, "---");
+    if(Top->killed[1] == 0) writeSomethingHelvetica(WHITE, 750,520, "---");
     else writeSomethingHelvetica(WHITE, 750,520, killed_quatre);
 
-    writeSomethingHelvetica(WHITE, 385,520, username_4);
+    writeSomethingArrayHelvetica(WHITE, 385,520, Top->username[1]);
     
     fclose(f);
+
+
     // dessin du cadre couleur sable du top 1
-
-    //compareTops(); // fonction tri qui replace tout au bon endroit
-    
-
-
-
-    // dessin du cadre autour du top 1
     glColor3f(SAND);
-    for (int i = 0; i < 30; i++){ 
-        glRasterPos3f(838, 615+i, 1); // DRAW LEFT LINE FRAME
-        char msg1[]="|";
-        for(int i = 0; i <strlen(msg1);i++)
-            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
 
-        glRasterPos3f(305, 615+i, 1); // DRAW RIGHT LINE FRAME
-        char msg2[]="|";
-        for(int i = 0; i <strlen(msg2);i++)
-            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-    }
+    writeSomething9by15(SAND,  838, 615, "|", 30, 0);
+    writeSomething9by15(SAND,  305, 615, "|", 30, 0);
+    writeSomething9by15(SAND,  310, 610, "-", 525, 1);
+    writeSomething9by15(SAND,  310, 650, "-", 525, 1);
 
-    for(int j = 0; j <= 525; j++)
-    {
-        glRasterPos3f(310+j, 610, 1); // DRAW DOWN LINE FRAME
-        char msg3[]="-";
-        for(int i = 0; i <strlen(msg3);i++)
-            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
-
-        glRasterPos3f(310+j, 650, 1); // DRAW UP LINE FRAME
-        char msg4[]="-";
-        for(int i = 0; i <strlen(msg4);i++)
-            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
-    }
+   
 }
                         /**********
                          * ÉCRANS *
@@ -836,6 +900,8 @@ void drawHighScore()
 
 void WelcomeDisplay()
 {	
+    top Top = malloc(sizeof(struct Score));
+
 
 	int x = (SCREEN_WIDTH/2)-80;
 
@@ -845,75 +911,33 @@ void WelcomeDisplay()
 
     frameDraw(EMERALD, x+30, 850, 630, 1);
 
-    // couleur
-    glColor3f(WHITE);
+    // textes
+    writeSomethingArray(WHITE, (x-150), 850,"S U S T A I N A B L E   M O B I L I T Y  :  S U B S I S T A N C E"); 
+    writeSomethingArray(WHITE, (x+575), 850, " ~ ");
+    writeSomethingArray(WHITE, (x-250), 850, " ~ ");
+    writeSomething9by15(WHITE, 50, 740, "CONTINUER ('c')", 0, 2);
+    writeSomething9by15(WHITE, 50, 700, "Nouvelle partie ('n')", 0, 2);
+    writeSomething9by15(WHITE, 50, 620, "GAMEPLAY ('g')", 0, 2);
+    writeSomething9by15(WHITE, 50, 580, "OPTIONS ('o')", 0, 2);
 
-    glRasterPos3f(x-150, 850, 1);
-    char msg1[]="S U S T A I N A B L E   M O B I L I T Y  :  S U B S I S T A N C E";
-    for(int i = 0; i <strlen(msg1);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
-
-    glRasterPos3f(x+575, 850, 1);
-    char msg50[]=" ~ ";
-    for(int i = 0; i <strlen(msg50);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg50[i]);
-
-    glRasterPos3f(x-250, 850, 1);
-    char msg51[]=" ~ ";
-    for(int i = 0; i <strlen(msg51);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg51[i]);
-
-    glColor3f(WHITE);
-
-    glRasterPos3f(50, 740, 0);
-    char msg3[]="CONTINUER ('c')";
-    for(int i = 0; i <strlen(msg3);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
-
-    glRasterPos3f(50, 700, 0);
-    char msg4[]="Nouvelle partie ('n')";
-    for(int i = 0; i <strlen(msg4);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
-
-    glRasterPos3f(50, 640, 0);
-    char msg5[]="GAMEPLAY ('g')";
-    for(int i = 0; i <strlen(msg5);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg5[i]);
-
-    glRasterPos3f(50, 600, 0);
-    char msg6[]="OPTIONS ('o')";
-    for(int i = 0; i <strlen(msg6);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
-
+    // cadre de la "sortie"
     glColor3f(EMERALD);
-    frameDraw(EMERALD, 50, 560, 210, 0);
+    frameDraw(EMERALD, 50, 500, 210, 0);
     glColor3f(WHITE);
 
-    glRasterPos3f(50, 560, 0);
-    char msg7[]=">>>> SORTIE >>>>('x')";
-    for(int i = 0; i <strlen(msg7);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
-
-    glColor3f(WHITE);
-    
-    glRasterPos3f(x-20, 50, 0);
-    char msg8[]="Press 'c' to enter the game";
-    for(int i = 0; i <strlen(msg8);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg8[i]);
-
-
-    glColor3f(RED);
-
+    writeSomething9by15(WHITE, 50, 500, ">>>> SORTIE >>>>('x')", 0, 2);
+    writeSomething9by15(WHITE, (x-20), 50, "Press 'c' to enter the game", 0, 2);
+   
     if(newGame == 1 && newGame_lock == 1)
     {
-        glRasterPos3f(50, 500, 0);
-        char msg3[]="AUCUNE PARTIE EN COURS";
-        for(int i = 0; i <strlen(msg3);i++)
-        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
-
+        writeSomething9by15(RED, 50, 450, "AUCUNE PARTIE EN COURS", 0, 2);
     }
 
-    drawHighScore();
+
+    drawHighScore(Top);
+
+    glutKeyboardFunc(keyboardFunc);
+
     glutSwapBuffers();
 
     
@@ -971,7 +995,7 @@ void UsernameDisplay()
 
     newGame = 1;
     newGame_lock = 1;
-
+    NewGame_statslock = 1;
 
 
 
@@ -981,58 +1005,27 @@ void UsernameDisplay()
     glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
     
-    int i;
-    int j;
     
-    for (i = 0; i < 48; i++){ 
-            glRasterPos3f(175, 750+i, 1); // DRAW LEFT LINE FRAME
-            char msg1[]="|";
-            for(int i = 0; i <strlen(msg1);i++)
-                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
-
-            glRasterPos3f(715, 750+i, 1); // DRAW RIGHT LINE FRAME
-            char msg2[]="|";
-            for(int i = 0; i <strlen(msg2);i++)
-                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-            
-        }
-
-        for(j = 0; j <= 540; j++)
-        {
-            glRasterPos3f(175+j, 800, 1); // DRAW DOWN LINE FRAME
-            char msg3[]="-";
-            for(int i = 0; i <strlen(msg3);i++)
-                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
-
-            glRasterPos3f(175+j, 750, 1); // DRAW UP LINE FRAME
-            char msg4[]="-";
-            for(int i = 0; i <strlen(msg4);i++)
-                glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
-        }
-
+    
+    writeSomething9by15(WHITE,  175, 750, "|", 48, 0);
+    writeSomething9by15(WHITE,  715, 750, "|", 48, 0);
+    writeSomething9by15(WHITE,  175, 800, "-", 540, 1);
+    writeSomething9by15(WHITE,  175, 750, "-", 540, 1);
 
     glColor3f(EMERALD);
     frameDraw(EMERALD, 50, 580, 210, 0);
     glColor3f(WHITE);
 
-    glRasterPos3f(50, 580, 0);
-    char msg0[]="<<<<<<<<<<<<<<<<<<<<<< ('ESC')";
-    for(int i = 0; i <strlen(msg0);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg0[i]);
-
+    writeSomething9by15(WHITE,  50, 580, "<<<<<<<<<<<<<<<<<<<<<< ('ESC')", 0, 2);
 
     frameDraw(EMERALD, 250, 850, 630, 1);
-	//writeSomething(EMERALD, 310, 770, "H  A  R  U  H  I  K  O");    
 	writeSomething(EMERALD, 210, 850, "  E N T R E Z    V O T R E     U S E R N A M E :"); 
 
     
     // affiche le username, qui est alimenté par la fonction Keyboard(Alphabet)
     writeSomethingArray(WHITE, 330, 770, username_array);
-        
-    glRasterPos3f(615, 730, 0);
-    char msg1[]= "PRESS ENTER";
-    for(int i = 0; i <strlen(msg1);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg1[i]);
+
+    writeSomething9by15(WHITE,  615, 730, "PRESS ENTER", 0, 2);
     
     glutKeyboardFunc(Alphabet);
 
@@ -1094,10 +1087,7 @@ void EndGameDisplay()
     frameDraw(EMERALD, 50, 430, 210, 0);
     glColor3f(WHITE);
     
-    glRasterPos3f(50, 430, 1);
-    char msg[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
-    for(int i = 0; i <strlen(msg);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg[i]);
+    writeSomething9by15(SAND,  50, 430, "<<<<<<<<<<<<<<<<<<<<<< ('r')", 0, 2);
 
     glutKeyboardFunc(keyboardFunc);
 
@@ -1149,10 +1139,7 @@ void WinDisplay()
     frameDraw(EMERALD, 50, 430, 210, 0);
     glColor3f(WHITE);
     
-    glRasterPos3f(50, 430, 1);
-    char msg[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
-    for(int i = 0; i <strlen(msg);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg[i]);
+    writeSomething9by15(SAND,  50, 430, "<<<<<<<<<<<<<<<<<<<<<< ('r')", 0, 2);
 
     glutKeyboardFunc(keyboardFunc);
 
@@ -1166,7 +1153,6 @@ void WinDisplay()
 
 void DisplayOptions()
 {	
-
 
     int x = (SCREEN_WIDTH/2)-80;
 
@@ -1187,53 +1173,32 @@ void DisplayOptions()
 
     glColor3f(WHITE);
 
-    glRasterPos3f(x-30, 850, 1);
-    char msg1[]="  O    P    T    I    O    N    S";
-    for(int i = 0; i <strlen(msg1);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
+    writeSomethingArray(WHITE, (x-30), 850, "  O    P    T    I    O    N    S");
+    writeSomething9by15(WHITE,  x, 750, difficulty_str, 0, 2);
+    writeSomething9by15(WHITE,  x, 700, gameplay_keys_str, 0, 2);
+    writeSomething9by15(WHITE,  x, 650, screen_str, 0, 2);
+    writeSomething9by15(WHITE,  x, 600, cheatmode_str, 0, 2);
+    writeSomething9by15(WHITE,  x, 500, "<<<<<<<<<<<<<<<<<<<<<< ('r')", 0, 2);
 
-    glColor3f(WHITE);
 
 
     // affiche la difficulté en cours
     frameDraw(WHITE, x, 750, 210, 0);
-    glRasterPos3f(x, 750, 1);
-    char* msg3 = difficulty_str;
-    for(int i = 0; i <strlen(msg3);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
-
-    // affiche les touches de jeu actives
     frameDraw(WHITE, x, 700, 210, 0);
-    glRasterPos3f(x, 700, 1);
-    char* msg4 = gameplay_keys_str;
-    for(int i = 0; i <strlen(msg4);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
-
-    // affiche l'inclinaison de la map
     frameDraw(WHITE, x, 650, 210, 0);
-    glRasterPos3f(x, 650, 1);
-    char* msg5 = screen_str;
-    for(int i = 0; i <strlen(msg5);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg5[i]);
-
-    // affiche si le cheat mode est actif ou non
     frameDraw(WHITE, x, 600, 210, 0);
-    glRasterPos3f(x, 600, 1);
-    char* msg6 = cheatmode_str;
-    for(int i = 0; i <strlen(msg6);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
 
     // affiche le bouton pour quitter
     glColor3f(EMERALD);
     frameDraw(EMERALD, x, 500, 210, 0);
     glColor3f(WHITE);
+
     glRasterPos3f(x, 500, 1);
     char msg7[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
     for(int i = 0; i <strlen(msg7);i++)
     	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
 
     glutKeyboardFunc(keyboardFuncOpt);
-
 
     glutSwapBuffers();
 }
@@ -1244,8 +1209,7 @@ void DisplayOptions()
 
 void DisplayGameplay()
 {	
-
-    
+    enemy en = malloc(sizeof(struct enemies));
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -1258,184 +1222,65 @@ void DisplayGameplay()
 
     frameDraw(EMERALD, x+30, 850, 630, 1);
 
-    glColor3f(WHITE);
+    writeSomething(WHITE,  x+10, 850, "G     A     M     E     P     L     A     Y");
+    writeSomething9by15(WHITE,  80, 790, "BIENVENUE DANS SUSTAINABILITY MOBILITY : SUBISTANCE !", 0, 2);
 
-    glRasterPos3f(x+10, 850, 1);
-    char msg1[]="G   A   M   E   P   L   A   Y";
-    for(int i = 0; i <strlen(msg1);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
+    writeSomething9by15(WHITE,  80, 750, "Le but du jeu est simple, reussir a detruire la mobilite forte !", 0, 2);
 
+    writeSomething9by15(WHITE,  80, 725, "il vous faudra eliminer le maximum d'ennemis avant que votre vie ne tombe a 0.", 0, 2);
+    writeSomething9by15(WHITE,  80, 660, "Le personnage possede un nombre de points de vie limites (15 max) ", 0, 2);
+    writeSomething9by15(WHITE,  80, 630, "Il a aussi un nombre de points d attaque progressif (augmentable via les bonus)", 0, 2);
+    writeSomething9by15(WHITE,  80, 600, "Vous aurez le choix entre deux types d'armes, le fusil (quoi qu'un peu excessif)", 0, 2);
+    writeSomething9by15(WHITE,  80, 570, "Mais aussi un canon à bulles, permettant d'attraper les bonus, de figer un obstacle", 0, 2);
+    writeSomething9by15(WHITE,  80, 540, "ou de ralentir un ennemi (vitesse / 2)", 0, 2);
+   
+    writeSomething9by15(WHITE,  250, 510, " ~ ", 0, 2);
 
-    glColor3f(WHITE);
+    writeSomething9by15(WHITE,  80, 480, "Un ennemi elimine rapporte 100 points", 0, 2);
+    writeSomething9by15(WHITE,  80, 450, "Une collision avec un ennemi enleve 1 point de vie, et retire 100 points.", 0, 2);
+    writeSomething9by15(WHITE,  80, 420, "Un ennemi arrivant en bas de la map enleve 1 point de vie, et retire 100 points.", 0, 2);
 
-    glRasterPos3f(80, 750, 0);
-    char msg3[]="Il suffit de deplacer le personnage avec les touches choisies. ";
-    for(int i = 0; i <strlen(msg3);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
+    writeSomething9by15(WHITE,  250, 390, " ~ ", 0, 2);
 
-    glRasterPos3f(80, 730, 0);
-    char msg4[]="Ensuite, vous pouvez tirer avec la barre d'espace. ";
-    for(int i = 0; i <strlen(msg4);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg4[i]);
+    writeSomething9by15(WHITE,  80, 360, "Un bonus attrape via une bulle ou une collision rajoute 1 point d'attaque et de vie au hero", 0, 2);
+    writeSomething9by15(WHITE,  80, 330, "Une collision avec un bonus donne une attaque ultime pour les 5 prochains kills.", 0, 2);
+    writeSomething9by15(WHITE,  80, 300, "Un bonus detruit n'apporte aucun effet", 0, 2);
 
-    glRasterPos3f(80, 710, 0);
-    char msg8[]="Le but du jeu est d'eliminer le maximum d'ennemis avant que votre vie ne tombe a 0.";
-    for(int i = 0; i <strlen(msg8);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg8[i]);
+    writeSomething9by15(WHITE,  250, 270, " ~ ", 0, 2);
 
+    writeSomething9by15(WHITE,  80, 240, "Une collision avec un obstacle fait perdre 1 de vie et 100 de score", 0, 2);
 
-    glRasterPos3f(80, 670, 0);
-    char msg5[]="Le personnage possede : ";
-    for(int i = 0; i <strlen(msg5);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg5[i]);
-
-    glRasterPos3f(80, 660, 0);
-    char msg21[]="---------------------";
-    for(int i = 0; i <strlen(msg21);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg21[i]);
-
-    glRasterPos3f(80, 640, 0);
-    char msg6[]="- Un nombre de points de vie (3 au debut),";
-    for(int i = 0; i <strlen(msg6);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg6[i]);
-
-    glRasterPos3f(80, 620, 0);
-    char msg7[]="- Un nombre de points d'attaques (1 au debut),";
-    for(int i = 0; i <strlen(msg7);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
-
-    glRasterPos3f(80, 600, 0);
-    char msg20[]="- Un type d'arme (un fusil ou un canon à bulles).";
-    for(int i = 0; i <strlen(msg20);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg20[i]);
-    
-    glRasterPos3f(80, 560, 0);
-    char msg9[]="Les ennemis :";
-    for(int i = 0; i <strlen(msg9);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg9[i]);    
-
-    glRasterPos3f(80, 550, 0);
-    char msg22[]="-------------";
-    for(int i = 0; i <strlen(msg22);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg22[i]); 
-
-    glRasterPos3f(80, 530, 0);
-    char msg23[]="- Possède un nombre points de vie (3 au debut).";
-    for(int i = 0; i <strlen(msg23);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg23[i]); 
-
-    glRasterPos3f(72, 510, 0);
-    char msg10[]=" - Un ennemi elimine rapporte 50 points";
-    for(int i = 0; i <strlen(msg10);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg10[i]);
-
-    glRasterPos3f(72, 490, 0);
-    char msg11[]=" - Une collision avec un ennemi enleve 1 point de vie, et retire 100 points.";
-    for(int i = 0; i <strlen(msg11);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg11[i]);
-    
-    glRasterPos3f(72, 470, 0);
-    char msg12[]=" - Un ennemi arrivant en bas de la map enleve 1 point de vie, et retire 100 points.";
-    for(int i = 0; i <strlen(msg12);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg12[i]);
-
-    glRasterPos3f(72, 450, 0);
-    char msg30[]=" - Un ennemi peut être ralenti avec le canon à bulles.";
-    for(int i = 0; i <strlen(msg30);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg30[i]);
-
-    glTranslatef(0,-20,0);
-
-    glRasterPos3f(72, 430, 0);
-    char msg24[]="Les bonus :";
-    for(int i = 0; i <strlen(msg24);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg24[i]);
-
-    glRasterPos3f(72, 420, 0);
-    char msg25[]="---------";
-    for(int i = 0; i <strlen(msg25);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg25[i]);    
-
-
-    glRasterPos3f(72, 400, 0);
-    char msg13[]=" - Un bonus attrape via une bulle ou une collision rajoute 1 point d'attaque et de vie au hero";
-    for(int i = 0; i <strlen(msg13);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg13[i]);
-
-    glTranslatef(-2,-25,0);
-
-    glRasterPos3f(72, 400, 0);
-    char msg55[]=" - Une collision avec un bonus donne une attaque ultime pour les 5 prochains kills.";
-    for(int i = 0; i <strlen(msg55);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg55[i]);
-
-    glRasterPos3f(72, 380, 0);
-    char msg14[]=" - Un bonus detruit n'apporte aucun effet";
-    for(int i = 0; i <strlen(msg14);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg14[i]);
-
-    glRasterPos3f(72, 340, 0);
-    char msg26[]="Les obstacles : ";
-    for(int i = 0; i <strlen(msg26);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg26[i]);
-
-    glRasterPos3f(72, 330, 0);
-    char msg27[]="-------------";
-    for(int i = 0; i <strlen(msg27);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg27[i]);
-
-    glRasterPos3f(72, 310, 0);
-    char msg15[]=" - Une collision avec un obstacle fait perdre 1 de vie et 100 de score";
-    for(int i = 0; i <strlen(msg15);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg15[i]);
-
-    glRasterPos3f(72, 290, 0);
-    char msg16[]=" - Un obstacle peut etre arrete avec le canon a bulle, puis detruit avec le fusil";
-    for(int i = 0; i <strlen(msg16);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg16[i]);
-
-    // dessin d'un cadre pour le bouton "retour en arrière"
     glColor3f(EMERALD);
-    frameDraw(EMERALD, 80, 100, 210, 0);
+    frameDraw(EMERALD, 80, 75, 210, 0);
     glColor3f(WHITE);
-    
-    glRasterPos3f(80, 100, 1);
-    char msg17[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
-    for(int i = 0; i <strlen(msg17);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg17[i]);
-
-    glRasterPos3f(80, 220, 1);
-    char msg40[]="! Un cheat mode peut etre active via le clic droit ou via le menu des options !";
-    for(int i = 0; i <strlen(msg40);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg40[i]);
+    writeSomething9by15(WHITE,  80, 75, "<<<<<<<<<<<<<<<<<<<<<<  ('r')", 0, 2);
+    writeSomething9by15(WHITE,  80, 185, "! Un cheat mode peut etre active via le clic droit ou via le menu des options !", 0, 2);
+    writeSomething9by15(WHITE,  350, 120, "E   N   J   O   Y !", 0, 2);
 
 
-    glRasterPos3f(80, 165, 1);
-    char msg41[]="E   N   J   O   Y !";
-    for(int i = 0; i <strlen(msg41);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg41[i]);
 
-    // dessin des "objets de jeu"  
-    glTranslatef(30,630,1);
-    drawSquare(BLUE, 1);
+    // dessin des "objets de jeu" dans le menu  
+    glTranslatef(30,585,1);
+    drawBike();
 
-    glTranslatef(2,-127,0);
-    drawSquare(RED, 1);
+    glTranslatef(2,-137,0);
+    //drawSquare(RED, 1);
+    glColor3f(RED);
+    drawCar(en);
 
-    glTranslatef(10,-108,0);
-    drawCircle(BLUE, 0, 0, 6);
-    drawCircle(BLUE, 0, 0, 7);
-    drawCircle(BLUE, 0, 0, 10);
+    glTranslatef(10,-111,0);
+    drawCircle(RED, 0, 0, 6);
+    drawCircle(RED, 0, 0, 7);
+    drawCircle(RED, 0, 0, 10);
 
-    glTranslatef(-22,-100,0);
-    drawSquare(YELLOW, 1);
-    glTranslatef(14,0,0);
-    drawSquare(YELLOW, 1);
-    glTranslatef(14,0,0);
-    drawSquare(YELLOW, 1);
+    glTranslatef(-12,-103,0);
+    glColor3f(BRICK);
+    drawBrickWall();
 
     // systeme D pour remettre le curseur à la bonne place pour redessin des autres fenetres
     glTranslatef(-46, -250, -1);
+
+
     glutSwapBuffers();
 }
 
@@ -1449,32 +1294,22 @@ void DisplayEnding()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glColor3f(EMERALD);
-
     frameDraw(EMERALD, (SCREEN_WIDTH/2)-50, 850, 630, 1);
-
     glColor3f(WHITE);
 
-    glRasterPos3f(350, 850, 1);
-    char msg1[]="A   B  I  E  N  T  O  T ";
-    for(int i = 0; i <strlen(msg1);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
-
-    glColor3f(WHITE);
-
-    frameDraw(WHITE, 50, 750, 210, 0);
-
-    glRasterPos3f(50, 750, 0);
-    char msg2[]="CREDITS";
-    for(int i = 0; i <strlen(msg2);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-    
+    writeSomething(WHITE,  350, 850, "A   B  I  E  N  T  O  T ");
 
     glColor3f(EMERALD);
+    frameDraw(WHITE, 50, 750, 210, 0);
+    glColor3f(WHITE);
 
-    glRasterPos3f(50, 720, 0);
-        char msg3[]="LOUYS RAPHAEL";
-        for(int i = 0; i <strlen(msg3);i++)
-            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
+    writeSomething9by15(WHITE,  50, 750, "CREDITS", 0, 2);
+    
+    glColor3f(EMERALD);
+
+    writeSomething9by15(WHITE,  50, 720, "Louys Raphaël", 0, 2);
+    writeSomething9by15(WHITE,  50, 700, "Bac 1 - Informatique HD", 0, 2);
+    writeSomething9by15(WHITE,  50, 680, "UNAMUR", 0, 2);
 
     glutSwapBuffers();
     wait(); // used to wait until a certain time, before exitting
@@ -1494,27 +1329,29 @@ void DisplayCredits()
 
     frameDraw(EMERALD, (SCREEN_WIDTH/2)-50, 850, 630, 1);
     glColor3f(WHITE);
-    glRasterPos3f(300, 850, 1);
-    char msg1[]="   C  R  E  D  I  T  S  ";
-    for(int i = 0; i <strlen(msg1);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, msg1[i]);
 
-    glColor3f(WHITE);
-
-    frameDraw(WHITE, 50, 750, 210, 0);
-
-    glRasterPos3f(50, 750, 0);
-    char msg2[]="CREDITS";
-    for(int i = 0; i <strlen(msg2);i++)
-    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg2[i]);
-    
+    writeSomething(WHITE,  320, 850, "   C   R   E   D   I   T  S   ");
 
     glColor3f(EMERALD);
+    frameDraw(WHITE, 50, 750, 210, 0);
+    glColor3f(WHITE);
 
-    glRasterPos3f(50, 720, 0);
-        char msg3[]="LOUYS RAPHAEL";
-        for(int i = 0; i <strlen(msg3);i++)
-            glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg3[i]);
+    writeSomething9by15(WHITE,  50, 750, "CREDITS", 0, 2);
+    
+    glColor3f(EMERALD);
+    
+    writeSomething9by15(WHITE,  50, 720, "Louys Raphael", 0, 2);
+    writeSomething9by15(WHITE,  50, 700, "Bac 1 - Informatique HD", 0, 2);
+    writeSomething9by15(WHITE,  50, 680, "UNAMUR", 0, 2);
+
+    glColor3f(EMERALD);
+    frameDraw(EMERALD, 50, 550, 210, 0);
+    glColor3f(WHITE);
+
+    glRasterPos3f(50, 550, 1);
+    char msg7[]="<<<<<<<<<<<<<<<<<<<<<< ('r')";
+    for(int i = 0; i <strlen(msg7);i++)
+    	glutBitmapCharacter(GLUT_BITMAP_9_BY_15, msg7[i]);
 
     glutSwapBuffers();
     
@@ -1535,7 +1372,8 @@ void options_keys(int option_number)
         
                 if(screen == true)
                 { 
-                    screen_str = "ECRAN     :  V R T C   ('s')";
+                    screen_str = "ECRAN     :  H R Z T   ('s')";
+                    writeSomething9by15(RED,70, 650, "WORKING ON IT, WON'T WORK", 0, 2);
                 }
                 
                 else
