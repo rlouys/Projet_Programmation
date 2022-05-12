@@ -359,7 +359,7 @@ void GameOptionsDisplay()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glTranslatef(200,400,0);
+    glTranslatef(290,400,0);
     drawSquare(EMERALD, 20);
 
     glTranslatef(0,400,0);
@@ -372,16 +372,16 @@ void GameOptionsDisplay()
     }
 
 
-    frameDraw(EMERALD, 210, 850, 630, 1);
-	writeSomething(EMERALD, 243, 850, "P A U S E D  ~  O P T I O N S");
+    frameDraw(EMERALD, 300, 850, 630, 1);
+	writeSomething(EMERALD, 333, 850, "P A U S E D  ~  O P T I O N S");
 
-    writeSomethingHelvetica(DARK_GREY, 243, 760, "('c')   CONTINUE >>>>");
-    writeSomethingHelvetica(DARK_GREY, 243, 700, "('g')   GAMEPLAY >>>>");
-    writeSomethingHelvetica(DARK_GREY, 243, 640, "('o')   OPTIONS >>>>");
-    writeSomethingHelvetica(DARK_GREY, 243, 580, "('d')   CREDITS >>>>");
-    writeSomethingHelvetica(DARK_GREY, 243, 470, "('m')  TO MENU AND SAVE >>>>");
+    writeSomethingHelvetica(DARK_GREY, 333, 760, "('c')   CONTINUE >>>>");
+    writeSomethingHelvetica(DARK_GREY, 333, 700, "('g')   GAMEPLAY >>>>");
+    writeSomethingHelvetica(DARK_GREY, 333, 640, "('o')   OPTIONS >>>>");
+    writeSomethingHelvetica(DARK_GREY, 333, 580, "('d')   CREDITS >>>>");
+    writeSomethingHelvetica(DARK_GREY, 333, 470, "('m')  TO MENU AND SAVE >>>>");
     
-    writeSomethingHelvetica(DARK_GREY, 243, 440, "('x')   QUIT AND SAVE >>>>");
+    writeSomethingHelvetica(DARK_GREY, 333, 440, "('x')   QUIT AND SAVE >>>>");
 
 
     glutKeyboardFunc(keyboardFuncPausedInGame);
